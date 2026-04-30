@@ -3,4 +3,4 @@
 :HL["/blog/_next/static/css/01ce2f9c921df27f.css","style"]
 :HL["/blog/_next/static/css/2ab627f753dbeb4e.css","style"]
 :HL["/blog/_next/static/css/743994cf6b7dcedb.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"openai-api","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"jRF5LC3S6cvFrchPNWN4H"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"openai-api","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"DoHVy2OplLgxipK_SzjNT"}
