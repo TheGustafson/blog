@@ -4,4 +4,4 @@
 :HL["/blog/_next/static/css/2ab627f753dbeb4e.css","style"]
 :HL["/blog/_next/static/css/743994cf6b7dcedb.css","style"]
 :HL["/blog/nick.jpg","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"about","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"qlzl7dCYxDsyuVtD4rlVd"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"about","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"iftkLGKpAqIeg6l8TkZzL"}
