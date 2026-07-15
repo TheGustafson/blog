@@ -216,7 +216,7 @@
       <description>The structural differences between GPT-style and T5-style models, why decoder-only won for generative LLMs, and where encoder-decoder still shines.</description>
     </item>
     <item>
-      <title>A Close Reading of 'Attention Is All You Need'</title>
+      <title>A Close Reading of ‘Attention Is All You Need’</title>
       <link>https://thegustafson.com/blog/reading-attention-is-all-you-need</link>
       <guid isPermaLink="true">https://thegustafson.com/blog/reading-attention-is-all-you-need</guid>
       <category>Arc 4: Transformers from First Principles</category>
@@ -300,21 +300,21 @@
       <description>The concrete responsibilities — graph optimization, memory allocation, scheduling, kernel dispatch — that sit between your model weights and an HTTP response.</description>
     </item>
     <item>
-      <title>Kernel Fusion and GPU Optimization</title>
+      <title>Kernel Fusion and the Memory Wall</title>
       <link>https://thegustafson.com/blog/kernel-fusion</link>
       <guid isPermaLink="true">https://thegustafson.com/blog/kernel-fusion</guid>
       <category>Arc 6: Inference Engines &amp; Serving Systems</category>
       <description>Why fusing multiple operations into a single GPU kernel reduces memory round-trips, and how FlashAttention is the poster child for this idea.</description>
     </item>
     <item>
-      <title>PagedAttention and the vLLM Insight</title>
+      <title>PagedAttention: Virtual Memory for the KV Cache</title>
       <link>https://thegustafson.com/blog/paged-attention</link>
       <guid isPermaLink="true">https://thegustafson.com/blog/paged-attention</guid>
       <category>Arc 6: Inference Engines &amp; Serving Systems</category>
       <description>Treating KV cache like virtual memory pages so you stop wasting 60-80% of GPU RAM on fragmentation.</description>
     </item>
     <item>
-      <title>Memory Management for LLMs</title>
+      <title>Memory Management: Fitting a Model and Deciding Concurrency</title>
       <link>https://thegustafson.com/blog/memory-management</link>
       <guid isPermaLink="true">https://thegustafson.com/blog/memory-management</guid>
       <category>Arc 6: Inference Engines &amp; Serving Systems</category>
@@ -692,7 +692,7 @@
       <description>How Anthropic's MCP, Google's A2A, and OpenAPI compete and complement each other as the protocol stack for agentic AI.</description>
     </item>
     <item>
-      <title>A Short History of the Field: 2013-2026</title>
+      <title>A Short History of the Field: 2013–2026</title>
       <link>https://thegustafson.com/blog/history-2013-2026</link>
       <guid isPermaLink="true">https://thegustafson.com/blog/history-2013-2026</guid>
       <category>Arc 12: Governance, Economics &amp; Trajectory</category>
