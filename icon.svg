@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- The site mark: two posts and the prerequisite chord between them,
+       on the paper square. Same grammar as the map and the OG cards. -->
+  <rect x="1" y="1" width="62" height="62" rx="14" fill="#faf8f1" stroke="#d6d3d1" stroke-width="1.5"/>
+  <path d="M 17 47 C 32 47, 47 32, 47 17" fill="none" stroke="#d6d3d1" stroke-width="4"/>
+  <path d="M 17 47 C 17 26, 26 17, 47 17" fill="none" stroke="#6366f1" stroke-width="5.5" stroke-linecap="round"/>
+  <circle cx="47" cy="17" r="7" fill="#faf8f1" stroke="#78716c" stroke-width="3.5"/>
+  <circle cx="17" cy="47" r="7.5" fill="#6366f1"/>
+</svg>
