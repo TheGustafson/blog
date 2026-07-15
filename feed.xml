@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nick Gustafson</title>
+    <link>https://nickgustafson.com/blog</link>
+    <atom:link href="https://nickgustafson.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Holding the LLM Stack in Your Head — a dependency-ordered walk through the full LLM stack, from linear algebra to agent protocols. A living document, continuously revised.</description>
+    <language>en-us</language>
+    <item>
+      <title>Holding the LLM Stack in Your Head</title>
+      <link>https://nickgustafson.com/blog/blog/the-missing-middle</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/the-missing-middle</guid>
+      <description>A personal journey through the full LLM stack — how I built the mental models, how the series actually gets written, and where to jump in.</description>
+    </item>
+    <item>
+      <title>Vectors, Matrices, and the Spaces They Live In</title>
+      <link>https://nickgustafson.com/blog/blog/vectors-and-spaces</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/vectors-and-spaces</guid>
+      <category>Arc 1: Mathematical &amp; Computational Prerequisites</category>
+      <description>Vectors as lists of activations, matrix multiplication as a linear map, and why every neural network operation bottoms out in matmuls.</description>
+    </item>
+    <item>
+      <title>Norms, Dot Products, and Similarity</title>
+      <link>https://nickgustafson.com/blog/blog/norms-dots-similarity</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/norms-dots-similarity</guid>
+      <category>Arc 1: Mathematical &amp; Computational Prerequisites</category>
+      <description>How cosine similarity, L2 distance, and projections work, and why they show up everywhere from attention scores to embedding retrieval.</description>
+    </item>
+    <item>
+      <title>Distributions, Softmax, and the Chain Rule of Words</title>
+      <link>https://nickgustafson.com/blog/blog/probability-distributions</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/probability-distributions</guid>
+      <category>Arc 1: Mathematical &amp; Computational Prerequisites</category>
+      <description>Softmax, categorical distributions, Bayes' rule, and the chain rule of probability — the four tools that make language modeling a well-defined math problem.</description>
+    </item>
+    <item>
+      <title>Cross-Entropy, KL Divergence, and What Loss Functions Measure</title>
+      <link>https://nickgustafson.com/blog/blog/cross-entropy-and-loss</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/cross-entropy-and-loss</guid>
+      <category>Arc 1: Mathematical &amp; Computational Prerequisites</category>
+      <description>Why cross-entropy is the standard LM loss, what it actually measures about two distributions, and how it connects to perplexity.</description>
+    </item>
+    <item>
+      <title>Gradients and How Machines Learn</title>
+      <link>https://nickgustafson.com/blog/blog/gradients-and-learning</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/gradients-and-learning</guid>
+      <category>Arc 1: Mathematical &amp; Computational Prerequisites</category>
+      <description>What a gradient is, why it points uphill, how backpropagation computes one efficiently via the chain rule, and what SGD does with it.</description>
+    </item>
+    <item>
+      <title>Optimizers: Momentum, Adam, and Learning Rate Schedules</title>
+      <link>https://nickgustafson.com/blog/blog/optimizers</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/optimizers</guid>
+      <category>Arc 1: Mathematical &amp; Computational Prerequisites</category>
+      <description>Why vanilla SGD is too slow, how Adam adapts per-parameter, and how warmup and cosine decay shape training dynamics.</description>
+    </item>
+    <item>
+      <title>GPUs, Floating Point, and Why Precision Matters</title>
+      <link>https://nickgustafson.com/blog/blog/gpus-and-floating-point</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/gpus-and-floating-point</guid>
+      <category>Arc 1: Mathematical &amp; Computational Prerequisites</category>
+      <description>IEEE 754, the difference between fp32/fp16/bfloat16, why mixed-precision training works, and the basics of GPU parallelism.</description>
+    </item>
+    <item>
+      <title>A Short Prehistory of Statistical NLP</title>
+      <link>https://nickgustafson.com/blog/blog/prehistory-of-nlp</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/prehistory-of-nlp</guid>
+      <category>Arc 1: Mathematical &amp; Computational Prerequisites</category>
+      <description>The arc from rule-based systems through statistical MT and log-linear models to neural approaches, giving you historical context for everything that follows.</description>
+    </item>
+    <item>
+      <title>Language Modeling as Next-Token Prediction</title>
+      <link>https://nickgustafson.com/blog/blog/next-token-prediction</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/next-token-prediction</guid>
+      <category>Arc 2: Language Modeling Before Transformers</category>
+      <description>Why 'predict the next word' is a surprisingly powerful training objective, and how it connects to the chain rule of probability.</description>
+    </item>
+    <item>
+      <title>N-gram Models and the Curse of Sparsity</title>
+      <link>https://nickgustafson.com/blog/blog/ngrams-and-sparsity</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/ngrams-and-sparsity</guid>
+      <category>Arc 2: Language Modeling Before Transformers</category>
+      <description>Counting-based language models, Markov assumptions, smoothing techniques, and why sparsity made n-grams hit a hard ceiling.</description>
+    </item>
+    <item>
+      <title>Word2vec and the Embedding Revolution</title>
+      <link>https://nickgustafson.com/blog/blog/word2vec</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/word2vec</guid>
+      <category>Arc 2: Language Modeling Before Transformers</category>
+      <description>How skip-gram and CBOW learn dense word vectors, why 'king - man + woman = queen' works, and what distributional semantics actually means.</description>
+    </item>
+    <item>
+      <title>GloVe, FastText, and the Embedding Zoo</title>
+      <link>https://nickgustafson.com/blog/blog/glove-fasttext</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/glove-fasttext</guid>
+      <category>Arc 2: Language Modeling Before Transformers</category>
+      <description>How GloVe combines count-based and predictive methods, how FastText handles subwords, and the trade-offs across embedding approaches.</description>
+    </item>
+    <item>
+      <title>Recurrent Neural Networks and Sequence Modeling</title>
+      <link>https://nickgustafson.com/blog/blog/rnns</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/rnns</guid>
+      <category>Arc 2: Language Modeling Before Transformers</category>
+      <description>The RNN equations, how hidden states carry information forward, why vanilla RNNs suffer from vanishing gradients, and what that means in practice.</description>
+    </item>
+    <item>
+      <title>LSTMs, GRUs, and Gated Memory</title>
+      <link>https://nickgustafson.com/blog/blog/lstms-grus</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/lstms-grus</guid>
+      <category>Arc 2: Language Modeling Before Transformers</category>
+      <description>How gates solve the vanishing gradient problem, the difference between LSTM and GRU cells, and why gated architectures dominated NLP for five years.</description>
+    </item>
+    <item>
+      <title>Seq2seq, Bahdanau Attention, and Why Recurrence Hit a Wall</title>
+      <link>https://nickgustafson.com/blog/blog/seq2seq-and-bahdanau</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/seq2seq-and-bahdanau</guid>
+      <category>Arc 2: Language Modeling Before Transformers</category>
+      <description>Encoder-decoder architectures, how additive attention let models align source and target tokens, and why sequential processing fundamentally bottlenecked scale.</description>
+    </item>
+    <item>
+      <title>Unicode, Bytes, and What Text Actually Is</title>
+      <link>https://nickgustafson.com/blog/blog/unicode-and-bytes</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/unicode-and-bytes</guid>
+      <category>Arc 3: Tokenization &amp; the Input Pipeline</category>
+      <description>UTF-8 encoding, code points vs. grapheme clusters, and why 'one character' is a surprisingly ambiguous concept for a model.</description>
+    </item>
+    <item>
+      <title>Byte-Pair Encoding from Scratch</title>
+      <link>https://nickgustafson.com/blog/blog/bpe-from-scratch</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/bpe-from-scratch</guid>
+      <category>Arc 3: Tokenization &amp; the Input Pipeline</category>
+      <description>The BPE merge algorithm step by step, implemented from scratch, showing how a raw byte stream becomes a vocabulary.</description>
+    </item>
+    <item>
+      <title>WordPiece, Unigram, and SentencePiece</title>
+      <link>https://nickgustafson.com/blog/blog/wordpiece-unigram-sentencepiece</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/wordpiece-unigram-sentencepiece</guid>
+      <category>Arc 3: Tokenization &amp; the Input Pipeline</category>
+      <description>How WordPiece (BERT) and Unigram (T5) differ from BPE, why SentencePiece operates on raw text, and when each approach wins.</description>
+    </item>
+    <item>
+      <title>Vocabulary Size, Merge Order, and Fertility</title>
+      <link>https://nickgustafson.com/blog/blog/vocabulary-design</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/vocabulary-design</guid>
+      <category>Arc 3: Tokenization &amp; the Input Pipeline</category>
+      <description>How vocabulary size affects model capacity and sequence length, what token fertility measures, and the practical trade-offs behind 32k vs. 128k vs. 200k vocabularies.</description>
+    </item>
+    <item>
+      <title>The Embedding Table and Its Geometry</title>
+      <link>https://nickgustafson.com/blog/blog/embedding-table</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/embedding-table</guid>
+      <category>Arc 3: Tokenization &amp; the Input Pipeline</category>
+      <description>How token IDs become vectors via a lookup table, why the embedding matrix is a learned linear map, and how embedding and unembedding layers relate.</description>
+    </item>
+    <item>
+      <title>Special Tokens, Chat Templates, and Input Formatting</title>
+      <link>https://nickgustafson.com/blog/blog/special-tokens-chat-templates</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/special-tokens-chat-templates</guid>
+      <category>Arc 3: Tokenization &amp; the Input Pipeline</category>
+      <description>BOS/EOS/PAD tokens, how chat-template formatting encodes multi-turn structure, system prompts, and tool-call schemas into a flat token stream.</description>
+    </item>
+    <item>
+      <title>Packing, Masking, and Tokenization as a Model Interface</title>
+      <link>https://nickgustafson.com/blog/blog/packing-and-masking</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/packing-and-masking</guid>
+      <category>Arc 3: Tokenization &amp; the Input Pipeline</category>
+      <description>Sequence packing for training efficiency, how attention masks prevent cross-contamination, and why tokenizer choices constrain everything downstream.</description>
+    </item>
+    <item>
+      <title>Self-Attention: Q, K, V from First Principles</title>
+      <link>https://nickgustafson.com/blog/blog/attention-from-scratch</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/attention-from-scratch</guid>
+      <category>Arc 4: Transformers from First Principles</category>
+      <description>Queries, keys, and values as learned linear projections, how scaled dot-product computes soft token-to-token lookups, and exactly why we divide by sqrt(d_k).</description>
+    </item>
+    <item>
+      <title>Multi-Head Attention and Representation Subspaces</title>
+      <link>https://nickgustafson.com/blog/blog/multi-head-attention</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/multi-head-attention</guid>
+      <category>Arc 4: Transformers from First Principles</category>
+      <description>Why multiple attention heads let the model attend to different relationship types in parallel, how heads partition the embedding dimension, and what the output projection does.</description>
+    </item>
+    <item>
+      <title>Causal Masking and the Autoregressive Constraint</title>
+      <link>https://nickgustafson.com/blog/blog/causal-masking</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/causal-masking</guid>
+      <category>Arc 4: Transformers from First Principles</category>
+      <description>Why decoder models must not attend to future tokens, how the triangular mask enforces this, and how masking shapes both training and generation.</description>
+    </item>
+    <item>
+      <title>Positional Encodings: Sinusoidal, Learned, RoPE, and ALiBi</title>
+      <link>https://nickgustafson.com/blog/blog/positional-encodings-and-rope</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/positional-encodings-and-rope</guid>
+      <category>Arc 4: Transformers from First Principles</category>
+      <description>Why attention is position-agnostic by default, how each encoding scheme injects order, why RoPE became dominant, and how ALiBi achieves length extrapolation.</description>
+    </item>
+    <item>
+      <title>The Feed-Forward Block as Key-Value Memory</title>
+      <link>https://nickgustafson.com/blog/blog/ffn-as-memory</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/ffn-as-memory</guid>
+      <category>Arc 4: Transformers from First Principles</category>
+      <description>The two-layer MLP that follows attention, why it can be interpreted as a learned key-value store over concepts, and what the intermediate dimension controls.</description>
+    </item>
+    <item>
+      <title>Layer Normalization: Pre-Norm, Post-Norm, and RMSNorm</title>
+      <link>https://nickgustafson.com/blog/blog/layer-norms</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/layer-norms</guid>
+      <category>Arc 4: Transformers from First Principles</category>
+      <description>Why normalization is essential for deep residual networks, how pre-norm stabilizes training, and why RMSNorm replaced LayerNorm in modern architectures.</description>
+    </item>
+    <item>
+      <title>Decoder-Only vs. Encoder-Decoder: Architecture Trade-offs</title>
+      <link>https://nickgustafson.com/blog/blog/decoder-vs-encoder-decoder</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/decoder-vs-encoder-decoder</guid>
+      <category>Arc 4: Transformers from First Principles</category>
+      <description>The structural differences between GPT-style and T5-style models, why decoder-only won for generative LLMs, and where encoder-decoder still shines.</description>
+    </item>
+    <item>
+      <title>A Close Reading of 'Attention Is All You Need'</title>
+      <link>https://nickgustafson.com/blog/blog/reading-attention-is-all-you-need</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/reading-attention-is-all-you-need</guid>
+      <category>Arc 4: Transformers from First Principles</category>
+      <description>The original 2017 paper section by section, connecting each design choice to what you already know, and noting which ideas survived and which were replaced.</description>
+    </item>
+    <item>
+      <title>Mixture-of-Experts Layers</title>
+      <link>https://nickgustafson.com/blog/blog/moe-layers</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/moe-layers</guid>
+      <category>Arc 4: Transformers from First Principles</category>
+      <description>How MoE replaces the dense FFN with sparse expert routing, the load-balancing problem, and how expert-choice routing solves it.</description>
+    </item>
+    <item>
+      <title>Training View vs. Inference View</title>
+      <link>https://nickgustafson.com/blog/blog/training-vs-inference</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/training-vs-inference</guid>
+      <category>Arc 5: Decoding &amp; the Real Inference Algorithm</category>
+      <description>Why the model you trained on full sequences behaves completely differently when it generates one token at a time, and what that means for everything that follows.</description>
+    </item>
+    <item>
+      <title>Prefill vs. Decode: The Two Phases of Inference</title>
+      <link>https://nickgustafson.com/blog/blog/prefill-vs-decode</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/prefill-vs-decode</guid>
+      <category>Arc 5: Decoding &amp; the Real Inference Algorithm</category>
+      <description>How the prompt is processed in parallel (prefill) but generation is strictly sequential (decode), and why this split dominates every performance conversation.</description>
+    </item>
+    <item>
+      <title>Why One New Token Means One New Row</title>
+      <link>https://nickgustafson.com/blog/blog/the-one-new-row</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/the-one-new-row</guid>
+      <category>Arc 5: Decoding &amp; the Real Inference Algorithm</category>
+      <description>Walking through the exact matrix operations at each decode step to see why generation is memory-bound, not compute-bound.</description>
+    </item>
+    <item>
+      <title>The KV Cache from First Principles</title>
+      <link>https://nickgustafson.com/blog/blog/kv-cache-from-first-principles</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/kv-cache-from-first-principles</guid>
+      <category>Arc 5: Decoding &amp; the Real Inference Algorithm</category>
+      <description>Deriving the key-value cache by noticing which attention computations are redundant, then watching memory grow linearly with sequence length.</description>
+    </item>
+    <item>
+      <title>Sampling Strategies: Temperature, Top-k, Top-p, and Min-p</title>
+      <link>https://nickgustafson.com/blog/blog/sampling-strategies</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/sampling-strategies</guid>
+      <category>Arc 5: Decoding &amp; the Real Inference Algorithm</category>
+      <description>How each strategy reshapes the probability distribution over the vocabulary, when to combine them, and what 'good randomness' actually looks like.</description>
+    </item>
+    <item>
+      <title>Speculative Decoding</title>
+      <link>https://nickgustafson.com/blog/blog/speculative-decoding</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/speculative-decoding</guid>
+      <category>Arc 5: Decoding &amp; the Real Inference Algorithm</category>
+      <description>Using a small draft model to guess multiple tokens at once and a large model to verify them in parallel, turning sequential generation into a bet on acceptance rates.</description>
+    </item>
+    <item>
+      <title>Continuous Batching</title>
+      <link>https://nickgustafson.com/blog/blog/continuous-batching</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/continuous-batching</guid>
+      <category>Arc 5: Decoding &amp; the Real Inference Algorithm</category>
+      <description>Why naive batching wastes GPU cycles on padding, and how iteration-level scheduling lets new requests join a running batch the moment a slot opens.</description>
+    </item>
+    <item>
+      <title>Prefix Caching and Prompt Reuse</title>
+      <link>https://nickgustafson.com/blog/blog/prefix-caching</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/prefix-caching</guid>
+      <category>Arc 5: Decoding &amp; the Real Inference Algorithm</category>
+      <description>Sharing KV cache across requests that start with the same system prompt, and the cache-eviction policies that make it practical.</description>
+    </item>
+    <item>
+      <title>Structured and Constrained Generation</title>
+      <link>https://nickgustafson.com/blog/blog/structured-generation</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/structured-generation</guid>
+      <category>Arc 5: Decoding &amp; the Real Inference Algorithm</category>
+      <description>How grammar-guided decoding and JSON-mode work by masking logits at each step, and the tradeoff between constraint strength and generation speed.</description>
+    </item>
+    <item>
+      <title>What an Inference Engine Actually Does</title>
+      <link>https://nickgustafson.com/blog/blog/what-an-inference-engine-does</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/what-an-inference-engine-does</guid>
+      <category>Arc 6: Inference Engines &amp; Serving Systems</category>
+      <description>The concrete responsibilities — graph optimization, memory allocation, scheduling, kernel dispatch — that sit between your model weights and an HTTP response.</description>
+    </item>
+    <item>
+      <title>Kernel Fusion and GPU Optimization</title>
+      <link>https://nickgustafson.com/blog/blog/kernel-fusion</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/kernel-fusion</guid>
+      <category>Arc 6: Inference Engines &amp; Serving Systems</category>
+      <description>Why fusing multiple operations into a single GPU kernel reduces memory round-trips, and how FlashAttention is the poster child for this idea.</description>
+    </item>
+    <item>
+      <title>PagedAttention and the vLLM Insight</title>
+      <link>https://nickgustafson.com/blog/blog/paged-attention</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/paged-attention</guid>
+      <category>Arc 6: Inference Engines &amp; Serving Systems</category>
+      <description>Treating KV cache like virtual memory pages so you stop wasting 60-80% of GPU RAM on fragmentation.</description>
+    </item>
+    <item>
+      <title>Memory Management for LLMs</title>
+      <link>https://nickgustafson.com/blog/blog/memory-management</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/memory-management</guid>
+      <category>Arc 6: Inference Engines &amp; Serving Systems</category>
+      <description>A unified picture of where bytes go — weights, activations, KV cache, CUDA context — and how to reason about what fits on your GPU.</description>
+    </item>
+    <item>
+      <title>Quantization: INT8, INT4, GPTQ, AWQ, and GGUF</title>
+      <link>https://nickgustafson.com/blog/blog/quantization</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/quantization</guid>
+      <category>Arc 6: Inference Engines &amp; Serving Systems</category>
+      <description>Shrinking weight precision to serve larger models on smaller hardware, with an honest look at what quality you lose and when.</description>
+    </item>
+    <item>
+      <title>Tensor, Pipeline, and Expert Parallelism</title>
+      <link>https://nickgustafson.com/blog/blog/parallelism-strategies</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/parallelism-strategies</guid>
+      <category>Arc 6: Inference Engines &amp; Serving Systems</category>
+      <description>Three ways to split a model across multiple GPUs, each with different latency and throughput profiles.</description>
+    </item>
+    <item>
+      <title>Throughput vs. Latency: Picking Your Tradeoff</title>
+      <link>https://nickgustafson.com/blog/blog/throughput-vs-latency</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/throughput-vs-latency</guid>
+      <category>Arc 6: Inference Engines &amp; Serving Systems</category>
+      <description>Why optimizing for tokens-per-second and optimizing for time-to-first-token are fundamentally in tension, and how batching policy mediates.</description>
+    </item>
+    <item>
+      <title>Comparing Engines: vLLM, TGI, TensorRT-LLM, llama.cpp, SGLang</title>
+      <link>https://nickgustafson.com/blog/blog/comparing-engines</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/comparing-engines</guid>
+      <category>Arc 6: Inference Engines &amp; Serving Systems</category>
+      <description>A framework for choosing an inference stack based on your actual constraints — hardware, model size, latency budget, and deployment environment.</description>
+    </item>
+    <item>
+      <title>Benchmarking Your Own Inference Stack</title>
+      <link>https://nickgustafson.com/blog/blog/benchmarking-inference</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/benchmarking-inference</guid>
+      <category>Arc 6: Inference Engines &amp; Serving Systems</category>
+      <description>How to run meaningful load tests, what metrics to capture, and why published benchmark numbers rarely transfer to your workload.</description>
+    </item>
+    <item>
+      <title>Pretraining Data: Mixtures, Curation, and What the Model Sees</title>
+      <link>https://nickgustafson.com/blog/blog/pretraining-data</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/pretraining-data</guid>
+      <category>Arc 7: Training &amp; Post-Training</category>
+      <description>How the composition and quality of the training corpus shapes capabilities more than architecture changes do.</description>
+    </item>
+    <item>
+      <title>Distributed Training: FSDP, DeepSpeed, and Megatron</title>
+      <link>https://nickgustafson.com/blog/blog/distributed-training</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/distributed-training</guid>
+      <category>Arc 7: Training &amp; Post-Training</category>
+      <description>The three dominant frameworks for spreading a training run across hundreds of GPUs, and the communication costs each one pays.</description>
+    </item>
+    <item>
+      <title>Supervised Fine-Tuning</title>
+      <link>https://nickgustafson.com/blog/blog/sft</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/sft</guid>
+      <category>Arc 7: Training &amp; Post-Training</category>
+      <description>Taking a pretrained base model and teaching it to follow instructions by training on (prompt, response) pairs, plus the formatting details that matter more than you'd think.</description>
+    </item>
+    <item>
+      <title>The RLHF Pipeline: Reward Models and PPO</title>
+      <link>https://nickgustafson.com/blog/blog/rlhf</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/rlhf</guid>
+      <category>Arc 7: Training &amp; Post-Training</category>
+      <description>How human preferences get compressed into a reward model, then used to steer generation via reinforcement learning, step by step.</description>
+    </item>
+    <item>
+      <title>DPO and Its Variants: Skipping the Reward Model</title>
+      <link>https://nickgustafson.com/blog/blog/dpo-and-variants</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/dpo-and-variants</guid>
+      <category>Arc 7: Training &amp; Post-Training</category>
+      <description>Why Direct Preference Optimization collapses the RLHF pipeline into a single supervised loss, and how IPO, KTO, and ORPO each tweak the formula.</description>
+    </item>
+    <item>
+      <title>Constitutional AI and RLAIF</title>
+      <link>https://nickgustafson.com/blog/blog/constitutional-ai</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/constitutional-ai</guid>
+      <category>Arc 7: Training &amp; Post-Training</category>
+      <description>Replacing human labelers with model-generated critiques guided by explicit principles, and what that buys you at scale.</description>
+    </item>
+    <item>
+      <title>Tool-Use Fine-Tuning</title>
+      <link>https://nickgustafson.com/blog/blog/tool-use-finetuning</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/tool-use-finetuning</guid>
+      <category>Arc 7: Training &amp; Post-Training</category>
+      <description>How models learn to emit structured tool calls, the data formats that work, and why function-calling reliability is a training problem, not a prompting problem.</description>
+    </item>
+    <item>
+      <title>Long-Context Training Techniques</title>
+      <link>https://nickgustafson.com/blog/blog/long-context-training</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/long-context-training</guid>
+      <category>Arc 7: Training &amp; Post-Training</category>
+      <description>RoPE scaling, progressive context extension, and the data strategies needed to make a model actually use its full context window.</description>
+    </item>
+    <item>
+      <title>Synthetic Data and Distillation</title>
+      <link>https://nickgustafson.com/blog/blog/synthetic-data-distillation</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/synthetic-data-distillation</guid>
+      <category>Arc 7: Training &amp; Post-Training</category>
+      <description>Using a stronger model to generate training data for a weaker one, when this works surprisingly well, and when it collapses.</description>
+    </item>
+    <item>
+      <title>LoRA and Parameter-Efficient Fine-Tuning</title>
+      <link>https://nickgustafson.com/blog/blog/lora-and-peft</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/lora-and-peft</guid>
+      <category>Arc 7: Training &amp; Post-Training</category>
+      <description>Freezing most weights and training low-rank adapters instead, with a clear picture of when PEFT matches full fine-tuning and when it falls short.</description>
+    </item>
+    <item>
+      <title>Loss vs. Benchmarks: Two Languages for Model Quality</title>
+      <link>https://nickgustafson.com/blog/blog/loss-vs-benchmarks</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/loss-vs-benchmarks</guid>
+      <category>Arc 8: Evaluation &amp; Scientific Discipline</category>
+      <description>Why validation loss is a smooth, reliable signal and benchmarks are noisy and gameable, but closer to what users actually care about.</description>
+    </item>
+    <item>
+      <title>Eval Harnesses: lm-eval-harness and HELM</title>
+      <link>https://nickgustafson.com/blog/blog/eval-harnesses</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/eval-harnesses</guid>
+      <category>Arc 8: Evaluation &amp; Scientific Discipline</category>
+      <description>How standardized evaluation frameworks work under the hood — prompt formatting, few-shot setup, metric aggregation — and why details matter enormously.</description>
+    </item>
+    <item>
+      <title>Contamination and Leakage</title>
+      <link>https://nickgustafson.com/blog/blog/contamination</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/contamination</guid>
+      <category>Arc 8: Evaluation &amp; Scientific Discipline</category>
+      <description>How benchmark answers end up in training data, the detection methods that exist, and why this problem is getting worse, not better.</description>
+    </item>
+    <item>
+      <title>Evaluating Reasoning</title>
+      <link>https://nickgustafson.com/blog/blog/evaluating-reasoning</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/evaluating-reasoning</guid>
+      <category>Arc 8: Evaluation &amp; Scientific Discipline</category>
+      <description>Why multiple-choice accuracy on MMLU tells you almost nothing about reasoning, and what newer evals like GPQA and FrontierMath attempt to measure instead.</description>
+    </item>
+    <item>
+      <title>Tool and Agent Evaluation</title>
+      <link>https://nickgustafson.com/blog/blog/tool-agent-evals</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/tool-agent-evals</guid>
+      <category>Arc 8: Evaluation &amp; Scientific Discipline</category>
+      <description>The unique challenges of evaluating multi-step tool use — partial credit, trajectory scoring, environment determinism — and why end-to-end pass rates hide most of the signal.</description>
+    </item>
+    <item>
+      <title>Human Preference Evaluation</title>
+      <link>https://nickgustafson.com/blog/blog/human-preference-eval</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/human-preference-eval</guid>
+      <category>Arc 8: Evaluation &amp; Scientific Discipline</category>
+      <description>How Chatbot Arena's Elo system works, what inter-annotator agreement looks like in practice, and the biases that style introduces over substance.</description>
+    </item>
+    <item>
+      <title>Calibration and Abstention</title>
+      <link>https://nickgustafson.com/blog/blog/calibration-and-abstention</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/calibration-and-abstention</guid>
+      <category>Arc 8: Evaluation &amp; Scientific Discipline</category>
+      <description>Whether a model's stated confidence matches its actual accuracy, and why teaching models to say 'I don't know' is an unsolved evaluation problem.</description>
+    </item>
+    <item>
+      <title>Embeddings from Scratch: From Word2Vec to E5</title>
+      <link>https://nickgustafson.com/blog/blog/embeddings-and-vector-search</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/embeddings-and-vector-search</guid>
+      <category>Arc 9: Retrieval, Memory &amp; Context Engineering</category>
+      <description>How text becomes geometry, from count-based vectors through contrastive learning to modern embedding models.</description>
+    </item>
+    <item>
+      <title>Vector Search and Approximate Nearest Neighbors</title>
+      <link>https://nickgustafson.com/blog/blog/vector-search-and-ann</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/vector-search-and-ann</guid>
+      <category>Arc 9: Retrieval, Memory &amp; Context Engineering</category>
+      <description>How HNSW, IVF, and product quantization make billion-scale similarity search practical in databases like Pinecone, Qdrant, and pgvector.</description>
+    </item>
+    <item>
+      <title>Dense, Sparse, and Hybrid Retrieval</title>
+      <link>https://nickgustafson.com/blog/blog/dense-sparse-hybrid</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/dense-sparse-hybrid</guid>
+      <category>Arc 9: Retrieval, Memory &amp; Context Engineering</category>
+      <description>Comparing BM25, learned-sparse models like SPLADE, dense embeddings, and the hybrid fusion strategies that outperform any single approach.</description>
+    </item>
+    <item>
+      <title>Chunking Strategies</title>
+      <link>https://nickgustafson.com/blog/blog/chunking-strategies</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/chunking-strategies</guid>
+      <category>Arc 9: Retrieval, Memory &amp; Context Engineering</category>
+      <description>Fixed-size, semantic, recursive, and parent-document chunking, and how chunk design dominates retrieval quality more than your embedding model does.</description>
+    </item>
+    <item>
+      <title>Rerankers and Cross-Encoders</title>
+      <link>https://nickgustafson.com/blog/blog/rerankers</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/rerankers</guid>
+      <category>Arc 9: Retrieval, Memory &amp; Context Engineering</category>
+      <description>Why a cheap first-stage retriever plus an expensive cross-encoder reranker beats a single-stage system, and how ColBERT bridges the gap.</description>
+    </item>
+    <item>
+      <title>RAG Architectures End to End</title>
+      <link>https://nickgustafson.com/blog/blog/rag-end-to-end</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/rag-end-to-end</guid>
+      <category>Arc 9: Retrieval, Memory &amp; Context Engineering</category>
+      <description>Tracing a query from ingestion through retrieval, reranking, prompt assembly, and generation — covering naive RAG, multi-hop, and agentic RAG patterns.</description>
+    </item>
+    <item>
+      <title>GraphRAG and Knowledge Graphs</title>
+      <link>https://nickgustafson.com/blog/blog/graphrag</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/graphrag</guid>
+      <category>Arc 9: Retrieval, Memory &amp; Context Engineering</category>
+      <description>How entity-relationship graphs enable multi-hop reasoning that flat vector search cannot, from Microsoft's GraphRAG to community-based summarization.</description>
+    </item>
+    <item>
+      <title>Context Windows: Advertised vs. Effective</title>
+      <link>https://nickgustafson.com/blog/blog/context-windows</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/context-windows</guid>
+      <category>Arc 9: Retrieval, Memory &amp; Context Engineering</category>
+      <description>Why a 1M-token window does not mean 1M tokens of useful recall, covering lost-in-the-middle effects, context rot, and working-memory bottlenecks.</description>
+    </item>
+    <item>
+      <title>Context Engineering: Compaction, Clearing, and Memory</title>
+      <link>https://nickgustafson.com/blog/blog/context-engineering</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/context-engineering</guid>
+      <category>Arc 9: Retrieval, Memory &amp; Context Engineering</category>
+      <description>Treating context as a scarce resource: sliding-window summarization, tool-result clearing, scratchpads, and sub-agent context isolation.</description>
+    </item>
+    <item>
+      <title>A Short History of Agents: From ReAct to 2026</title>
+      <link>https://nickgustafson.com/blog/blog/history-of-agents</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/history-of-agents</guid>
+      <category>Arc 10: Tools, Protocols &amp; Agent Loops</category>
+      <description>The lineage from chain-of-thought prompting and ReAct through Toolformer, function calling, and today's production agent systems.</description>
+    </item>
+    <item>
+      <title>Function Calling as Structured Generation</title>
+      <link>https://nickgustafson.com/blog/blog/function-calling</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/function-calling</guid>
+      <category>Arc 10: Tools, Protocols &amp; Agent Loops</category>
+      <description>How providers constrain decoder output to valid JSON tool calls using grammars, guided decoding, and schema-conditioned sampling.</description>
+    </item>
+    <item>
+      <title>The Agent Loop: Model, Runtime, Tool, Resume</title>
+      <link>https://nickgustafson.com/blog/blog/the-agent-loop</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/the-agent-loop</guid>
+      <category>Arc 10: Tools, Protocols &amp; Agent Loops</category>
+      <description>Dissecting the core execute-observe-decide cycle that every agent framework implements, including error handling and retry logic.</description>
+    </item>
+    <item>
+      <title>Transcript Formats: How Providers Represent Tool Use</title>
+      <link>https://nickgustafson.com/blog/blog/transcript-formats</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/transcript-formats</guid>
+      <category>Arc 10: Tools, Protocols &amp; Agent Loops</category>
+      <description>Comparing Anthropic's content-block array, OpenAI's tool_calls messages, and Gemini's function-call parts to understand what the model actually sees.</description>
+    </item>
+    <item>
+      <title>MCP: A Cross-System Standard for Tool Integration</title>
+      <link>https://nickgustafson.com/blog/blog/mcp</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/mcp</guid>
+      <category>Arc 10: Tools, Protocols &amp; Agent Loops</category>
+      <description>What the Model Context Protocol solves, how servers expose tools/resources/prompts, and why it became the dominant standard for tool integration.</description>
+    </item>
+    <item>
+      <title>Remote MCP, OAuth, and Enterprise Auth</title>
+      <link>https://nickgustafson.com/blog/blog/remote-mcp-and-auth</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/remote-mcp-and-auth</guid>
+      <category>Arc 10: Tools, Protocols &amp; Agent Loops</category>
+      <description>Moving MCP beyond local stdio: streamable HTTP transport, OAuth 2.1 with PKCE, and the enterprise authentication landscape.</description>
+    </item>
+    <item>
+      <title>Planning and Reasoning in Agents</title>
+      <link>https://nickgustafson.com/blog/blog/planning-and-reasoning</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/planning-and-reasoning</guid>
+      <category>Arc 10: Tools, Protocols &amp; Agent Loops</category>
+      <description>How extended thinking, chain-of-thought budgets, and explicit planning steps improve agent task-success rates, and where they still fail.</description>
+    </item>
+    <item>
+      <title>Computer Use and Browser Agents</title>
+      <link>https://nickgustafson.com/blog/blog/computer-use</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/computer-use</guid>
+      <category>Arc 10: Tools, Protocols &amp; Agent Loops</category>
+      <description>How screenshot-driven computer use and browser agents work, from Anthropic's approach to CUA, and their current safety boundaries.</description>
+    </item>
+    <item>
+      <title>Multi-Agent Systems and Agent-to-Agent Protocols</title>
+      <link>https://nickgustafson.com/blog/blog/multi-agent</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/multi-agent</guid>
+      <category>Arc 10: Tools, Protocols &amp; Agent Loops</category>
+      <description>Orchestration patterns (supervisor, swarm, pipeline), Google's A2A protocol, and when multi-agent actually beats single-agent.</description>
+    </item>
+    <item>
+      <title>OpenAI's API: From Chat Completions to Responses</title>
+      <link>https://nickgustafson.com/blog/blog/openai-api</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/openai-api</guid>
+      <category>Arc 11: Provider Ecosystems in Practice</category>
+      <description>The evolution through Completions, Chat Completions, Assistants, and the agent-native Responses API with built-in tools and conversations.</description>
+    </item>
+    <item>
+      <title>Anthropic's API: Messages, Thinking, and Context Tools</title>
+      <link>https://nickgustafson.com/blog/blog/anthropic-api</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/anthropic-api</guid>
+      <category>Arc 11: Provider Ecosystems in Practice</category>
+      <description>The Messages API's content-block design, extended thinking with interleaved reasoning, prompt caching, and context-editing tools.</description>
+    </item>
+    <item>
+      <title>Google's API: Gemini, Grounding, and the ADK</title>
+      <link>https://nickgustafson.com/blog/blog/google-api</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/google-api</guid>
+      <category>Arc 11: Provider Ecosystems in Practice</category>
+      <description>Gemini's multimodal-native function calling, grounding with Google Search, the Agent Development Kit, and how thought signatures differ from Anthropic's approach.</description>
+    </item>
+    <item>
+      <title>Open-Weight Models: Llama, Mistral, Qwen, DeepSeek</title>
+      <link>https://nickgustafson.com/blog/blog/open-weight-models</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/open-weight-models</guid>
+      <category>Arc 11: Provider Ecosystems in Practice</category>
+      <description>The practical landscape of weights-available models: licensing, fine-tuning rights, multilingual strengths, and where open models match or trail frontier APIs.</description>
+    </item>
+    <item>
+      <title>The Hugging Face Ecosystem: Hub, Transformers, and Inference</title>
+      <link>https://nickgustafson.com/blog/blog/huggingface-ecosystem</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/huggingface-ecosystem</guid>
+      <category>Arc 11: Provider Ecosystems in Practice</category>
+      <description>How the Hub, Transformers library, PEFT adapters, and Inference Endpoints form the connective tissue of open-weight model deployment.</description>
+    </item>
+    <item>
+      <title>Bedrock, Azure AI, and Cloud Model Marketplaces</title>
+      <link>https://nickgustafson.com/blog/blog/cloud-model-marketplaces</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/cloud-model-marketplaces</guid>
+      <category>Arc 11: Provider Ecosystems in Practice</category>
+      <description>How AWS Bedrock and Azure AI let enterprises consume multiple providers behind a single API, with guardrails, logging, and compliance controls.</description>
+    </item>
+    <item>
+      <title>Lock-In, Portability, and Abstraction Layers</title>
+      <link>https://nickgustafson.com/blog/blog/lock-in-and-portability</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/lock-in-and-portability</guid>
+      <category>Arc 11: Provider Ecosystems in Practice</category>
+      <description>The real switching costs between providers, what LiteLLM and similar shims can and cannot abstract, and how to architect for optionality.</description>
+    </item>
+    <item>
+      <title>Scaling Laws: What They Predict and Where They Bend</title>
+      <link>https://nickgustafson.com/blog/blog/scaling-laws</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/scaling-laws</guid>
+      <category>Arc 12: Governance, Economics &amp; Trajectory</category>
+      <description>From Kaplan to Chinchilla to Llama 3: what scaling laws actually tell us about returns on compute, data, and parameters.</description>
+    </item>
+    <item>
+      <title>Inference Economics: Cost per Token, Batching, and Caching</title>
+      <link>https://nickgustafson.com/blog/blog/inference-economics</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/inference-economics</guid>
+      <category>Arc 12: Governance, Economics &amp; Trajectory</category>
+      <description>Why inference dominates enterprise AI spend, how prompt caching and quantization cut costs, and why agentic workloads multiply token budgets dramatically.</description>
+    </item>
+    <item>
+      <title>Open vs. Closed: Ecosystems, Licensing, and Leverage</title>
+      <link>https://nickgustafson.com/blog/blog/open-vs-closed</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/open-vs-closed</guid>
+      <category>Arc 12: Governance, Economics &amp; Trajectory</category>
+      <description>The strategic tension between open-weight models and closed APIs, and what 'open' actually means in practice.</description>
+    </item>
+    <item>
+      <title>Safety and Alignment: The Landscape in 2026</title>
+      <link>https://nickgustafson.com/blog/blog/safety-and-alignment</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/safety-and-alignment</guid>
+      <category>Arc 12: Governance, Economics &amp; Trajectory</category>
+      <description>RLHF, constitutional AI, red-teaming, model cards, and responsible scaling policies — what the field has shipped and what remains unsolved.</description>
+    </item>
+    <item>
+      <title>The EU AI Act and Global Regulation</title>
+      <link>https://nickgustafson.com/blog/blog/ai-regulation</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/ai-regulation</guid>
+      <category>Arc 12: Governance, Economics &amp; Trajectory</category>
+      <description>The phased rollout from prohibited practices through GPAI obligations, plus the US executive order landscape and what practitioners need to know.</description>
+    </item>
+    <item>
+      <title>Standards Wars: MCP, A2A, and the Fight for the Agent Layer</title>
+      <link>https://nickgustafson.com/blog/blog/standards-wars</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/standards-wars</guid>
+      <category>Arc 12: Governance, Economics &amp; Trajectory</category>
+      <description>How Anthropic's MCP, Google's A2A, and OpenAPI compete and complement each other as the protocol stack for agentic AI.</description>
+    </item>
+    <item>
+      <title>A Short History of the Field: 2013-2026</title>
+      <link>https://nickgustafson.com/blog/blog/history-2013-2026</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/history-2013-2026</guid>
+      <category>Arc 12: Governance, Economics &amp; Trajectory</category>
+      <description>From word2vec through the transformer, GPT scaling, ChatGPT, open-weight releases, and the agent era — the key inflection points that built today's stack.</description>
+    </item>
+    <item>
+      <title>What Comes Next: Honest Uncertainty</title>
+      <link>https://nickgustafson.com/blog/blog/what-comes-next</link>
+      <guid isPermaLink="true">https://nickgustafson.com/blog/blog/what-comes-next</guid>
+      <category>Arc 12: Governance, Economics &amp; Trajectory</category>
+      <description>Test-time compute scaling, multimodal-native architectures, world models, and the questions the field genuinely cannot yet answer.</description>
+    </item>
+  </channel>
+</rss>
