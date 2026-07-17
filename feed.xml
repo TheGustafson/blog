@@ -4,7 +4,7 @@
     <title>Nick Gustafson</title>
     <link>https://thegustafson.com</link>
     <atom:link href="https://thegustafson.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <description>Holding the LLM Stack in Your Head — a dependency-ordered walk through the full LLM stack, from linear algebra to agent protocols. A living document, continuously revised.</description>
+    <description>Writing by Nick Gustafson — software engineer and data scientist. Notes on machine learning, the systems behind it, and the things worth understanding deeply.</description>
     <language>en-us</language>
     <item>
       <title>Holding the LLM Stack in Your Head</title>
