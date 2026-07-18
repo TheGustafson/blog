@@ -5,4 +5,4 @@
 :HL["/_next/static/css/894c0ba8e58fc522.css","style"]
 :HL["/_next/static/css/b6e26ea8c5332a05.css","style"]
 :HL["/_next/static/css/f7b086d117daf3c6.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"decoder-vs-encoder-decoder","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"xPdUnKX6_MjMEF8ww3__E"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"decoder-vs-encoder-decoder","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"OIK_b6mBwE3KxYQ-VYnhb"}
