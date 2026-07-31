@@ -1,0 +1,33 @@
+[package]
+name = "gai-tictactoe"
+version = "0.1.0"
+authors = ["Nick Gustafson"]
+edition = "2024"
+rust-version = "1.85"
+description = "A small, exact tic-tac-toe engine with perfect play"
+license = "MIT"
+readme = "README.md"
+documentation = "https://docs.rs/gai-tictactoe"
+homepage = "https://thegustafson.com/games/tic-tac-toe"
+repository = "https://github.com/TheGustafson/gai-tictactoe"
+keywords = ["tic-tac-toe", "game", "engine", "search", "wasm"]
+categories = ["game-engines", "wasm"]
+include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "gai-tictactoe"
+path = "src/bin/engine.rs"
+
+[features]
+default = []
+wasm = ["dep:js-sys", "dep:wasm-bindgen"]
+
+[dependencies]
+js-sys = { version = "0.3.83", optional = true }
+wasm-bindgen = { version = "0.2.126", optional = true }
+
+[lints.rust]
+unsafe_code = "forbid"

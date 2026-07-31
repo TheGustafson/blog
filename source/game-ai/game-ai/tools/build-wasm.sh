@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GAME_AI_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+BLOG_DIR="$(cd "$GAME_AI_DIR/.." && pwd)"
+TICTACTOE_OUTPUT_DIR="$BLOG_DIR/public/game-ai/tictactoe"
+TICTACTOE_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/gai_tictactoe.wasm"
+CONNECT4_OUTPUT_DIR="$BLOG_DIR/public/game-ai/connect4"
+CONNECT4_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/gai_connect4.wasm"
+OTHELLO_OUTPUT_DIR="$BLOG_DIR/public/game-ai/othello"
+OTHELLO_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/gai_othello.wasm"
+CHESS_OUTPUT_DIR="$BLOG_DIR/public/game-ai/chess"
+CHESS_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/gai_chess.wasm"
+EXPECTED_WASM_BINDGEN_VERSION="0.2.126"
+
+if ! command -v wasm-bindgen >/dev/null 2>&1; then
+  echo "wasm-bindgen CLI $EXPECTED_WASM_BINDGEN_VERSION is required" >&2
+  exit 1
+fi
+
+ACTUAL_WASM_BINDGEN_VERSION="$(wasm-bindgen --version)"
+if [[ "$ACTUAL_WASM_BINDGEN_VERSION" != "wasm-bindgen $EXPECTED_WASM_BINDGEN_VERSION" ]]; then
+  echo \
+    "wasm-bindgen CLI mismatch: expected $EXPECTED_WASM_BINDGEN_VERSION, got $ACTUAL_WASM_BINDGEN_VERSION" \
+    >&2
+  exit 1
+fi
+
+cargo build \
+  --manifest-path "$GAME_AI_DIR/Cargo.toml" \
+  --package gai-tictactoe \
+  --profile wasm-release \
+  --target wasm32-unknown-unknown \
+  --features wasm
+
+mkdir -p "$TICTACTOE_OUTPUT_DIR"
+wasm-bindgen \
+  --target no-modules \
+  --no-typescript \
+  --out-dir "$TICTACTOE_OUTPUT_DIR" \
+  --out-name tictactoe \
+  "$TICTACTOE_WASM_PATH"
+cp "$GAME_AI_DIR/browser/tictactoe.worker.js" "$TICTACTOE_OUTPUT_DIR/worker.js"
+
+cargo build \
+  --manifest-path "$GAME_AI_DIR/Cargo.toml" \
+  --package gai-connect4 \
+  --profile wasm-release \
+  --target wasm32-unknown-unknown \
+  --features wasm
+
+mkdir -p "$CONNECT4_OUTPUT_DIR"
+wasm-bindgen \
+  --target no-modules \
+  --no-typescript \
+  --out-dir "$CONNECT4_OUTPUT_DIR" \
+  --out-name connect4 \
+  "$CONNECT4_WASM_PATH"
+cp "$GAME_AI_DIR/browser/connect4.worker.js" "$CONNECT4_OUTPUT_DIR/worker.js"
+
+cargo build \
+  --manifest-path "$GAME_AI_DIR/Cargo.toml" \
+  --package gai-othello \
+  --profile wasm-release \
+  --target wasm32-unknown-unknown \
+  --features wasm
+
+mkdir -p "$OTHELLO_OUTPUT_DIR"
+wasm-bindgen \
+  --target no-modules \
+  --no-typescript \
+  --out-dir "$OTHELLO_OUTPUT_DIR" \
+  --out-name othello \
+  "$OTHELLO_WASM_PATH"
+cp "$GAME_AI_DIR/browser/othello.worker.js" "$OTHELLO_OUTPUT_DIR/worker.js"
+
+cargo build \
+  --manifest-path "$GAME_AI_DIR/Cargo.toml" \
+  --package gai-chess \
+  --profile wasm-release \
+  --target wasm32-unknown-unknown \
+  --features wasm
+
+mkdir -p "$CHESS_OUTPUT_DIR"
+wasm-bindgen \
+  --target no-modules \
+  --no-typescript \
+  --out-dir "$CHESS_OUTPUT_DIR" \
+  --out-name chess \
+  "$CHESS_WASM_PATH"
+cp "$GAME_AI_DIR/browser/chess.worker.js" "$CHESS_OUTPUT_DIR/worker.js"

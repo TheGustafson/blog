@@ -1,0 +1,340 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/*
+ * Light "paper" theme inspired by Distill.pub / Colah / Lilian Weng.
+ * Warm off-white background, dark text, minimal chrome.
+ *
+ * Color grammar (keep to it):
+ *   paper     — the room. Everything sits on it. No dark mode; paper IS the brand.
+ *   ink       — the matter. Text, nodes, diagrams.
+ *   attention — blue-600. Interactivity, focus, prerequisites, "look here".
+ *               (Was indigo on paper-launch chrome, but 299 components had
+ *               already settled on blue-600 as the interactive color; the
+ *               token now matches the site as written. Indigo survives only
+ *               as a categorical color, e.g. the map's arc ramp.)
+ *   play      — amber. Asides, the game link, dependents, the wink.
+ *   stone-*   — everything structural in between.
+ */
+
+:root {
+  --paper: #faf8f1;
+  --ink: #1a1a1a;
+  --attention: #2563eb;
+  --play: #d97706;
+  --border: #d4d0c8;
+  --border-light: #e7e5e4;
+  /* Legacy aliases (older components reference these). */
+  --bg: var(--paper);
+  --text: var(--ink);
+  --accent: #bfdbfe; /* selection wash — blue-200 over paper */
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/*
+ * Three type voices:
+ *   Newsreader  — the essay voice. Prose paragraphs, list items, quotes.
+ *   Geist Sans  — the chrome voice. Headings, nav, cards, buttons.
+ *   Geist Mono  — the machine voice. Labels, numbers, axes, code.
+ * Scoped to text elements (not the whole .prose tree) so interactive
+ * components embedded in posts keep their sans/mono voices.
+ */
+.prose {
+  font-size: 1.0625rem; /* 17px */
+}
+@media (min-width: 640px) {
+  .prose {
+    font-size: 1.09375rem; /* 17.5px */
+  }
+}
+.prose :is(p, li, blockquote) {
+  font-family: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  line-height: 1.72;
+}
+.prose :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+/* Code inside serif paragraphs stays in the machine voice. */
+.prose :is(p, li) code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* Keyboard focus for links and controls — attention blue, same as sliders. */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--attention);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/*
+ * Range slider — styled to read as a distinct, clickable control.
+ * The track is a visible pill so the reader's eye can follow where the
+ * handle rides, and the thumb is large enough to draw the eye and invite
+ * a drag. Components can override `--slider-accent` via an inline style
+ * to recolor the thumb and the native fill (Firefox + modern WebKit via
+ * `accent-color`).
+ */
+input[type="range"] {
+  --slider-accent: var(--attention);
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  height: 22px;
+  accent-color: var(--slider-accent);
+}
+
+/* Track — WebKit */
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #e7e5e4;
+  border-radius: 999px;
+  border: 1px solid #d6d3d1;
+}
+
+/* Thumb — WebKit */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--slider-accent);
+  margin-top: -7px;
+  border: 2px solid #fafaf9;
+  box-shadow:
+    0 0 0 1px #78716c,
+    0 1px 3px rgba(0, 0, 0, 0.18);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.14);
+  box-shadow:
+    0 0 0 1px #44403c,
+    0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.14);
+}
+
+/* Track — Firefox */
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: #e7e5e4;
+  border-radius: 999px;
+  border: 1px solid #d6d3d1;
+}
+
+/* Firefox paints a native fill on the filled portion of the track. */
+input[type="range"]::-moz-range-progress {
+  height: 6px;
+  background: var(--slider-accent);
+  border-radius: 999px;
+}
+
+/* Thumb — Firefox */
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--slider-accent);
+  border: 2px solid #fafaf9;
+  box-shadow:
+    0 0 0 1px #78716c,
+    0 1px 3px rgba(0, 0, 0, 0.18);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.14);
+  box-shadow:
+    0 0 0 1px #44403c,
+    0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Keyboard focus ring — softer blue halo around the thumb */
+input[type="range"]:focus {
+  outline: none;
+}
+
+input[type="range"]:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.35),
+    0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+input[type="range"]:focus-visible::-moz-range-thumb {
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.35),
+    0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+input[type="range"]:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Wide display equations scroll sideways instead of breaking the page. */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+}
+
+/* Anchored headings clear the sticky nav when jumped to. */
+.prose :is(h2, h3, h4) {
+  scroll-margin-top: 5rem;
+}
+
+/*
+ * Section permalinks. Injected next to each h2/h3 after mount; invisible
+ * until the heading is hovered or the link itself is focused.
+ */
+.heading-anchor {
+  margin-left: 0.4em;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.75em;
+  font-weight: 400;
+  color: var(--attention);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+h2:hover .heading-anchor,
+h3:hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 0.75;
+}
+.heading-anchor:hover {
+  opacity: 1;
+}
+
+/* Selection color */
+::selection {
+  background: var(--accent);
+}
+
+/*
+ * Figures: automatic numbering so prose can reference "Figure 3".
+ * Only <Figure>-wrapped figures participate; bare components don't count.
+ */
+article {
+  counter-reset: figure;
+}
+figure.post-figure {
+  counter-increment: figure;
+}
+figure.post-figure figcaption::before {
+  content: "Figure " counter(figure) ". ";
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: #57534e;
+}
+
+/*
+ * Drop cap on arc-opening posts. Scoped to the first CLASSLESS paragraph:
+ * styled paragraphs (hero sublines, captions) all carry a className, so if
+ * a post opens with one of those the cap simply doesn't render — it can
+ * never land on the wrong paragraph.
+ *
+ * The child combinator ('>') is load-bearing: MDX renders body paragraphs as
+ * direct children of the <article>, but a loose markdown list or a blockquote
+ * wraps its text in a nested <p>. A descendant selector would treat each of
+ * those nested <p> as the ':first-of-type' of its own <li>/<blockquote> and
+ * drop-cap them too (references written with blank lines between bullets were
+ * the visible symptom). Anchoring to the article's own children keeps the cap
+ * on the opening paragraph alone.
+ */
+.arc-opener > p:not([class]):first-of-type::first-letter {
+  font-family: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  float: left;
+  font-size: 3.1em;
+  line-height: 0.85;
+  padding: 0.04em 0.09em 0 0;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/*
+ * Asides — margin notes in the grammar's play-amber.
+ * In flow below 2xl; floated into the wide left margin at 2xl+
+ * (the right margin belongs to the TOC rail).
+ */
+.post-aside {
+  font-family: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  font-size: 0.88em;
+  line-height: 1.55;
+  color: #57534e;
+  border-left: 2px solid rgb(217 119 6 / 0.45);
+  padding-left: 0.9em;
+  margin: 1.4em 0 1.4em 1.1em;
+}
+@media (min-width: 1536px) {
+  .post-aside {
+    float: left;
+    clear: left;
+    width: 230px;
+    margin: 0.2em 1.2em 1em -262px;
+    border-left: none;
+    border-top: 2px solid rgb(217 119 6 / 0.45);
+    padding: 0.5em 0 0;
+    font-size: 0.8em;
+  }
+}
+@media print {
+  .post-aside {
+    float: none;
+    width: auto;
+    margin: 1.4em 0;
+  }
+}
+
+/*
+ * Reduced motion: the autoplay visualizations handle this in useAutoPlay
+ * (they start paused); this guard covers CSS transitions and animations.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Wide tables scroll sideways instead of breaking the page, like equations. */
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/*
+ * Print: drop the chrome, keep the essay. Interactive figures print as
+ * their current frame; nav, sidebars, and controls disappear.
+ */
+@media print {
+  header,
+  footer,
+  .print-hidden {
+    display: none !important;
+  }
+  .heading-anchor {
+    display: none;
+  }
+  body {
+    background: #fff;
+  }
+}

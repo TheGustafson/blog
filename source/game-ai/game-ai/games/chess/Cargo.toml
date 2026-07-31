@@ -1,0 +1,52 @@
+[package]
+name = "gai-chess"
+version = "0.1.0"
+authors = ["Nick Gustafson"]
+edition = "2024"
+rust-version = "1.85"
+description = "A compact chess rules and search engine with classical and NNUE evaluation"
+license = "MIT"
+readme = "README.md"
+documentation = "https://docs.rs/gai-chess"
+homepage = "https://thegustafson.com/games/chess"
+repository = "https://github.com/TheGustafson/gai-chess"
+keywords = ["chess", "game", "engine", "nnue", "wasm"]
+categories = ["game-engines", "wasm"]
+include = [
+  "/src/**",
+  "/tests/**",
+  "/networks/**",
+  "/tuning/README.md",
+  "/README.md",
+  "/LICENSE",
+]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "gai-chess"
+path = "src/bin/engine.rs"
+
+[[bin]]
+name = "gai-chess-psqt-tuner"
+path = "src/bin/psqt_tuner.rs"
+
+[[bin]]
+name = "gai-chess-nnue-trainer"
+path = "src/bin/nnue_trainer.rs"
+
+[[bin]]
+name = "gai-chess-evaluator-match"
+path = "src/bin/evaluator_match.rs"
+
+[features]
+default = []
+wasm = ["dep:js-sys", "dep:wasm-bindgen"]
+
+[dependencies]
+js-sys = { version = "0.3.83", optional = true }
+wasm-bindgen = { version = "0.2.126", optional = true }
+
+[lints.rust]
+unsafe_code = "forbid"

@@ -1,0 +1,10 @@
+[workspace]
+members = ["games/chess", "games/connect4", "games/othello", "games/tictactoe"]
+resolver = "3"
+
+[profile.wasm-release]
+inherits = "release"
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+strip = "symbols"

@@ -1,0 +1,33 @@
+[package]
+name = "gai-othello"
+version = "0.1.0"
+authors = ["Nick Gustafson"]
+edition = "2024"
+rust-version = "1.85"
+description = "An Othello rules, evaluation, and alpha-beta search engine"
+license = "MIT"
+readme = "README.md"
+documentation = "https://docs.rs/gai-othello"
+homepage = "https://thegustafson.com/games/othello"
+repository = "https://github.com/TheGustafson/gai-othello"
+keywords = ["othello", "reversi", "game", "engine", "wasm"]
+categories = ["game-engines", "wasm"]
+include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "gai-othello"
+path = "src/bin/engine.rs"
+
+[features]
+default = []
+wasm = ["dep:js-sys", "dep:wasm-bindgen"]
+
+[dependencies]
+js-sys = { version = "0.3.83", optional = true }
+wasm-bindgen = { version = "0.2.126", optional = true }
+
+[lints.rust]
+unsafe_code = "forbid"

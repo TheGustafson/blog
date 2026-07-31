@@ -1,0 +1,33 @@
+[package]
+name = "gai-connect4"
+version = "0.1.0"
+authors = ["Nick Gustafson"]
+edition = "2024"
+rust-version = "1.85"
+description = "A compact Connect Four rules and alpha-beta search engine"
+license = "MIT"
+readme = "README.md"
+documentation = "https://docs.rs/gai-connect4"
+homepage = "https://thegustafson.com/games/connect-four"
+repository = "https://github.com/TheGustafson/gai-connect4"
+keywords = ["connect-four", "game", "engine", "alpha-beta", "wasm"]
+categories = ["game-engines", "wasm"]
+include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "gai-connect4"
+path = "src/bin/engine.rs"
+
+[features]
+default = []
+wasm = ["dep:js-sys", "dep:wasm-bindgen"]
+
+[dependencies]
+js-sys = { version = "0.3.83", optional = true }
+wasm-bindgen = { version = "0.2.126", optional = true }
+
+[lints.rust]
+unsafe_code = "forbid"
