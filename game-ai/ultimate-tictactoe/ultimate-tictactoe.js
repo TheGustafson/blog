@@ -71,7 +71,7 @@ let wasm_bindgen = (function(exports) {
             __wbg___wbindgen_throw_344f42d3211c4765: function(arg0, arg1) {
                 throw new Error(getStringFromWasm0(arg0, arg1));
             },
-            __wbg_now_55b625313f6def45: function() {
+            __wbg_now_97ac5054f23cfd21: function() {
                 const ret = performance.now();
                 return ret;
             },

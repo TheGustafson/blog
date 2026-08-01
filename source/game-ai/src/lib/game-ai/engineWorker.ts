@@ -1,5 +1,40 @@
 export type Mark = "X" | "O";
 
+export type UltimateMctsMoveStats = {
+  move: string;
+  visits: number;
+  prior: number;
+  expectedScore: number;
+};
+
+type UltimateMctsDecision = {
+  algorithm: "mcts";
+  strategy:
+    | "random-uct"
+    | "tactical-uct"
+    | "handcrafted-puct"
+    | "learned-puct";
+  bestMove: string | null;
+  simulations: number;
+  treeNodes: number;
+  rootVisits: number;
+  rolloutMoves: number;
+  leafEvaluations: number;
+  expectedScore: number;
+  elapsedMs: number;
+  rootMoves: UltimateMctsMoveStats[];
+};
+
+export type UltimateDecision =
+  | {
+      algorithm: "alpha-beta";
+      bestMove: string | null;
+      depth: number;
+      score: number;
+      nodes: number;
+    }
+  | UltimateMctsDecision;
+
 export type UltimateTicTacToeSnapshot = {
   board: Array<Mark | null>;
   miniBoards: Array<Mark | "draw" | null>;
@@ -11,12 +46,7 @@ export type UltimateTicTacToeSnapshot = {
   legalMoves: string[];
   history: string[];
   lastMove: string | null;
-  decision: {
-    bestMove: string | null;
-    depth: number;
-    score: number;
-    nodes: number;
-  } | null;
+  decision: UltimateDecision | null;
 };
 
 export type ConnectFourSnapshot = {
@@ -31,11 +61,7 @@ export type ConnectFourSnapshot = {
 };
 
 export type OthelloProfile =
-  | "material"
-  | "mobility"
-  | "corners"
-  | "frontier"
-  | "phase";
+  "material" | "mobility" | "corners" | "frontier" | "phase";
 
 export type OthelloSnapshot = {
   board: Array<"B" | "W" | null>;
@@ -218,7 +244,7 @@ export class GameEngineWorker<Snapshot> {
     this.worker.terminate();
     this.rejectAll(error);
     this.onFatalError?.(error);
-  };
+  }
 
   private rejectAll(error: Error) {
     for (const request of this.pending.values()) {

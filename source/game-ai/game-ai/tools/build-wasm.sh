@@ -32,8 +32,10 @@ cargo build \
   --locked \
   --manifest-path "$GAME_AI_DIR/Cargo.toml" \
   --package ai-ultimate-tictactoe \
+  --lib \
   --profile wasm-release \
   --target wasm32-unknown-unknown \
+  --no-default-features \
   --features wasm
 
 mkdir -p "$ULTIMATE_OUTPUT_DIR"
@@ -44,6 +46,23 @@ wasm-bindgen \
   --out-name ultimate-tictactoe \
   "$ULTIMATE_WASM_PATH"
 cp "$GAME_AI_DIR/browser/ultimate-tictactoe.worker.js" "$ULTIMATE_OUTPUT_DIR/worker.js"
+
+cargo build \
+  --locked \
+  --manifest-path "$GAME_AI_DIR/Cargo.toml" \
+  --package ai-ultimate-tictactoe \
+  --lib \
+  --profile wasm-release \
+  --target wasm32-unknown-unknown \
+  --features wasm,mcts
+
+wasm-bindgen \
+  --target no-modules \
+  --no-typescript \
+  --out-dir "$ULTIMATE_OUTPUT_DIR" \
+  --out-name ultimate-tictactoe-mcts \
+  "$ULTIMATE_WASM_PATH"
+cp "$GAME_AI_DIR/browser/ultimate-tictactoe-mcts.worker.js" "$ULTIMATE_OUTPUT_DIR/mcts-worker.js"
 
 cargo build \
   --locked \

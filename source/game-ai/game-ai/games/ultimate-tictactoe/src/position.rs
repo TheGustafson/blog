@@ -122,6 +122,7 @@ impl MoveList {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum PositionStateError {
+    CellsOutsideBoard { board: u8 },
     OverlappingCells { board: u8 },
     BothPlayersWonBoard { board: u8 },
     ImpossibleTurnCounts,
@@ -133,6 +134,9 @@ pub enum PositionStateError {
 impl fmt::Display for PositionStateError {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::CellsOutsideBoard { board } => {
+                write!(formatter, "mini-board {board} contains out-of-range cells")
+            }
             Self::OverlappingCells { board } => {
                 write!(formatter, "X and O overlap in mini-board {board}")
             }
@@ -201,6 +205,12 @@ impl Position {
         active_board: Option<u8>,
         side_to_move: Player,
     ) -> Result<Self, PositionStateError> {
+        for board in 0..9 {
+            let index = board as usize;
+            if (x_cells[index] | o_cells[index]) & !FULL != 0 {
+                return Err(PositionStateError::CellsOutsideBoard { board });
+            }
+        }
         let x_count: u32 = x_cells.iter().map(|mask| mask.count_ones()).sum();
         let o_count: u32 = o_cells.iter().map(|mask| mask.count_ones()).sum();
         let counts_match = match side_to_move {

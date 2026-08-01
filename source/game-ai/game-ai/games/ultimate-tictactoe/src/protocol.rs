@@ -1,6 +1,8 @@
 use crate::{
     GameResult, MiniResult, Move, Player, Position, SearchOptions, SearchReport, Searcher,
 };
+#[cfg(feature = "mcts")]
+use crate::{MctsOptions, MctsReport, MctsSearcher, MctsStrategy};
 use std::fmt::Write;
 use std::str::FromStr;
 
@@ -9,7 +11,15 @@ pub struct Engine {
     position: Position,
     history: Vec<Move>,
     searcher: Searcher,
-    last_report: Option<SearchReport>,
+    #[cfg(feature = "mcts")]
+    mcts_searcher: MctsSearcher,
+    last_decision: Option<Decision>,
+}
+
+enum Decision {
+    AlphaBeta(SearchReport),
+    #[cfg(feature = "mcts")]
+    Mcts(MctsReport),
 }
 
 impl Default for Engine {
@@ -24,7 +34,9 @@ impl Engine {
             position: Position::start(),
             history: Vec::new(),
             searcher: Searcher::new(),
-            last_report: None,
+            #[cfg(feature = "mcts")]
+            mcts_searcher: MctsSearcher::new(),
+            last_decision: None,
         }
     }
 
@@ -43,11 +55,13 @@ impl Engine {
             "newgame" => {
                 self.position = Position::start();
                 self.history.clear();
-                self.last_report = None;
+                self.last_decision = None;
                 Vec::new()
             }
             "position" => self.set_position(&words[1..]),
             "play" => self.search(&words[1..]),
+            #[cfg(feature = "mcts")]
+            "mcts" => self.search_mcts(&words[1..]),
             "legal" => vec![format!(
                 "legalmoves {}",
                 self.position
@@ -135,20 +149,23 @@ impl Engine {
             json.push_str("null");
         }
         json.push_str(",\"decision\":");
-        if let Some(report) = &self.last_report {
-            write!(
-                json,
-                "{{\"bestMove\":{},\"depth\":{},\"score\":{},\"nodes\":{}}}",
-                report
-                    .best_move
-                    .map_or_else(|| "null".to_owned(), |mv| format!("\"{mv}\"")),
-                report.depth,
-                report.score,
-                report.nodes,
-            )
-            .expect("writing to String cannot fail");
-        } else {
-            json.push_str("null");
+        match &self.last_decision {
+            Some(Decision::AlphaBeta(report)) => {
+                write!(
+                    json,
+                    "{{\"bestMove\":{},\"algorithm\":\"alpha-beta\",\"depth\":{},\"score\":{},\"nodes\":{}}}",
+                    report
+                        .best_move
+                        .map_or_else(|| "null".to_owned(), |mv| format!("\"{mv}\"")),
+                    report.depth,
+                    report.score,
+                    report.nodes,
+                )
+                .expect("writing to String cannot fail");
+            }
+            #[cfg(feature = "mcts")]
+            Some(Decision::Mcts(report)) => write_mcts_report(&mut json, report),
+            None => json.push_str("null"),
         }
         json.push('}');
         json
@@ -174,7 +191,7 @@ impl Engine {
             Ok(position) => {
                 self.position = position;
                 self.history = moves;
-                self.last_report = None;
+                self.last_decision = None;
                 Vec::new()
             }
             Err(message) => vec![error(&message.to_string())],
@@ -213,9 +230,107 @@ impl Engine {
             "bestmove {best} depth {} score {} nodes {}",
             report.depth, report.score, report.nodes
         );
-        self.last_report = Some(report);
+        self.last_decision = Some(Decision::AlphaBeta(report));
         vec![output]
     }
+
+    #[cfg(feature = "mcts")]
+    fn search_mcts(&mut self, words: &[&str]) -> Vec<String> {
+        let mut options = MctsOptions::default();
+        let mut index = 0;
+        while index < words.len() {
+            let Some(value) = words.get(index + 1) else {
+                return vec![error("mcts options need a value")];
+            };
+            match words[index] {
+                "simulations" => match value.parse::<u32>() {
+                    Ok(simulations @ 1..=1_000_000) => {
+                        options.max_simulations = simulations;
+                    }
+                    _ => return vec![error("simulations must be from 1 through 1000000")],
+                },
+                "softtime" => match value.parse::<u32>() {
+                    Ok(time @ 1..=1_000) => options.soft_time_ms = time,
+                    _ => return vec![error("softtime must be from 1 through 1000 milliseconds")],
+                },
+                "exploration" => match value.parse::<f64>() {
+                    Ok(exploration)
+                        if exploration.is_finite() && (0.0..=4.0).contains(&exploration) =>
+                    {
+                        options.exploration = exploration;
+                    }
+                    _ => return vec![error("exploration must be from 0 through 4")],
+                },
+                "seed" => match value.parse::<u64>() {
+                    Ok(seed) => options.seed = seed,
+                    _ => return vec![error("seed must be an unsigned 64-bit number")],
+                },
+                "strategy" => match *value {
+                    "random-uct" => options.strategy = MctsStrategy::UctRandom,
+                    "tactical-uct" => options.strategy = MctsStrategy::UctTactical,
+                    "handcrafted-puct" => options.strategy = MctsStrategy::PuctHandcrafted,
+                    "learned-puct" => options.strategy = MctsStrategy::PuctLearned,
+                    _ => {
+                        return vec![error(
+                            "strategy must be random-uct, tactical-uct, handcrafted-puct, or learned-puct",
+                        )];
+                    }
+                },
+                _ => {
+                    return vec![error(
+                        "mcts supports simulations, softtime, exploration, seed, and strategy",
+                    )];
+                }
+            }
+            index += 2;
+        }
+
+        let report = self.mcts_searcher.search(self.position, options);
+        let best = report
+            .best_move
+            .map_or_else(|| "none".to_owned(), |mv| mv.to_string());
+        let output = format!(
+            "bestmove {best} simulations {} nodes {} score {:.4} strategy {}",
+            report.simulations,
+            report.tree_nodes,
+            report.expected_score,
+            report.strategy.name(),
+        );
+        self.last_decision = Some(Decision::Mcts(report));
+        vec![output]
+    }
+}
+
+#[cfg(feature = "mcts")]
+fn write_mcts_report(json: &mut String, report: &MctsReport) {
+    write!(
+        json,
+        "{{\"bestMove\":{},\"algorithm\":\"mcts\",\"strategy\":\"{}\",\"simulations\":{},\"treeNodes\":{},\"rootVisits\":{},\"rolloutMoves\":{},\"leafEvaluations\":{},\"expectedScore\":{:.4},\"elapsedMs\":{},\"rootMoves\":[",
+        report
+            .best_move
+            .map_or_else(|| "null".to_owned(), |mv| format!("\"{mv}\"")),
+        report.strategy.name(),
+        report.simulations,
+        report.tree_nodes,
+        report.root_visits,
+        report.rollout_moves,
+        report.leaf_evaluations,
+        report.expected_score,
+        report.elapsed_ms,
+    )
+    .expect("writing to String cannot fail");
+    for (index, stats) in report.root_moves.iter().enumerate() {
+        if index > 0 {
+            json.push(',');
+        }
+        write!(
+            json,
+            "{{\"move\":\"{}\",\"visits\":{},\"prior\":{:.6},\"expectedScore\":{:.4}}}",
+            stats.mv, stats.visits, stats.prior, stats.expected_score,
+        )
+        .expect("writing to String cannot fail");
+    }
+    json.push_str("]}");
 }
 
 fn result_name(result: GameResult) -> &'static str {

@@ -177,7 +177,7 @@ impl Searcher {
 
         let mut completed_depth = 0;
         let mut best_move = fallback;
-        let mut best_score = self.evaluate(position);
+        let mut best_score = evaluate_position(&self.mini, position);
         for depth in 1..=options.max_depth.max(1) {
             if self.deadline.expired() {
                 break;
@@ -317,7 +317,7 @@ impl Searcher {
         beta: i32,
         remaining: u8,
     ) -> Option<i32> {
-        let stand_pat = self.evaluate(position);
+        let stand_pat = evaluate_position(&self.mini, position);
         if remaining == 0 || stand_pat >= beta {
             return Some(stand_pat);
         }
@@ -342,45 +342,6 @@ impl Searcher {
             alpha = alpha.max(score);
         }
         Some(alpha)
-    }
-
-    fn evaluate(&self, position: Position) -> i32 {
-        let (macro_x, macro_o, macro_drawn) = position.macro_masks();
-        let mut absolute = macro_score(macro_x, macro_o, macro_drawn);
-        const BOARD_WEIGHT: [i32; 9] = [3, 2, 3, 2, 4, 2, 3, 2, 3];
-        for board in 0..9 {
-            if position.mini_result(board) != MiniResult::Open {
-                continue;
-            }
-            let (x, o) = position.mini_masks(board);
-            let info = self.mini.get(x, o);
-            debug_assert!(info.winner.is_none() && !info.drawn);
-            absolute += BOARD_WEIGHT[board as usize]
-                * (i32::from(info.potential[Player::X.index()])
-                    - i32::from(info.potential[Player::O.index()]));
-        }
-
-        let routing = self.routing_score(position);
-        if position.side_to_move() == Player::X {
-            absolute + routing
-        } else {
-            -absolute + routing
-        }
-    }
-
-    fn routing_score(&self, position: Position) -> i32 {
-        let side = position.side_to_move();
-        let opponent = side.other();
-        let Some(board) = position.active_board() else {
-            let useful = position.legal_moves().len() as i32;
-            return 30 + useful.min(40);
-        };
-        let (x, o) = position.mini_masks(board);
-        let info = self.mini.get(x, o);
-        let our_wins = info.winning_moves[side.index()].count_ones() as i32;
-        let their_wins = info.winning_moves[opponent.index()].count_ones() as i32;
-        let our_forks = info.fork_moves[side.index()].count_ones() as i32;
-        95 * our_wins - 80 * their_wins + 35 * our_forks + info.empty.count_ones() as i32
     }
 
     fn ordered_moves(&self, position: Position, tt_move: Option<Move>) -> Vec<(Move, i32)> {
@@ -602,6 +563,42 @@ fn decode_score(score: i32, ply: u8) -> i32 {
         score + i32::from(ply)
     } else {
         score
+    }
+}
+
+pub(crate) fn evaluate_position(table: &MiniTable, position: Position) -> i32 {
+    let (macro_x, macro_o, macro_drawn) = position.macro_masks();
+    let mut absolute = macro_score(macro_x, macro_o, macro_drawn);
+    const BOARD_WEIGHT: [i32; 9] = [3, 2, 3, 2, 4, 2, 3, 2, 3];
+    for board in 0..9 {
+        if position.mini_result(board) != MiniResult::Open {
+            continue;
+        }
+        let (x, o) = position.mini_masks(board);
+        let info = table.get(x, o);
+        debug_assert!(info.winner.is_none() && !info.drawn);
+        absolute += BOARD_WEIGHT[board as usize]
+            * (i32::from(info.potential[Player::X.index()])
+                - i32::from(info.potential[Player::O.index()]));
+    }
+
+    let side = position.side_to_move();
+    let opponent = side.other();
+    let routing = if let Some(board) = position.active_board() {
+        let (x, o) = position.mini_masks(board);
+        let info = table.get(x, o);
+        let our_wins = info.winning_moves[side.index()].count_ones() as i32;
+        let their_wins = info.winning_moves[opponent.index()].count_ones() as i32;
+        let our_forks = info.fork_moves[side.index()].count_ones() as i32;
+        95 * our_wins - 80 * their_wins + 35 * our_forks + info.empty.count_ones() as i32
+    } else {
+        30 + (position.legal_moves().len() as i32).min(40)
+    };
+
+    if side == Player::X {
+        absolute + routing
+    } else {
+        -absolute + routing
     }
 }
 

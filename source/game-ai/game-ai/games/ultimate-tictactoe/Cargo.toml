@@ -1,17 +1,17 @@
 [package]
 name = "ai-ultimate-tictactoe"
-version = "0.1.0"
+version = "0.2.0"
 default-run = "ai-ultimate-tictactoe"
 authors = ["Nick Gustafson"]
 edition = "2024"
 rust-version = "1.85"
-description = "A compact Ultimate Tic-Tac-Toe engine with alpha-beta search"
+description = "Ultimate Tic-Tac-Toe with alpha-beta, UCT, PUCT, and WebAssembly support"
 license = "MIT"
 readme = "README.md"
 documentation = "https://docs.rs/ai-ultimate-tictactoe"
 homepage = "https://thegustafson.com/games/tic-tac-toe"
 repository = "https://github.com/TheGustafson/ai-ultimate-tictactoe"
-keywords = ["ultimate-tic-tac-toe", "game", "engine", "alpha-beta", "wasm"]
+keywords = ["tic-tac-toe", "game", "engine", "mcts", "wasm"]
 categories = ["game-engines", "wasm"]
 include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
 
@@ -22,9 +22,26 @@ crate-type = ["cdylib", "rlib"]
 name = "ai-ultimate-tictactoe"
 path = "src/bin/engine.rs"
 
+[[bin]]
+name = "train-mcts"
+path = "src/bin/train-mcts.rs"
+required-features = ["training"]
+
+[[bin]]
+name = "mcts-match"
+path = "src/bin/mcts-match.rs"
+required-features = ["mcts"]
+
+[[bin]]
+name = "mcts-round-robin"
+path = "src/bin/mcts-round-robin.rs"
+required-features = ["mcts"]
+
 [features]
-default = []
+default = ["mcts"]
+mcts = []
 wasm = ["dep:wasm-bindgen"]
+training = ["mcts"]
 
 [dependencies]
 wasm-bindgen = { version = "0.2.126", optional = true }

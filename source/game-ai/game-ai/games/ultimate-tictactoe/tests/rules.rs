@@ -176,6 +176,15 @@ fn drawn_boards_block_macro_lines() {
 fn imported_positions_reject_impossible_state() {
     let mut x = [0; 9];
     let mut o = [0; 9];
+    x[0] = 1 << 15;
+    o[1] = 1 << 15;
+    assert_eq!(
+        Position::from_cells(x, o, None, Player::X),
+        Err(PositionStateError::CellsOutsideBoard { board: 0 })
+    );
+
+    let mut x = [0; 9];
+    let mut o = [0; 9];
     x[0] = 1;
     o[0] = 1;
     assert_eq!(

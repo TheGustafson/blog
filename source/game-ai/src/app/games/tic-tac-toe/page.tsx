@@ -7,7 +7,8 @@ const GAMES_ARE_PUBLIC = process.env.PUBLISH_GAME_AI === "1";
 
 export const metadata: Metadata = {
   title: "Ultimate Tic-Tac-Toe",
-  description: "Play Ultimate Tic-Tac-Toe against a Rust alpha-beta engine.",
+  description:
+    "Play Ultimate Tic-Tac-Toe against Rust MCTS and alpha-beta engines.",
   robots: GAMES_ARE_PUBLIC
     ? { index: true, follow: true }
     : { index: false, follow: false },
@@ -32,8 +33,8 @@ export default function TicTacToePage() {
         </h1>
         <p className="mt-4 font-[family-name:var(--font-newsreader)] text-lg text-stone-600">
           Every move decides where your opponent must play next. Claim three
-          mini-boards in a row before the alpha-beta engine routes you into a
-          trap.
+          mini-boards in a row before the engine routes you into a trap. MCTS
+          plays by default, with alpha-beta available from the engine selector.
         </p>
       </header>
 
