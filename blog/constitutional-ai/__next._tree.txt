@@ -5,4 +5,4 @@
 :HL["/_next/static/css/894c0ba8e58fc522.css","style"]
 :HL["/_next/static/css/36e6abe0436d4abd.css","style"]
 :HL["/_next/static/css/f7b086d117daf3c6.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"constitutional-ai","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"WQyTK_oU11vQR0vppm7o5"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"constitutional-ai","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"fqF1hugLZyTgQ3K6-Lae3"}

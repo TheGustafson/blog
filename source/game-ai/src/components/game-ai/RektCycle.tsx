@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "./RektCycle.module.css";
 
 const WORDS = ["rekt", "crushed", "destroyed", "SHREKT"] as const;
+const VERB_WORDS = ["rekt", "crush", "destroy", "SHREKT"] as const;
 
 type Phase = "typing" | "holding" | "deleting";
 
@@ -19,7 +20,8 @@ const INITIAL_STATE: CycleState = {
   phase: "holding",
 };
 
-export function RektCycle() {
+export function RektCycle({ verb = false }: { verb?: boolean }) {
+  const words = verb ? VERB_WORDS : WORDS;
   const [state, setState] = useState<CycleState>(INITIAL_STATE);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ export function RektCycle() {
       return;
     }
 
-    const target = WORDS[state.wordIndex];
+    const target = words[state.wordIndex];
     const delay =
       state.phase === "holding"
         ? target === "SHREKT"
@@ -41,7 +43,7 @@ export function RektCycle() {
 
     const timeout = window.setTimeout(() => {
       setState((current) => {
-        const currentTarget = WORDS[current.wordIndex];
+        const currentTarget = words[current.wordIndex];
 
         if (current.phase === "holding") {
           return { ...current, phase: "deleting" };
@@ -53,7 +55,7 @@ export function RektCycle() {
           }
 
           return {
-            wordIndex: (current.wordIndex + 1) % WORDS.length,
+            wordIndex: (current.wordIndex + 1) % words.length,
             text: "",
             phase: "typing",
           };
@@ -69,15 +71,16 @@ export function RektCycle() {
     }, delay);
 
     return () => window.clearTimeout(timeout);
-  }, [state]);
+  }, [state, words]);
 
   const isShrekt =
-    state.phase === "holding" && WORDS[state.wordIndex] === "SHREKT";
+    state.phase === "holding" && words[state.wordIndex] === "SHREKT";
 
   return (
     <span
       className={styles.root}
       data-rekt-cycle
+      data-rekt-form={verb ? "verb" : "participle"}
       data-rekt-word={state.text}
       data-rekt-phase={state.phase}
     >
