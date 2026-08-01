@@ -1,5 +1,34 @@
 use ai_connect4::{Algorithm, Move, Position, ScoreKind, SearchLimits, iterative_search, search};
 
+#[test]
+fn published_search_presets_increase_monotonically() {
+    use ai_connect4::{SEARCH_PRESETS, search_preset};
+
+    assert_eq!(
+        SEARCH_PRESETS.map(|preset| preset.name),
+        ["beginner", "easy", "medium", "hard", "expert", "maximum"]
+    );
+    assert_eq!(
+        SEARCH_PRESETS.map(|preset| (preset.limits.depth, preset.limits.nodes)),
+        [
+            (3, Some(250)),
+            (5, Some(2_000)),
+            (7, Some(10_000)),
+            (9, Some(50_000)),
+            (12, Some(200_000)),
+            (42, Some(750_000)),
+        ]
+    );
+    for pair in SEARCH_PRESETS.windows(2) {
+        assert!(pair[0].limits.depth < pair[1].limits.depth);
+        assert!(pair[0].limits.nodes < pair[1].limits.nodes);
+    }
+    for preset in SEARCH_PRESETS {
+        assert_eq!(search_preset(preset.name), Some(preset));
+    }
+    assert_eq!(search_preset("unknown"), None);
+}
+
 fn position(notation: &[&str]) -> Position {
     let moves: Vec<Move> = notation
         .iter()

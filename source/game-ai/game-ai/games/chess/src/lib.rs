@@ -33,8 +33,8 @@ pub use perft::{divide, perft};
 pub use position::{CastlingRights, GameResult, MoveError, Position, Undo};
 pub use protocol::Engine;
 pub use search::{
-    Candidate, IterationSummary, IterativeSearchReport, Score, ScoreKind, SearchConfig,
-    SearchReport, SearchStats, iterative_search, iterative_search_with_history, search,
-    search_with_history,
+    Candidate, IterationSummary, IterativeSearchReport, SEARCH_PRESETS, Score, ScoreKind,
+    SearchConfig, SearchPreset, SearchReport, SearchStats, iterative_search,
+    iterative_search_with_history, search, search_preset, search_with_history,
 };
 pub use types::{Color, Piece, PieceKind, Square};

@@ -161,6 +161,103 @@ impl SearchConfig {
     }
 }
 
+/// A named set of search limits and features for interactive play.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SearchPreset {
+    pub name: &'static str,
+    pub config: SearchConfig,
+}
+
+/// The built-in strength ladder, ordered from least to most search work.
+pub const SEARCH_PRESETS: [SearchPreset; 6] = [
+    SearchPreset {
+        name: "beginner",
+        config: SearchConfig {
+            depth: 2,
+            nodes: Some(1_000),
+            time_millis: Some(25),
+            evaluator: EvaluationProfile::TinyNnue,
+            incremental_nnue: true,
+            quiescence: false,
+            move_ordering: false,
+            transposition_table: false,
+        },
+    },
+    SearchPreset {
+        name: "easy",
+        config: SearchConfig {
+            depth: 3,
+            nodes: Some(5_000),
+            time_millis: Some(50),
+            evaluator: EvaluationProfile::TinyNnue,
+            incremental_nnue: true,
+            quiescence: false,
+            move_ordering: true,
+            transposition_table: true,
+        },
+    },
+    SearchPreset {
+        name: "medium",
+        config: SearchConfig {
+            depth: 4,
+            nodes: Some(15_000),
+            time_millis: Some(100),
+            evaluator: EvaluationProfile::TinyNnue,
+            incremental_nnue: true,
+            quiescence: true,
+            move_ordering: true,
+            transposition_table: true,
+        },
+    },
+    SearchPreset {
+        name: "hard",
+        config: SearchConfig {
+            depth: 5,
+            nodes: Some(40_000),
+            time_millis: Some(250),
+            evaluator: EvaluationProfile::TinyNnue,
+            incremental_nnue: true,
+            quiescence: true,
+            move_ordering: true,
+            transposition_table: true,
+        },
+    },
+    SearchPreset {
+        name: "expert",
+        config: SearchConfig {
+            depth: 7,
+            nodes: Some(120_000),
+            time_millis: Some(500),
+            evaluator: EvaluationProfile::TinyNnue,
+            incremental_nnue: true,
+            quiescence: true,
+            move_ordering: true,
+            transposition_table: true,
+        },
+    },
+    SearchPreset {
+        name: "maximum",
+        config: SearchConfig {
+            depth: 64,
+            nodes: Some(300_000),
+            time_millis: Some(1_000),
+            evaluator: EvaluationProfile::TinyNnue,
+            incremental_nnue: true,
+            quiescence: true,
+            move_ordering: true,
+            transposition_table: true,
+        },
+    },
+];
+
+/// Finds a built-in strength preset by its lowercase name.
+pub fn search_preset(name: &str) -> Option<SearchPreset> {
+    SEARCH_PRESETS
+        .iter()
+        .copied()
+        .find(|preset| preset.name == name)
+}
+
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct SearchStats {
     pub nodes: u64,

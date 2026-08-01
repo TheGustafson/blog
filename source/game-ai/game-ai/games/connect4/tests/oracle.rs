@@ -16,12 +16,10 @@ fn published_reference_cases_are_legal_and_probe_by_position() {
         assert_eq!(probe_oracle(position), Some(&case));
         assert_eq!(
             case.outcome,
-            if case.pons_score > 0 {
-                OracleOutcome::Win
-            } else if case.pons_score < 0 {
-                OracleOutcome::Loss
-            } else {
-                OracleOutcome::Draw
+            match case.pons_score.cmp(&0) {
+                std::cmp::Ordering::Greater => OracleOutcome::Win,
+                std::cmp::Ordering::Less => OracleOutcome::Loss,
+                std::cmp::Ordering::Equal => OracleOutcome::Draw,
             }
         );
     }

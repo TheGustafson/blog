@@ -18,6 +18,16 @@ import { GameResult } from "./GameResult";
 
 const COLUMNS = ["a", "b", "c", "d", "e", "f", "g"] as const;
 const ROWS = [5, 4, 3, 2, 1, 0] as const;
+const STRENGTHS = {
+  beginner: { label: "Beginner", depth: 3, nodes: 250 },
+  easy: { label: "Easy", depth: 5, nodes: 2_000 },
+  medium: { label: "Medium", depth: 7, nodes: 10_000 },
+  hard: { label: "Hard", depth: 9, nodes: 50_000 },
+  expert: { label: "Expert", depth: 12, nodes: 200_000 },
+  maximum: { label: "Maximum", depth: 42, nodes: 750_000 },
+};
+type Strength = keyof typeof STRENGTHS;
+
 function positionCommand(moves: string[]) {
   return moves.length === 0
     ? "position startpos"
@@ -35,7 +45,7 @@ export function ConnectFourGame() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [humanSide, setHumanSide] = useState<"R" | "Y">("R");
-  const [depth, setDepth] = useState(9);
+  const [strength, setStrength] = useState<Strength>("maximum");
   const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
 
   const send = useCallback(async (command: string) => {
@@ -122,7 +132,10 @@ export function ConnectFourGame() {
     engineThinkingRef.current = true;
     try {
       await runBusy(async () => {
-        const searched = await send(`go depth ${depth}`);
+        const setting = STRENGTHS[strength];
+        const searched = await send(
+          `go iterative depth ${setting.depth} nodes ${setting.nodes}`,
+        );
         const analysis = searched.snapshot.analysis;
         if (!analysis?.bestMove) return;
         await send(positionCommand([...history, analysis.bestMove]));
@@ -130,7 +143,7 @@ export function ConnectFourGame() {
     } finally {
       engineThinkingRef.current = false;
     }
-  }, [depth, runBusy, send, snapshot]);
+  }, [runBusy, send, snapshot, strength]);
 
   useEffect(() => {
     if (
@@ -183,14 +196,7 @@ export function ConnectFourGame() {
     queuedMoveRef.current = null;
     if (!snapshot.legalMoves.includes(move)) return;
     void runBusy(() => changePosition([...snapshot.history, move]));
-  }, [
-    busy,
-    changePosition,
-    humanSide,
-    ready,
-    runBusy,
-    snapshot,
-  ]);
+  }, [busy, changePosition, humanSide, ready, runBusy, snapshot]);
 
   const newGame = () => {
     queuedMoveRef.current = null;
@@ -269,6 +275,7 @@ export function ConnectFourGame() {
   const canUndo =
     Boolean(snapshot?.history.length) &&
     !(humanSide === "Y" && snapshot?.history.length === 1);
+  const selectedStrength = STRENGTHS[strength];
 
   return (
     <div
@@ -277,22 +284,25 @@ export function ConnectFourGame() {
       className="game-ai-workbench not-prose mx-auto mb-10 mt-4 w-[min(820px,calc(100vw-2rem))] sm:mt-6"
     >
       <div className="game-ai-play-controls">
-        <label className="game-ai-inline-range">
-          <span>Opponent · {depth} moves ahead</span>
-          <input
-            type="range"
-            min="4"
-            max="9"
-            value={depth}
+        <label className="game-ai-search-control">
+          <span>Strength</span>
+          <select
+            value={strength}
             disabled={!ready || busy}
             aria-label="Opponent strength"
-            aria-valuetext={`${depth} moves ahead`}
-            onChange={(event) => setDepth(Number(event.target.value))}
-          />
-          <span className="game-ai-range-ends">
-            <i>faster</i>
-            <i>stronger</i>
-          </span>
+            onChange={(event) => setStrength(event.target.value as Strength)}
+          >
+            {Object.entries(STRENGTHS).map(([value, setting]) => (
+              <option key={value} value={value}>
+                {setting.label} — depth {setting.depth},{" "}
+                {setting.nodes.toLocaleString()} nodes
+              </option>
+            ))}
+          </select>
+          <small className="game-ai-search-limits">
+            Max depth {selectedStrength.depth} ·{" "}
+            {selectedStrength.nodes.toLocaleString()} nodes
+          </small>
         </label>
         <button
           type="button"
@@ -314,9 +324,7 @@ export function ConnectFourGame() {
                 onRestart={newGame}
                 focusAfterRestart={() =>
                   boardRef.current
-                    ?.querySelector<HTMLButtonElement>(
-                      "[data-connect-column]",
-                    )
+                    ?.querySelector<HTMLButtonElement>("[data-connect-column]")
                     ?.focus()
                 }
               />
@@ -332,10 +340,7 @@ export function ConnectFourGame() {
             {COLUMNS.map((column, columnIndex) => {
               const legal = snapshot?.legalMoves.includes(column) ?? false;
               const discs = (snapshot?.columns[columnIndex] ?? []).flatMap(
-                (mark) =>
-                  mark
-                    ? [mark === "R" ? "red" : "yellow"]
-                    : [],
+                (mark) => (mark ? [mark === "R" ? "red" : "yellow"] : []),
               );
               const columnState =
                 discs.length === 0
@@ -359,9 +364,7 @@ export function ConnectFourGame() {
                   aria-label={columnLabel}
                   aria-disabled={!playable}
                   onClick={() => makeMove(column)}
-                  onKeyDown={(event) =>
-                    moveBoardFocus(event, columnIndex)
-                  }
+                  onKeyDown={(event) => moveBoardFocus(event, columnIndex)}
                   onPointerEnter={(event) => {
                     if (event.pointerType === "mouse") {
                       setHoveredColumn(column);
@@ -451,7 +454,6 @@ export function ConnectFourGame() {
             </div>
           </div>
         </div>
-
       </div>
 
       {error && ready && (

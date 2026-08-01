@@ -31,8 +31,8 @@ export default function ChessPage() {
           Chess
         </h1>
         <p className="mt-4 font-[family-name:var(--font-newsreader)] text-lg text-stone-600">
-          The engine searches progressively deeper. Its strongest setting uses
-          a small neural network to score the positions it reaches.
+          The engine searches progressively deeper and uses a small neural
+          network to score positions.
         </p>
       </header>
 

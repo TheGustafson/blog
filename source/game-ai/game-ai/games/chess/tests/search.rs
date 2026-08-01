@@ -3,6 +3,65 @@ use ai_chess::{
     search_with_history,
 };
 
+#[test]
+fn published_search_presets_increase_monotonically() {
+    use ai_chess::{SEARCH_PRESETS, search_preset};
+
+    assert_eq!(
+        SEARCH_PRESETS.map(|preset| preset.name),
+        ["beginner", "easy", "medium", "hard", "expert", "maximum"]
+    );
+    assert_eq!(
+        SEARCH_PRESETS.map(|preset| (
+            preset.config.depth,
+            preset.config.nodes,
+            preset.config.time_millis,
+        )),
+        [
+            (2, Some(1_000), Some(25)),
+            (3, Some(5_000), Some(50)),
+            (4, Some(15_000), Some(100)),
+            (5, Some(40_000), Some(250)),
+            (7, Some(120_000), Some(500)),
+            (64, Some(300_000), Some(1_000)),
+        ]
+    );
+    assert_eq!(
+        SEARCH_PRESETS.map(|preset| (
+            preset.config.quiescence,
+            preset.config.move_ordering,
+            preset.config.transposition_table,
+        )),
+        [
+            (false, false, false),
+            (false, true, true),
+            (true, true, true),
+            (true, true, true),
+            (true, true, true),
+            (true, true, true),
+        ]
+    );
+    for pair in SEARCH_PRESETS.windows(2) {
+        assert!(pair[0].config.depth < pair[1].config.depth);
+        assert!(pair[0].config.nodes < pair[1].config.nodes);
+        assert!(pair[0].config.time_millis < pair[1].config.time_millis);
+    }
+    assert!(
+        SEARCH_PRESETS
+            .iter()
+            .all(|preset| preset.config.time_millis <= Some(1_000))
+    );
+    assert!(
+        SEARCH_PRESETS
+            .iter()
+            .all(|preset| preset.config.evaluator == EvaluationProfile::TinyNnue)
+    );
+    for preset in SEARCH_PRESETS {
+        assert_eq!(search_preset(preset.name), Some(preset));
+    }
+    assert_eq!(search_preset("unknown"), None);
+}
+
 fn config(depth: u8, evaluator: EvaluationProfile) -> SearchConfig {
     SearchConfig::classical(depth, evaluator)
 }

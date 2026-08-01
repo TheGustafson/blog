@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   type ChessPlaySnapshot,
   type ChessProfile,
@@ -17,7 +12,7 @@ import { EngineStartupNote } from "./EngineStartupNote";
 import { GameResult } from "./GameResult";
 
 type Side = "white" | "black";
-type Opponent = "material" | "psqt" | "quiet" | "classical" | "nnue";
+type Strength = "beginner" | "easy" | "medium" | "hard" | "expert" | "maximum";
 type EngineOptions = {
   evaluator: ChessProfile;
   incrementalNnue?: boolean;
@@ -54,78 +49,97 @@ const PIECE_NAMES: Record<string, string> = {
   n: "black knight",
   p: "black pawn",
 };
-const OPPONENTS: Array<{
-  value: Opponent;
+const STRENGTHS: Array<{
+  value: Strength;
   label: string;
-  options: EngineOptions;
   depth: number;
   nodes: number;
+  time: number;
+  search: Omit<EngineOptions, "evaluator" | "incrementalNnue">;
 }> = [
   {
-    value: "material",
-    label: "Counts pieces",
-    options: {
-      evaluator: "material",
+    value: "beginner",
+    label: "Beginner",
+    depth: 2,
+    nodes: 1_000,
+    time: 25,
+    search: {
       quiescence: false,
       moveOrdering: false,
       transpositionTable: false,
     },
-    depth: 4,
-    nodes: 8_000,
   },
   {
-    value: "psqt",
-    label: "Values piece placement",
-    options: {
-      evaluator: "piece-square",
-      quiescence: false,
-      moveOrdering: false,
-      transpositionTable: false,
-    },
-    depth: 4,
-    nodes: 12_000,
-  },
-  {
-    value: "quiet",
-    label: "Adds search shortcuts",
-    options: {
-      evaluator: "piece-square",
+    value: "easy",
+    label: "Easy",
+    depth: 3,
+    nodes: 5_000,
+    time: 50,
+    search: {
       quiescence: false,
       moveOrdering: true,
       transpositionTable: true,
     },
+  },
+  {
+    value: "medium",
+    label: "Medium",
+    depth: 4,
+    nodes: 15_000,
+    time: 100,
+    search: {
+      quiescence: true,
+      moveOrdering: true,
+      transpositionTable: true,
+    },
+  },
+  {
+    value: "hard",
+    label: "Hard",
     depth: 5,
-    nodes: 25_000,
-  },
-  {
-    value: "classical",
-    label: "Sees through captures",
-    options: {
-      evaluator: "piece-square",
+    nodes: 40_000,
+    time: 250,
+    search: {
       quiescence: true,
       moveOrdering: true,
       transpositionTable: true,
     },
-    depth: 6,
-    nodes: 50_000,
   },
   {
-    value: "nnue",
-    label: "Tiny neural network",
-    options: {
-      evaluator: "tiny-nnue",
-      incrementalNnue: true,
+    value: "expert",
+    label: "Expert",
+    depth: 7,
+    nodes: 120_000,
+    time: 500,
+    search: {
       quiescence: true,
       moveOrdering: true,
       transpositionTable: true,
     },
-    depth: 6,
-    nodes: 50_000,
+  },
+  {
+    value: "maximum",
+    label: "Maximum",
+    depth: 64,
+    nodes: 300_000,
+    time: 1_000,
+    search: {
+      quiescence: true,
+      moveOrdering: true,
+      transpositionTable: true,
+    },
   },
 ];
 
+const EVALUATORS: Array<{ value: ChessProfile; label: string }> = [
+  { value: "material", label: "Material" },
+  { value: "piece-square", label: "Tapered PSQT" },
+  { value: "tiny-nnue", label: "Tiny NNUE" },
+];
+
 function positionCommand(base: string, moves: string[]) {
-  const prefix = base === "startpos" ? "position startpos" : `position fen ${base}`;
+  const prefix =
+    base === "startpos" ? "position startpos" : `position fen ${base}`;
   return moves.length === 0 ? prefix : `${prefix} moves ${moves.join(" ")}`;
 }
 
@@ -152,7 +166,8 @@ export function ChessGame() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [humanSide, setHumanSide] = useState<Side>("white");
-  const [opponent, setOpponent] = useState<Opponent>("nnue");
+  const [strength, setStrength] = useState<Strength>("maximum");
+  const [evaluator, setEvaluator] = useState<ChessProfile>("tiny-nnue");
   const [basePosition, setBasePosition] = useState("startpos");
   const [selected, setSelected] = useState<string | null>(null);
   const [promotionMoves, setPromotionMoves] = useState<string[]>([]);
@@ -256,25 +271,22 @@ export function ChessGame() {
   const playEngineTurn = useCallback(async () => {
     if (!snapshot) return;
     const profile =
-      OPPONENTS.find((entry) => entry.value === opponent) ?? OPPONENTS[3];
+      STRENGTHS.find((entry) => entry.value === strength) ?? STRENGTHS[5];
     const history = snapshot.history;
     await runBusy(async () => {
-      await configure(profile.options);
+      await configure({
+        ...profile.search,
+        evaluator,
+        incrementalNnue: true,
+      });
       const response = await send(
-        `go depth ${profile.depth} nodes ${profile.nodes}`,
+        `go depth ${profile.depth} nodes ${profile.nodes} movetime ${profile.time}`,
       );
       const bestMove = response.snapshot.analysis?.bestMove;
       if (!bestMove) return;
       await send(positionCommand(basePosition, [...history, bestMove]));
     });
-  }, [
-    basePosition,
-    configure,
-    opponent,
-    runBusy,
-    send,
-    snapshot,
-  ]);
+  }, [basePosition, configure, evaluator, runBusy, send, snapshot, strength]);
 
   useEffect(() => {
     if (
@@ -336,8 +348,7 @@ export function ChessGame() {
       return false;
     }
     const matches = snapshot.legalMoves.filter(
-      (move) =>
-        move.slice(0, 2) === origin && move.slice(2, 4) === destination,
+      (move) => move.slice(0, 2) === origin && move.slice(2, 4) === destination,
     );
     if (matches.length === 1) {
       setSelected(null);
@@ -402,10 +413,10 @@ export function ChessGame() {
                     : `${sideName(snapshot.sideToMove)} is searching…`;
   const canMoveOnBoard = Boolean(
     snapshot &&
-      ready &&
-      !busy &&
-      snapshot.result === "ongoing" &&
-      snapshot.sideToMove === humanSide,
+    ready &&
+    !busy &&
+    snapshot.result === "ongoing" &&
+    snapshot.sideToMove === humanSide,
   );
   const resultMessage =
     snapshot?.result === "checkmate"
@@ -424,6 +435,8 @@ export function ChessGame() {
   const canUndo =
     Boolean(snapshot?.history.length) &&
     !(humanSide === "black" && snapshot?.history.length === 1);
+  const selectedStrength =
+    STRENGTHS.find((entry) => entry.value === strength) ?? STRENGTHS[5];
 
   return (
     <div
@@ -432,19 +445,41 @@ export function ChessGame() {
       className="game-ai-workbench not-prose mx-auto mb-10 mt-4 w-[min(820px,calc(100vw-2rem))] sm:mt-6"
     >
       <div className="game-ai-play-controls">
-        <label>
-          <span>Opponent</span>
+        <label className="game-ai-search-control">
+          <span>Strength</span>
           <select
-            value={opponent}
+            value={strength}
             disabled={!ready || busy}
-            aria-label="Opponent"
+            aria-label="Opponent strength"
+            onChange={(event) => setStrength(event.target.value as Strength)}
+          >
+            {STRENGTHS.map((entry) => (
+              <option key={entry.value} value={entry.value}>
+                {entry.label} — depth {entry.depth},{" "}
+                {entry.nodes.toLocaleString()} nodes,{" "}
+                {entry.time.toLocaleString()} ms
+              </option>
+            ))}
+          </select>
+          <small className="game-ai-search-limits">
+            Max depth {selectedStrength.depth} ·{" "}
+            {selectedStrength.nodes.toLocaleString()} nodes ·{" "}
+            {selectedStrength.time.toLocaleString()} ms
+          </small>
+        </label>
+        <label>
+          <span>Evaluator</span>
+          <select
+            value={evaluator}
+            disabled={!ready || busy}
+            aria-label="Evaluator"
             onChange={(event) =>
-              setOpponent(event.target.value as Opponent)
+              setEvaluator(event.target.value as ChessProfile)
             }
           >
-            {OPPONENTS.map((entry) => (
+            {EVALUATORS.map((entry) => (
               <option key={entry.value} value={entry.value}>
-                {entry.label}
+                {entry.label} evaluation
               </option>
             ))}
           </select>
@@ -509,8 +544,8 @@ export function ChessGame() {
               {promotionMoves.map((move) => {
                 const piece =
                   snapshot?.sideToMove === "white"
-                    ? move.at(-1)?.toUpperCase() ?? "Q"
-                    : move.at(-1) ?? "q";
+                    ? (move.at(-1)?.toUpperCase() ?? "Q")
+                    : (move.at(-1) ?? "q");
                 return (
                   <button
                     key={move}
@@ -556,7 +591,6 @@ export function ChessGame() {
             </div>
           </div>
         </div>
-
       </div>
 
       {error && ready && (

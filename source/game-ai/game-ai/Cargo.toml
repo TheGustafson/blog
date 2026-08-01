@@ -1,5 +1,10 @@
 [workspace]
-members = ["games/chess", "games/connect4", "games/othello", "games/tictactoe"]
+members = [
+    "games/chess",
+    "games/connect4",
+    "games/othello",
+    "games/ultimate-tictactoe",
+]
 resolver = "3"
 
 [profile.wasm-release]

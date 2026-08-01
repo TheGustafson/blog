@@ -2,6 +2,23 @@
 
 A Connect Four rules and search library built on two bitboards.
 
+Play against it compiled to Wasm here: <https://thegustafson.com/games/connect-four>
+
+## Self-play
+
+The `selfplay` binary runs deterministic paired-color matches. Each opening is
+played twice with the engines swapping Red and Yellow.
+
+```sh
+cargo run --release --bin selfplay -- \
+  --a maximum --b expert --games 12 --opening-plies 4 --seed 1
+```
+
+The six built-in profiles are `beginner`, `easy`, `medium`, `hard`, `expert`,
+and `maximum`. Use `--a-depth`, `--a-nodes`, and the corresponding `--b-*`
+options to override their limits. Library users can read the same settings with
+`search_preset` or `SEARCH_PRESETS`.
+
 ## Use it
 
 Add the crate to your project:

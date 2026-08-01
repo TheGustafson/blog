@@ -124,6 +124,49 @@ impl SearchLimits {
     }
 }
 
+/// A named depth and cumulative node budget for interactive play.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SearchPreset {
+    pub name: &'static str,
+    pub limits: SearchLimits,
+}
+
+/// The built-in strength ladder, ordered from least to most search work.
+pub const SEARCH_PRESETS: [SearchPreset; 6] = [
+    SearchPreset {
+        name: "beginner",
+        limits: SearchLimits::with_nodes(3, 250),
+    },
+    SearchPreset {
+        name: "easy",
+        limits: SearchLimits::with_nodes(5, 2_000),
+    },
+    SearchPreset {
+        name: "medium",
+        limits: SearchLimits::with_nodes(7, 10_000),
+    },
+    SearchPreset {
+        name: "hard",
+        limits: SearchLimits::with_nodes(9, 50_000),
+    },
+    SearchPreset {
+        name: "expert",
+        limits: SearchLimits::with_nodes(12, 200_000),
+    },
+    SearchPreset {
+        name: "maximum",
+        limits: SearchLimits::with_nodes(42, 750_000),
+    },
+];
+
+/// Finds a built-in strength preset by its lowercase name.
+pub fn search_preset(name: &str) -> Option<SearchPreset> {
+    SEARCH_PRESETS
+        .iter()
+        .copied()
+        .find(|preset| preset.name == name)
+}
+
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct SearchStats {
     pub nodes: u64,

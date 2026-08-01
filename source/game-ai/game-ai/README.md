@@ -2,7 +2,7 @@
 
 The browser games use four independent Rust crates:
 
-- [`ai-tictactoe`](games/tictactoe/README.md)
+- [`ai-ultimate-tictactoe`](games/ultimate-tictactoe/README.md)
 - [`ai-connect4`](games/connect4/README.md)
 - [`ai-othello`](games/othello/README.md)
 - [`ai-chess`](games/chess/README.md)

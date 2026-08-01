@@ -1,15 +1,22 @@
 export type Mark = "X" | "O";
-export type PlayStrategy = "random" | "tactical" | "tablebase";
 
-export type TicTacToeSnapshot = {
+export type UltimateTicTacToeSnapshot = {
   board: Array<Mark | null>;
+  miniBoards: Array<Mark | "draw" | null>;
   sideToMove: Mark;
+  activeBoard: number | null;
   result: "ongoing" | "draw" | "win";
   winner: Mark | null;
-  winningLine: string[];
+  macroWinningLine: number[];
   legalMoves: string[];
   history: string[];
-  decision: { bestMove: string } | null;
+  lastMove: string | null;
+  decision: {
+    bestMove: string | null;
+    depth: number;
+    score: number;
+    nodes: number;
+  } | null;
 };
 
 export type ConnectFourSnapshot = {

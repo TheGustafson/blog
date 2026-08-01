@@ -5,8 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GAME_AI_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BLOG_DIR="$(cd "$GAME_AI_DIR/.." && pwd)"
-TICTACTOE_OUTPUT_DIR="$BLOG_DIR/public/game-ai/tictactoe"
-TICTACTOE_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_tictactoe.wasm"
+ULTIMATE_OUTPUT_DIR="$BLOG_DIR/public/game-ai/ultimate-tictactoe"
+ULTIMATE_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_ultimate_tictactoe.wasm"
 CONNECT4_OUTPUT_DIR="$BLOG_DIR/public/game-ai/connect4"
 CONNECT4_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_connect4.wasm"
 OTHELLO_OUTPUT_DIR="$BLOG_DIR/public/game-ai/othello"
@@ -31,19 +31,19 @@ fi
 cargo build \
   --locked \
   --manifest-path "$GAME_AI_DIR/Cargo.toml" \
-  --package ai-tictactoe \
+  --package ai-ultimate-tictactoe \
   --profile wasm-release \
   --target wasm32-unknown-unknown \
   --features wasm
 
-mkdir -p "$TICTACTOE_OUTPUT_DIR"
+mkdir -p "$ULTIMATE_OUTPUT_DIR"
 wasm-bindgen \
   --target no-modules \
   --no-typescript \
-  --out-dir "$TICTACTOE_OUTPUT_DIR" \
-  --out-name tictactoe \
-  "$TICTACTOE_WASM_PATH"
-cp "$GAME_AI_DIR/browser/tictactoe.worker.js" "$TICTACTOE_OUTPUT_DIR/worker.js"
+  --out-dir "$ULTIMATE_OUTPUT_DIR" \
+  --out-name ultimate-tictactoe \
+  "$ULTIMATE_WASM_PATH"
+cp "$GAME_AI_DIR/browser/ultimate-tictactoe.worker.js" "$ULTIMATE_OUTPUT_DIR/worker.js"
 
 cargo build \
   --locked \

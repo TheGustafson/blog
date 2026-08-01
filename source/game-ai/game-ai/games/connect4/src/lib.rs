@@ -17,8 +17,9 @@ pub use perft::perft;
 pub use position::{GameResult, HEIGHT, MoveError, Position, Side, Undo, WIDTH};
 pub use protocol::Engine;
 pub use search::{
-    Algorithm, IterationSummary, IterativeSearchReport, RootBranch, Score, ScoreKind, SearchLimits,
-    SearchReport, SearchStats, iterative_search, search,
+    Algorithm, IterationSummary, IterativeSearchReport, RootBranch, SEARCH_PRESETS, Score,
+    ScoreKind, SearchLimits, SearchPreset, SearchReport, SearchStats, iterative_search, search,
+    search_preset,
 };
 
 /// Slow reference code and fixed oracle cases used to verify the engine.

@@ -45,6 +45,16 @@ const PROFILES: Array<{
     label: "Adapts as board fills",
   },
 ];
+const STRENGTHS = {
+  beginner: { label: "Beginner", depth: 1, endgame: 0 },
+  easy: { label: "Easy", depth: 2, endgame: 0 },
+  medium: { label: "Medium", depth: 4, endgame: 2 },
+  hard: { label: "Hard", depth: 5, endgame: 4 },
+  expert: { label: "Expert", depth: 6, endgame: 8 },
+  maximum: { label: "Maximum", depth: 7, endgame: 8 },
+};
+type Strength = keyof typeof STRENGTHS;
+
 function positionCommand(moves: string[]) {
   return moves.length === 0
     ? "position startpos"
@@ -70,8 +80,7 @@ export function OthelloGame() {
   const [error, setError] = useState<string | null>(null);
   const [humanSide, setHumanSide] = useState<"B" | "W">("B");
   const [evaluator, setEvaluator] = useState<OthelloProfile>("phase");
-  const depth = 5;
-  const exactEndgame = 8;
+  const [strength, setStrength] = useState<Strength>("maximum");
 
   const send = useCallback(async (command: string) => {
     const engine = engineRef.current;
@@ -155,15 +164,16 @@ export function OthelloGame() {
     if (!snapshot) return;
     const history = snapshot.history;
     await runBusy(async () => {
+      const setting = STRENGTHS[strength];
       await send(`setoption name Evaluator value ${evaluator}`);
       const searched = await send(
-        `go depth ${depth} endgame ${exactEndgame}`,
+        `go depth ${setting.depth} endgame ${setting.endgame}`,
       );
       const analysis = searched.snapshot.analysis;
       if (!analysis?.bestMove) return;
       await send(positionCommand([...history, analysis.bestMove]));
     });
-  }, [depth, evaluator, exactEndgame, runBusy, send, snapshot]);
+  }, [evaluator, runBusy, send, snapshot, strength]);
 
   useEffect(() => {
     if (
@@ -265,13 +275,9 @@ export function OthelloGame() {
     snapshot && snapshot.result !== "ongoing"
       ? (() => {
           const humanCount =
-            humanSide === "B"
-              ? snapshot.counts.black
-              : snapshot.counts.white;
+            humanSide === "B" ? snapshot.counts.black : snapshot.counts.white;
           const opponentCount =
-            humanSide === "B"
-              ? snapshot.counts.white
-              : snapshot.counts.black;
+            humanSide === "B" ? snapshot.counts.white : snapshot.counts.black;
           const score = `${humanCount}–${opponentCount}.`;
           if (snapshot.result === "draw") return `Draw, ${score}`;
           return snapshot.winner === humanSide
@@ -286,6 +292,7 @@ export function OthelloGame() {
     snapshot?.result === "ongoing" &&
     snapshot.legalMoves[0] === "pass" &&
     snapshot.sideToMove === humanSide;
+  const selectedStrength = STRENGTHS[strength];
 
   useEffect(() => {
     if (!mustPass) return;
@@ -312,19 +319,43 @@ export function OthelloGame() {
       className="game-ai-workbench not-prose mx-auto mb-10 mt-4 w-[min(820px,calc(100vw-2rem))] sm:mt-6"
     >
       <div className="game-ai-play-controls">
+        <label className="game-ai-search-control">
+          <span>Strength</span>
+          <select
+            value={strength}
+            disabled={!ready || busy}
+            aria-label="Opponent strength"
+            onChange={(event) => setStrength(event.target.value as Strength)}
+          >
+            {Object.entries(STRENGTHS).map(([value, setting]) => (
+              <option key={value} value={value}>
+                {setting.label} — depth {setting.depth},{" "}
+                {setting.endgame === 0
+                  ? "exact solve off"
+                  : `exact at ${setting.endgame} empties`}
+              </option>
+            ))}
+          </select>
+          <small className="game-ai-search-limits">
+            Depth {selectedStrength.depth} ·{" "}
+            {selectedStrength.endgame === 0
+              ? "exact solve off"
+              : `exact solve at ${selectedStrength.endgame} empty squares`}
+          </small>
+        </label>
         <label>
-          <span>Opponent</span>
+          <span>Evaluator</span>
           <select
             value={evaluator}
             disabled={!ready || busy}
-            aria-label="Opponent"
+            aria-label="Evaluator"
             onChange={(event) =>
               setEvaluator(event.target.value as OthelloProfile)
             }
           >
             {PROFILES.map((profile) => (
               <option key={profile.value} value={profile.value}>
-                {profile.label}
+                {profile.label} evaluation
               </option>
             ))}
           </select>
@@ -349,9 +380,7 @@ export function OthelloGame() {
                 onRestart={newGame}
                 focusAfterRestart={() =>
                   boardRef.current
-                    ?.querySelector<HTMLButtonElement>(
-                      "[data-othello-square]",
-                    )
+                    ?.querySelector<HTMLButtonElement>("[data-othello-square]")
                     ?.focus()
                 }
               />
@@ -409,9 +438,7 @@ export function OthelloGame() {
                     }`}
                     aria-disabled={!playable}
                     onClick={() => makeMove(square)}
-                    onKeyDown={(event) =>
-                      moveBoardFocus(event, displayIndex)
-                    }
+                    onKeyDown={(event) => moveBoardFocus(event, displayIndex)}
                     className="group relative aspect-square min-w-0 border border-emerald-950/30 bg-emerald-700 outline-none focus-visible:z-20 focus-visible:ring-2 focus-visible:ring-amber-300"
                   >
                     {mark && (
@@ -420,11 +447,7 @@ export function OthelloGame() {
                           mark === "B"
                             ? "border-stone-600 bg-[radial-gradient(circle_at_35%_28%,#57534e,#0c0a09_66%)]"
                             : "border-stone-300 bg-[radial-gradient(circle_at_35%_28%,#fff,#e7e5e4_70%)]"
-                        } ${
-                          flipped
-                            ? "othello-disc-flip"
-                            : ""
-                        } ${
+                        } ${flipped ? "othello-disc-flip" : ""} ${
                           snapshot?.lastMove === square
                             ? "ring-2 ring-amber-300 ring-offset-1 ring-offset-emerald-700"
                             : ""
@@ -500,9 +523,7 @@ export function OthelloGame() {
               </button>
             </div>
           </div>
-
         </div>
-
       </div>
 
       {error && ready && (

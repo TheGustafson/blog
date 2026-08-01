@@ -20,10 +20,10 @@ export const metadata: Metadata = {
 const games = [
   {
     number: "01",
-    title: "Tic-tac-toe",
+    title: "Ultimate Tic-Tac-Toe",
     href: "/games/tic-tac-toe",
-    note: "At its strongest setting, the engine has solved every reachable position, so it cannot lose.",
-    preview: "tic-tac-toe",
+    note: "Each move routes the next player to one of nine smaller boards. The engine searches the tactical consequences with alpha-beta.",
+    preview: "ultimate-tic-tac-toe",
   },
   {
     number: "02",
@@ -48,7 +48,21 @@ const games = [
   },
 ] as const;
 
-const ticTacToe = ["×", "", "○", "", "×", "", "○", "", "×"];
+const ultimateMarks = new Map([
+  [4, "×"],
+  [8, "○"],
+  [11, "×"],
+  [20, "○"],
+  [24, "×"],
+  [30, "○"],
+  [36, "×"],
+  [40, "○"],
+  [48, "×"],
+  [52, "○"],
+  [60, "×"],
+  [68, "○"],
+  [76, "×"],
+]);
 const connectFour = new Map([
   [29, "red"],
   [30, "red"],
@@ -141,11 +155,11 @@ function GamePreview({
 }: {
   kind: (typeof games)[number]["preview"];
 }) {
-  if (kind === "tic-tac-toe") {
+  if (kind === "ultimate-tic-tac-toe") {
     return (
-      <div className="games-index-ttt" aria-hidden="true">
-        {ticTacToe.map((mark, index) => (
-          <span key={index}>{mark}</span>
+      <div className="games-index-ultimate" aria-hidden="true">
+        {Array.from({ length: 81 }, (_, index) => (
+          <span key={index}>{ultimateMarks.get(index) ?? ""}</span>
         ))}
       </div>
     );

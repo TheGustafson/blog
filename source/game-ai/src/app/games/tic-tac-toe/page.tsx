@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GameSourceLinks } from "@/components/game-ai/GameSourceLinks";
-import { TicTacToeGame } from "@/components/game-ai/TicTacToeGame";
+import { UltimateTicTacToeGame } from "@/components/game-ai/UltimateTicTacToeGame";
 
 const GAMES_ARE_PUBLIC = process.env.PUBLISH_GAME_AI === "1";
 
 export const metadata: Metadata = {
-  title: "Tic-tac-toe",
-  description: "Play tic-tac-toe against a small Rust engine.",
+  title: "Ultimate Tic-Tac-Toe",
+  description: "Play Ultimate Tic-Tac-Toe against a Rust alpha-beta engine.",
   robots: GAMES_ARE_PUBLIC
     ? { index: true, follow: true }
     : { index: false, follow: false },
@@ -28,18 +28,19 @@ export default function TicTacToePage() {
           ← Game AIs
         </Link>
         <h1 className="mt-7 text-4xl font-semibold tracking-[-0.035em] text-stone-900 sm:text-6xl">
-          Tic-tac-toe
+          Ultimate Tic-Tac-Toe
         </h1>
         <p className="mt-4 font-[family-name:var(--font-newsreader)] text-lg text-stone-600">
-          Perfect has solved every reachable position. The others play
-          randomly or look only for an immediate win or block.
+          Every move decides where your opponent must play next. Claim three
+          mini-boards in a row before the alpha-beta engine routes you into a
+          trap.
         </p>
       </header>
 
-      <TicTacToeGame />
+      <UltimateTicTacToeGame />
       <GameSourceLinks
-        crateName="ai-tictactoe"
-        gameName="Tic-tac-toe"
+        crateName="ai-ultimate-tictactoe"
+        gameName="Ultimate Tic-Tac-Toe"
       />
     </div>
   );

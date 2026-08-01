@@ -58,6 +58,66 @@ impl SearchConfig {
     }
 }
 
+/// A named search depth and exact-endgame threshold for interactive play.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SearchPreset {
+    pub name: &'static str,
+    pub depth: u8,
+    pub exact_endgame_empties: u8,
+}
+
+impl SearchPreset {
+    pub const fn config(self, evaluator: EvaluationProfile) -> SearchConfig {
+        SearchConfig {
+            depth: self.depth,
+            evaluator,
+            exact_endgame_empties: self.exact_endgame_empties,
+        }
+    }
+}
+
+/// The built-in strength ladder, ordered from least to most search work.
+pub const SEARCH_PRESETS: [SearchPreset; 6] = [
+    SearchPreset {
+        name: "beginner",
+        depth: 1,
+        exact_endgame_empties: 0,
+    },
+    SearchPreset {
+        name: "easy",
+        depth: 2,
+        exact_endgame_empties: 0,
+    },
+    SearchPreset {
+        name: "medium",
+        depth: 4,
+        exact_endgame_empties: 2,
+    },
+    SearchPreset {
+        name: "hard",
+        depth: 5,
+        exact_endgame_empties: 4,
+    },
+    SearchPreset {
+        name: "expert",
+        depth: 6,
+        exact_endgame_empties: 8,
+    },
+    SearchPreset {
+        name: "maximum",
+        depth: 7,
+        exact_endgame_empties: 8,
+    },
+];
+
+/// Finds a built-in strength preset by its lowercase name.
+pub fn search_preset(name: &str) -> Option<SearchPreset> {
+    SEARCH_PRESETS
+        .iter()
+        .copied()
+        .find(|preset| preset.name == name)
+}
+
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct SearchStats {
     pub nodes: u64,

@@ -1,6 +1,28 @@
 use ai_othello::{EvaluationProfile, Move, Position, ScoreKind, SearchConfig, search};
 
 #[test]
+fn published_search_presets_increase_monotonically() {
+    use ai_othello::{SEARCH_PRESETS, search_preset};
+
+    assert_eq!(
+        SEARCH_PRESETS.map(|preset| preset.name),
+        ["beginner", "easy", "medium", "hard", "expert", "maximum"]
+    );
+    assert_eq!(
+        SEARCH_PRESETS.map(|preset| (preset.depth, preset.exact_endgame_empties)),
+        [(1, 0), (2, 0), (4, 2), (5, 4), (6, 8), (7, 8)]
+    );
+    for pair in SEARCH_PRESETS.windows(2) {
+        assert!(pair[0].depth < pair[1].depth);
+        assert!(pair[0].exact_endgame_empties <= pair[1].exact_endgame_empties);
+    }
+    for preset in SEARCH_PRESETS {
+        assert_eq!(search_preset(preset.name), Some(preset));
+    }
+    assert_eq!(search_preset("unknown"), None);
+}
+
+#[test]
 fn alpha_beta_returns_a_stable_opening_signature_for_each_evaluator() {
     let expected = [
         (EvaluationProfile::Material, "d3"),

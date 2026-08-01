@@ -21,7 +21,8 @@ pub use perft::perft;
 pub use position::{GameResult, MoveError, Position, Side, Undo};
 pub use protocol::Engine;
 pub use search::{
-    Candidate, Score, ScoreKind, SearchConfig, SearchReport, SearchStats, search, search_until,
+    Candidate, SEARCH_PRESETS, Score, ScoreKind, SearchConfig, SearchPreset, SearchReport,
+    SearchStats, search, search_preset, search_until,
 };
 
 #[cfg(not(target_arch = "wasm32"))]

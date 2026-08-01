@@ -11,9 +11,7 @@ export const metadata: Metadata = {
   robots: GAMES_ARE_PUBLIC
     ? { index: true, follow: true }
     : { index: false, follow: false },
-  alternates: GAMES_ARE_PUBLIC
-    ? { canonical: "/games/othello" }
-    : undefined,
+  alternates: GAMES_ARE_PUBLIC ? { canonical: "/games/othello" } : undefined,
 };
 
 export default function OthelloPage() {
@@ -31,8 +29,8 @@ export default function OthelloPage() {
           Othello
         </h1>
         <p className="mt-4 font-[family-name:var(--font-newsreader)] text-lg text-stone-600">
-          Early on, the adaptive opponent values mobility and corners. As the
-          board fills, disc count matters more.
+          The engine weighs mobility, corners, and disc count differently as the
+          board fills.
         </p>
       </header>
 
