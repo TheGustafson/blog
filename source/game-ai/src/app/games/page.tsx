@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { RektCycle } from "@/components/game-ai/RektCycle";
 
 const GAMES_ARE_PUBLIC = process.env.PUBLISH_GAME_AI === "1";
 const SOURCE_URL =
@@ -195,7 +196,7 @@ export default function GamesPage() {
           Game AIs
         </h1>
         <p className="mt-5 max-w-xl font-[family-name:var(--font-newsreader)] text-xl leading-relaxed text-stone-600">
-          Get rekt by AI. A WASM game engine behind each opponent.
+          Get <RektCycle /> by AI. A WASM game engine behind each opponent.
         </p>
         {GAMES_ARE_PUBLIC && (
           <a

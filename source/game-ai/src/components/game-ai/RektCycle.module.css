@@ -1,0 +1,80 @@
+.root {
+  display: inline-block;
+  margin-inline: 0.1em;
+  white-space: nowrap;
+}
+
+.word {
+  display: inline-block;
+  transform-origin: center;
+  transition: color 140ms ease;
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.055em;
+  height: 0.82em;
+  margin-left: 0.07em;
+  background: currentColor;
+  vertical-align: -0.04em;
+  animation: rekt-cursor-blink 760ms steps(1, end) infinite;
+}
+
+.shrekt {
+  color: #2f7042;
+  animation: shrekt-impact 1.35s ease-in-out both;
+}
+
+@keyframes rekt-cursor-blink {
+  0%,
+  46% {
+    opacity: 1;
+  }
+
+  47%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes shrekt-impact {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  12% {
+    transform: scale(1.12) rotate(-1.5deg);
+  }
+
+  22% {
+    transform: scale(1.12) rotate(1.5deg);
+  }
+
+  32% {
+    transform: scale(1.1) rotate(-1deg);
+  }
+
+  44% {
+    transform: scale(1.1) rotate(1deg);
+  }
+
+  68% {
+    transform: scale(1.08) rotate(0deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    display: none;
+  }
+
+  .word,
+  .shrekt {
+    animation: none;
+    transition: none;
+  }
+}
