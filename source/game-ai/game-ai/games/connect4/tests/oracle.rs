@@ -1,5 +1,5 @@
-use gai_connect4::verification::{ORACLE_CASES, OracleOutcome, probe_oracle};
-use gai_connect4::{Algorithm, Column, Move, Position, ScoreKind, SearchLimits, search};
+use ai_connect4::verification::{ORACLE_CASES, OracleOutcome, probe_oracle};
+use ai_connect4::{Algorithm, Column, Move, Position, ScoreKind, SearchLimits, search};
 
 fn position(notation: &str) -> Position {
     let moves: Vec<_> = notation

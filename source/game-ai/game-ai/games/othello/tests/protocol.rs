@@ -1,4 +1,4 @@
-use gai_othello::Engine;
+use ai_othello::Engine;
 
 #[test]
 fn protocol_exposes_flip_and_evaluation_data_from_one_session() {

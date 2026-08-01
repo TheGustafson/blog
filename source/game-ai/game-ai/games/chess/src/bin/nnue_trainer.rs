@@ -4,7 +4,7 @@
 //! runtime architecture, trains one deterministic model, quantizes through the
 //! production serializer, and reports held-out and float/integer parity.
 
-use gai_chess::{
+use ai_chess::{
     Color, EvaluationProfile, FloatNnueNetwork, MoveKind, NNUE_FEATURES, NNUE_HIDDEN, PieceKind,
     Position, QuantizedNnueNetwork, Square, classical_piece_value, evaluate, nnue_feature_index,
 };
@@ -163,7 +163,7 @@ struct Metrics {
 
 fn main() {
     if let Err(error) = run() {
-        eprintln!("gai-chess-nnue-trainer: {error}");
+        eprintln!("ai-chess-nnue-trainer: {error}");
         std::process::exit(2);
     }
 }
@@ -172,13 +172,13 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let mut args = env::args().skip(1);
     let hardneg_corpus = args
         .next()
-        .ok_or("usage: gai-chess-nnue-trainer <hardneg corpus> <canonical sample> <output>")?;
+        .ok_or("usage: ai-chess-nnue-trainer <hardneg corpus> <canonical sample> <output>")?;
     let canonical_corpus = args
         .next()
-        .ok_or("usage: gai-chess-nnue-trainer <hardneg corpus> <canonical sample> <output>")?;
+        .ok_or("usage: ai-chess-nnue-trainer <hardneg corpus> <canonical sample> <output>")?;
     let output = args
         .next()
-        .ok_or("usage: gai-chess-nnue-trainer <hardneg corpus> <canonical sample> <output>")?;
+        .ok_or("usage: ai-chess-nnue-trainer <hardneg corpus> <canonical sample> <output>")?;
     if args.next().is_some() {
         return Err("trainer accepts exactly three arguments".into());
     }
@@ -635,9 +635,9 @@ fn features(position: &Position) -> Vec<[u16; 2]> {
         for kind in PieceKind::ALL {
             let mut occupied = position.pieces(color, kind);
             while occupied != 0 {
-                let square = gai_chess::Square::new(occupied.trailing_zeros() as u8);
+                let square = ai_chess::Square::new(occupied.trailing_zeros() as u8);
                 occupied &= occupied - 1;
-                let piece = gai_chess::Piece::new(color, kind);
+                let piece = ai_chess::Piece::new(color, kind);
                 features.push([
                     nnue_feature_index(piece, square, Color::White) as u16,
                     nnue_feature_index(piece, square, Color::Black) as u16,

@@ -1,4 +1,4 @@
-use gai_chess::{
+use ai_chess::{
     EvaluationProfile, GameResult, Position, ScoreKind, SearchConfig, iterative_search, search,
     search_with_history,
 };

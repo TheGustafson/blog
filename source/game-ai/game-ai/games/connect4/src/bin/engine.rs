@@ -1,4 +1,4 @@
-use gai_connect4::Engine;
+use ai_connect4::Engine;
 use std::io::{self, BufRead};
 
 fn main() {

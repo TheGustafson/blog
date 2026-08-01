@@ -1,4 +1,4 @@
-# gai-othello
+# ai-othello
 
 An Othello rules and search library with bitboards and complete pass handling.
 
@@ -8,11 +8,11 @@ Add the crate to your project:
 
 ```toml
 [dependencies]
-gai-othello = "0.1"
+ai-othello = "0.1"
 ```
 
 ```rust
-use gai_othello::{EvaluationProfile, Position, SearchConfig, search};
+use ai_othello::{EvaluationProfile, Position, SearchConfig, search};
 
 let position = Position::default();
 let config = SearchConfig::fixed_depth(5, EvaluationProfile::Phase);

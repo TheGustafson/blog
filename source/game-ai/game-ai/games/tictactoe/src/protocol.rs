@@ -191,7 +191,7 @@ impl Engine {
 
     fn handshake(&self) -> Vec<String> {
         vec![
-            "id name gai-tictactoe".to_owned(),
+            "id name ai-tictactoe".to_owned(),
             "id author Nick Gustafson".to_owned(),
             "id game tictactoe".to_owned(),
             "option name Algorithm type combo default tablebase var plain var memo var symmetry var tablebase"

@@ -1,5 +1,5 @@
 [package]
-name = "gai-othello"
+name = "ai-othello"
 version = "0.1.0"
 authors = ["Nick Gustafson"]
 edition = "2024"
@@ -7,9 +7,9 @@ rust-version = "1.85"
 description = "An Othello rules, evaluation, and alpha-beta search engine"
 license = "MIT"
 readme = "README.md"
-documentation = "https://docs.rs/gai-othello"
+documentation = "https://docs.rs/ai-othello"
 homepage = "https://thegustafson.com/games/othello"
-repository = "https://github.com/TheGustafson/gai-othello"
+repository = "https://github.com/TheGustafson/ai-othello"
 keywords = ["othello", "reversi", "game", "engine", "wasm"]
 categories = ["game-engines", "wasm"]
 include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
@@ -18,7 +18,7 @@ include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
 crate-type = ["cdylib", "rlib"]
 
 [[bin]]
-name = "gai-othello"
+name = "ai-othello"
 path = "src/bin/engine.rs"
 
 [features]

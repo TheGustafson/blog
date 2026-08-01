@@ -8,7 +8,7 @@ fn main() {
 
 #[cfg(not(target_arch = "wasm32"))]
 mod native {
-    use gai_othello::{CassioEngine, Engine};
+    use ai_othello::{CassioEngine, Engine};
     use std::io::{self, BufRead, Write};
     use std::sync::atomic::{AtomicU64, Ordering};
     use std::sync::{Arc, mpsc};

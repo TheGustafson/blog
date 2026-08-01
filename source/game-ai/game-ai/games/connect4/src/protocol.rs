@@ -181,7 +181,7 @@ impl Engine {
 
     fn handshake(&self) -> Vec<String> {
         vec![
-            "id name gai-connect4".to_owned(),
+            "id name ai-connect4".to_owned(),
             "id author Nick Gustafson".to_owned(),
             "id game connect4".to_owned(),
             "option name Algorithm type combo default tt var plain var alpha-beta var ordered var tt"

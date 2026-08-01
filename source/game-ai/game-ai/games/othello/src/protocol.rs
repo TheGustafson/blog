@@ -170,7 +170,7 @@ impl Engine {
 
     fn handshake(&self) -> Vec<String> {
         vec![
-            "id name gai-othello".to_owned(),
+            "id name ai-othello".to_owned(),
             "id author Nick Gustafson".to_owned(),
             "id game othello".to_owned(),
             "option name Evaluator type combo default phase var material var mobility var corners var frontier var phase"

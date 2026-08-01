@@ -1,5 +1,5 @@
-use gai_othello::verification::{ReferencePosition, reference_perft};
-use gai_othello::{GameResult, Move, MoveError, Position, Side, Square, perft};
+use ai_othello::verification::{ReferencePosition, reference_perft};
+use ai_othello::{GameResult, Move, MoveError, Position, Side, Square, perft};
 
 #[test]
 fn initial_position_and_notation_are_stable() {

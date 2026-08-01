@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { GameSourceLinks } from "@/components/game-ai/GameSourceLinks";
 import { OthelloGame } from "@/components/game-ai/OthelloGame";
 
 const GAMES_ARE_PUBLIC = process.env.PUBLISH_GAME_AI === "1";
@@ -36,6 +37,7 @@ export default function OthelloPage() {
       </header>
 
       <OthelloGame />
+      <GameSourceLinks crateName="ai-othello" gameName="Othello" />
     </div>
   );
 }

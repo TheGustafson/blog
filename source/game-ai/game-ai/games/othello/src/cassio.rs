@@ -44,7 +44,7 @@ impl CassioEngine {
             "get-version" => without_parameters(
                 command,
                 &parameters,
-                vec!["version: GAI Othello 0.1.0".to_owned(), "ready.".to_owned()],
+                vec!["version: AI Othello 0.1.0".to_owned(), "ready.".to_owned()],
             ),
             "midgame-search" => self.midgame_search(&parameters, should_stop),
             "endgame-search" => self.endgame_search(&parameters, should_stop),

@@ -66,7 +66,7 @@ not an Elo estimate. Playing strength still needs equal-budget engine games.
 Reproduction:
 
 ```bash
-cargo run --release --bin gai-chess-psqt-tuner -- \
+cargo run --release --bin ai-chess-psqt-tuner -- \
   /path/to/hn_cp_wdl_filtered.txt
 ```
 

@@ -1,4 +1,4 @@
-use gai_chess::Engine;
+use ai_chess::Engine;
 use std::cell::Cell;
 
 #[test]
@@ -7,7 +7,7 @@ fn uci_position_search_and_snapshot_share_one_session() {
     assert_eq!(
         engine.command("uci"),
         [
-            "id name GAI Chess",
+            "id name AI Chess",
             "id author Nick Gustafson",
             "option name Evaluator type combo default piece-square var material var piece-square var tiny-nnue",
             "option name Quiescence type check default true",

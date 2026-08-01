@@ -214,7 +214,7 @@ impl Engine {
 
     fn handshake(&self) -> Vec<String> {
         vec![
-            "id name GAI Chess".to_owned(),
+            "id name AI Chess".to_owned(),
             "id author Nick Gustafson".to_owned(),
             "option name Evaluator type combo default piece-square var material var piece-square var tiny-nnue"
                 .to_owned(),

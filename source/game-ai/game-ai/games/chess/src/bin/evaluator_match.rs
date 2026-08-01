@@ -5,7 +5,7 @@
 //! evaluator changes. This is a reproducible teaching measurement, not an Elo
 //! framework.
 
-use gai_chess::{
+use ai_chess::{
     Color, EvaluationProfile, GameResult, Position, SearchConfig, iterative_search_with_history,
 };
 

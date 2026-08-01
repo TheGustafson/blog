@@ -1,5 +1,5 @@
-use gai_connect4::verification::{ReferencePosition, reference_perft};
-use gai_connect4::{Cell, Column, GameResult, Move, MoveError, Position, Side, perft};
+use ai_connect4::verification::{ReferencePosition, reference_perft};
+use ai_connect4::{Cell, Column, GameResult, Move, MoveError, Position, Side, perft};
 use std::collections::HashMap;
 
 fn moves(notation: &[&str]) -> Vec<Move> {

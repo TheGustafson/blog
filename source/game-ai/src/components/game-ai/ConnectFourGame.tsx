@@ -362,10 +362,16 @@ export function ConnectFourGame() {
                   onKeyDown={(event) =>
                     moveBoardFocus(event, columnIndex)
                   }
-                  onFocus={() => setHoveredColumn(column)}
-                  onBlur={() => setHoveredColumn(null)}
-                  onMouseEnter={() => setHoveredColumn(column)}
-                  onMouseLeave={() => setHoveredColumn(null)}
+                  onPointerEnter={(event) => {
+                    if (event.pointerType === "mouse") {
+                      setHoveredColumn(column);
+                    }
+                  }}
+                  onPointerLeave={(event) => {
+                    if (event.pointerType === "mouse") {
+                      setHoveredColumn(null);
+                    }
+                  }}
                   className="group relative grid min-w-0 gap-1 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-blue-700 sm:gap-2"
                 >
                   {ROWS.map((row) => {
@@ -391,6 +397,7 @@ export function ConnectFourGame() {
                         {(mark || preview) && (
                           <span
                             data-connect-piece={mark || undefined}
+                            data-connect-preview={preview || undefined}
                             className={`absolute inset-[8%] rounded-full shadow-sm ${
                               mark === "R" ||
                               (preview && snapshot?.sideToMove === "R")

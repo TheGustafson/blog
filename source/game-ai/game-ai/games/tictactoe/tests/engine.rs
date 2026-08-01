@@ -1,4 +1,4 @@
-use gai_tictactoe::{
+use ai_tictactoe::{
     Algorithm, DecisionReason, Engine, GameResult, Move, Outcome, PlayStrategy, Position, Side,
     Tablebase, build_tree, choose_move, search,
 };

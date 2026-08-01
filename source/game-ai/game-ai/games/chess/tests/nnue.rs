@@ -1,4 +1,4 @@
-use gai_chess::{
+use ai_chess::{
     Color, EvaluationProfile, FeatureDelta, FloatNnueNetwork, NNUE_FEATURES, NNUE_HIDDEN,
     NnueAccumulator, Piece, PieceKind, Position, QuantizedNnueNetwork, Square, builtin_nnue,
     evaluate, nnue_feature_index,

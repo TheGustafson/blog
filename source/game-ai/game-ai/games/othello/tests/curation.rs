@@ -1,4 +1,4 @@
-use gai_othello::{EvaluationProfile, Move, Position, ScoreKind, SearchConfig, evaluate, search};
+use ai_othello::{EvaluationProfile, Move, Position, ScoreKind, SearchConfig, evaluate, search};
 
 fn curated_position() -> Position {
     let moves: Vec<Move> = ["d3", "c3", "b3", "b2", "b1", "a1", "c4", "c1", "c2"]
@@ -68,8 +68,8 @@ fn greedy_material_and_future_control_disagree_on_a_locked_position() {
 #[test]
 fn the_greedy_move_flips_four_while_the_control_move_flips_one() {
     let position = curated_position();
-    let greedy: gai_othello::Square = "c5".parse().unwrap();
-    let control: gai_othello::Square = "d2".parse().unwrap();
+    let greedy: ai_othello::Square = "c5".parse().unwrap();
+    let control: ai_othello::Square = "d2".parse().unwrap();
     assert_eq!(position.flips_for(greedy).count_ones(), 4);
     assert_eq!(position.flips_for(control).count_ones(), 1);
 

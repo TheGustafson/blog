@@ -1,4 +1,4 @@
-use gai_othello::{CassioEngine, Position};
+use ai_othello::{CassioEngine, Position};
 use std::cell::Cell;
 
 #[test]
@@ -32,7 +32,7 @@ fn cassio_core_transcript_is_compatible_and_searches_the_real_position() {
     assert_eq!(engine.command("ENGINE-PROTOCOL init"), ["ready."]);
     assert_eq!(
         engine.command("ENGINE-PROTOCOL get-version"),
-        ["version: GAI Othello 0.1.0", "ready."]
+        ["version: AI Othello 0.1.0", "ready."]
     );
     assert_eq!(engine.command("ENGINE-PROTOCOL new-position"), ["ready."]);
 

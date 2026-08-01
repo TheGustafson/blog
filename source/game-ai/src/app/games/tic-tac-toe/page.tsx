@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { GameSourceLinks } from "@/components/game-ai/GameSourceLinks";
 import { TicTacToeGame } from "@/components/game-ai/TicTacToeGame";
 
 const GAMES_ARE_PUBLIC = process.env.PUBLISH_GAME_AI === "1";
@@ -36,6 +37,10 @@ export default function TicTacToePage() {
       </header>
 
       <TicTacToeGame />
+      <GameSourceLinks
+        crateName="ai-tictactoe"
+        gameName="Tic-tac-toe"
+      />
     </div>
   );
 }

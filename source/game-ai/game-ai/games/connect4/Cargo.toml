@@ -1,5 +1,5 @@
 [package]
-name = "gai-connect4"
+name = "ai-connect4"
 version = "0.1.0"
 authors = ["Nick Gustafson"]
 edition = "2024"
@@ -7,9 +7,9 @@ rust-version = "1.85"
 description = "A compact Connect Four rules and alpha-beta search engine"
 license = "MIT"
 readme = "README.md"
-documentation = "https://docs.rs/gai-connect4"
+documentation = "https://docs.rs/ai-connect4"
 homepage = "https://thegustafson.com/games/connect-four"
-repository = "https://github.com/TheGustafson/gai-connect4"
+repository = "https://github.com/TheGustafson/ai-connect4"
 keywords = ["connect-four", "game", "engine", "alpha-beta", "wasm"]
 categories = ["game-engines", "wasm"]
 include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
@@ -18,7 +18,7 @@ include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
 crate-type = ["cdylib", "rlib"]
 
 [[bin]]
-name = "gai-connect4"
+name = "ai-connect4"
 path = "src/bin/engine.rs"
 
 [features]

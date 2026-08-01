@@ -1,4 +1,4 @@
-use gai_othello::{EvaluationProfile, Move, Position, Side, evaluate};
+use ai_othello::{EvaluationProfile, Move, Position, Side, evaluate};
 
 fn position(moves: &[&str]) -> Position {
     let moves: Vec<Move> = moves.iter().map(|mv| mv.parse().unwrap()).collect();

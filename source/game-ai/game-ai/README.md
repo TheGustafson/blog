@@ -2,10 +2,10 @@
 
 The browser games use four independent Rust crates:
 
-- [`gai-tictactoe`](games/tictactoe/README.md)
-- [`gai-connect4`](games/connect4/README.md)
-- [`gai-othello`](games/othello/README.md)
-- [`gai-chess`](games/chess/README.md)
+- [`ai-tictactoe`](games/tictactoe/README.md)
+- [`ai-connect4`](games/connect4/README.md)
+- [`ai-othello`](games/othello/README.md)
+- [`ai-chess`](games/chess/README.md)
 
 Each crate is maintained in its own public repository. The directories under
 `games/` are Git submodules pinned to exact release commits. The workspace

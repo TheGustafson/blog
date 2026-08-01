@@ -1,4 +1,4 @@
-# gai-connect4
+# ai-connect4
 
 A Connect Four rules and search library built on two bitboards.
 
@@ -8,11 +8,11 @@ Add the crate to your project:
 
 ```toml
 [dependencies]
-gai-connect4 = "0.1"
+ai-connect4 = "0.1"
 ```
 
 ```rust
-use gai_connect4::{Algorithm, Move, Position, SearchLimits, search};
+use ai_connect4::{Algorithm, Move, Position, SearchLimits, search};
 
 let mut position = Position::default();
 position

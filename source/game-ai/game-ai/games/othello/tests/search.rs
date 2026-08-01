@@ -1,4 +1,4 @@
-use gai_othello::{EvaluationProfile, Move, Position, ScoreKind, SearchConfig, search};
+use ai_othello::{EvaluationProfile, Move, Position, ScoreKind, SearchConfig, search};
 
 #[test]
 fn alpha_beta_returns_a_stable_opening_signature_for_each_evaluator() {
@@ -41,9 +41,9 @@ fn visible_evaluator_choices_can_change_the_move() {
 
 #[test]
 fn passes_survive_the_negamax_perspective_change() {
-    let black = 1u64 << "b1".parse::<gai_othello::Square>().unwrap().index();
-    let white = 1u64 << "a1".parse::<gai_othello::Square>().unwrap().index();
-    let position = Position::from_bits(black, white, gai_othello::Side::Black).unwrap();
+    let black = 1u64 << "b1".parse::<ai_othello::Square>().unwrap().index();
+    let white = 1u64 << "a1".parse::<ai_othello::Square>().unwrap().index();
+    let position = Position::from_bits(black, white, ai_othello::Side::Black).unwrap();
     let report = search(
         position,
         SearchConfig::fixed_depth(1, EvaluationProfile::Phase),
@@ -56,7 +56,7 @@ fn passes_survive_the_negamax_perspective_change() {
 #[test]
 fn exact_endgame_search_ignores_the_heuristic_horizon() {
     let mut position = Position::start();
-    while position.empty_count() > 8 && position.result() == gai_othello::GameResult::Ongoing {
+    while position.empty_count() > 8 && position.result() == ai_othello::GameResult::Ongoing {
         let moves = position.legal_moves();
         let index = (usize::from(position.occupied_count()) * 7 + 3) % moves.len();
         position.make_move(moves.as_slice()[index]).unwrap();

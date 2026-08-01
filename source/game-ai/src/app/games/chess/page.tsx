@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChessGame } from "@/components/game-ai/ChessGame";
+import { GameSourceLinks } from "@/components/game-ai/GameSourceLinks";
 
 const GAMES_ARE_PUBLIC = process.env.PUBLISH_GAME_AI === "1";
 
@@ -36,6 +37,7 @@ export default function ChessPage() {
       </header>
 
       <ChessGame />
+      <GameSourceLinks crateName="ai-chess" gameName="Chess" />
     </div>
   );
 }

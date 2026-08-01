@@ -1,4 +1,4 @@
-use gai_chess::Engine;
+use ai_chess::Engine;
 use std::io::{self, BufRead, Write};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, mpsc};

@@ -5,10 +5,10 @@ game_ai_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 repository_root=$(cd "$game_ai_root/.." && pwd)
 
 engines=(
-  "tictactoe:gai-tictactoe"
-  "connect4:gai-connect4"
-  "othello:gai-othello"
-  "chess:gai-chess"
+  "tictactoe:ai-tictactoe"
+  "connect4:ai-connect4"
+  "othello:ai-othello"
+  "chess:ai-chess"
 )
 
 for entry in "${engines[@]}"; do

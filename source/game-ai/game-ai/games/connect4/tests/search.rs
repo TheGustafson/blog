@@ -1,4 +1,4 @@
-use gai_connect4::{Algorithm, Move, Position, ScoreKind, SearchLimits, iterative_search, search};
+use ai_connect4::{Algorithm, Move, Position, ScoreKind, SearchLimits, iterative_search, search};
 
 fn position(notation: &[&str]) -> Position {
     let moves: Vec<Move> = notation

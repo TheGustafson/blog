@@ -1,4 +1,4 @@
-use gai_connect4::Engine;
+use ai_connect4::Engine;
 
 #[test]
 fn handshake_position_search_and_snapshot_share_one_session() {

@@ -1,4 +1,4 @@
-use gai_tictactoe::Engine;
+use ai_tictactoe::Engine;
 use std::io::{self, BufRead};
 
 fn main() {

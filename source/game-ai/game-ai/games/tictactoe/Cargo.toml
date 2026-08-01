@@ -1,5 +1,5 @@
 [package]
-name = "gai-tictactoe"
+name = "ai-tictactoe"
 version = "0.1.0"
 authors = ["Nick Gustafson"]
 edition = "2024"
@@ -7,9 +7,9 @@ rust-version = "1.85"
 description = "A small, exact tic-tac-toe engine with perfect play"
 license = "MIT"
 readme = "README.md"
-documentation = "https://docs.rs/gai-tictactoe"
+documentation = "https://docs.rs/ai-tictactoe"
 homepage = "https://thegustafson.com/games/tic-tac-toe"
-repository = "https://github.com/TheGustafson/gai-tictactoe"
+repository = "https://github.com/TheGustafson/ai-tictactoe"
 keywords = ["tic-tac-toe", "game", "engine", "search", "wasm"]
 categories = ["game-engines", "wasm"]
 include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
@@ -18,7 +18,7 @@ include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
 crate-type = ["cdylib", "rlib"]
 
 [[bin]]
-name = "gai-tictactoe"
+name = "ai-tictactoe"
 path = "src/bin/engine.rs"
 
 [features]

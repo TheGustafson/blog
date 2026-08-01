@@ -6,13 +6,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GAME_AI_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BLOG_DIR="$(cd "$GAME_AI_DIR/.." && pwd)"
 TICTACTOE_OUTPUT_DIR="$BLOG_DIR/public/game-ai/tictactoe"
-TICTACTOE_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/gai_tictactoe.wasm"
+TICTACTOE_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_tictactoe.wasm"
 CONNECT4_OUTPUT_DIR="$BLOG_DIR/public/game-ai/connect4"
-CONNECT4_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/gai_connect4.wasm"
+CONNECT4_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_connect4.wasm"
 OTHELLO_OUTPUT_DIR="$BLOG_DIR/public/game-ai/othello"
-OTHELLO_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/gai_othello.wasm"
+OTHELLO_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_othello.wasm"
 CHESS_OUTPUT_DIR="$BLOG_DIR/public/game-ai/chess"
-CHESS_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/gai_chess.wasm"
+CHESS_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_chess.wasm"
 EXPECTED_WASM_BINDGEN_VERSION="0.2.126"
 
 if ! command -v wasm-bindgen >/dev/null 2>&1; then
@@ -29,8 +29,9 @@ if [[ "$ACTUAL_WASM_BINDGEN_VERSION" != "wasm-bindgen $EXPECTED_WASM_BINDGEN_VER
 fi
 
 cargo build \
+  --locked \
   --manifest-path "$GAME_AI_DIR/Cargo.toml" \
-  --package gai-tictactoe \
+  --package ai-tictactoe \
   --profile wasm-release \
   --target wasm32-unknown-unknown \
   --features wasm
@@ -45,8 +46,9 @@ wasm-bindgen \
 cp "$GAME_AI_DIR/browser/tictactoe.worker.js" "$TICTACTOE_OUTPUT_DIR/worker.js"
 
 cargo build \
+  --locked \
   --manifest-path "$GAME_AI_DIR/Cargo.toml" \
-  --package gai-connect4 \
+  --package ai-connect4 \
   --profile wasm-release \
   --target wasm32-unknown-unknown \
   --features wasm
@@ -61,8 +63,9 @@ wasm-bindgen \
 cp "$GAME_AI_DIR/browser/connect4.worker.js" "$CONNECT4_OUTPUT_DIR/worker.js"
 
 cargo build \
+  --locked \
   --manifest-path "$GAME_AI_DIR/Cargo.toml" \
-  --package gai-othello \
+  --package ai-othello \
   --profile wasm-release \
   --target wasm32-unknown-unknown \
   --features wasm
@@ -77,8 +80,9 @@ wasm-bindgen \
 cp "$GAME_AI_DIR/browser/othello.worker.js" "$OTHELLO_OUTPUT_DIR/worker.js"
 
 cargo build \
+  --locked \
   --manifest-path "$GAME_AI_DIR/Cargo.toml" \
-  --package gai-chess \
+  --package ai-chess \
   --profile wasm-release \
   --target wasm32-unknown-unknown \
   --features wasm

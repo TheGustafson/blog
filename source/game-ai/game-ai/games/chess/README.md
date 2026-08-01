@@ -1,4 +1,4 @@
-# gai-chess
+# ai-chess
 
 A small chess rules and search library with classical and NNUE evaluation.
 
@@ -8,11 +8,11 @@ Add the crate to your project:
 
 ```toml
 [dependencies]
-gai-chess = "0.1"
+ai-chess = "0.1"
 ```
 
 ```rust
-use gai_chess::{EvaluationProfile, Position, SearchConfig, iterative_search};
+use ai_chess::{EvaluationProfile, Position, SearchConfig, iterative_search};
 
 let position = Position::default();
 let config = SearchConfig::classical(4, EvaluationProfile::TinyNnue)

@@ -1,4 +1,4 @@
-# gai-tictactoe
+# ai-tictactoe
 
 A tic-tac-toe rules and search library with perfect play.
 
@@ -8,13 +8,13 @@ Add the crate to your project:
 
 ```toml
 [dependencies]
-gai-tictactoe = "0.1"
+ai-tictactoe = "0.1"
 ```
 
 Build the tablebase once, then use it for each position:
 
 ```rust
-use gai_tictactoe::{Algorithm, Position, Tablebase, search};
+use ai_tictactoe::{Algorithm, Position, Tablebase, search};
 
 let position = Position::default();
 let tablebase = Tablebase::build();

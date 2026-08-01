@@ -1,4 +1,4 @@
-use gai_chess::{
+use ai_chess::{
     CastlingRights, Color, Evaluation, EvaluationProfile, GameResult, MoveKind, Piece, PieceKind,
     Position, Square, evaluate, perft, piece_contributions,
 };
@@ -282,5 +282,5 @@ fn evaluation_is_traceable_tapered_and_color_symmetric() {
 
 #[test]
 fn move_parser_rejects_non_ascii_without_panicking() {
-    assert!("é2e4".parse::<gai_chess::Move>().is_err());
+    assert!("é2e4".parse::<ai_chess::Move>().is_err());
 }
