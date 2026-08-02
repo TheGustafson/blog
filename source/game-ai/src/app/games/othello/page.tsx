@@ -7,7 +7,8 @@ const GAMES_ARE_PUBLIC = process.env.PUBLISH_GAME_AI === "1";
 
 export const metadata: Metadata = {
   title: "Othello",
-  description: "Play Othello against a positional Rust engine.",
+  description:
+    "Play Othello against a Rust alpha-beta engine with selectable evaluation.",
   robots: GAMES_ARE_PUBLIC
     ? { index: true, follow: true }
     : { index: false, follow: false },
@@ -29,8 +30,8 @@ export default function OthelloPage() {
           Othello
         </h1>
         <p className="mt-4 font-[family-name:var(--font-newsreader)] text-lg text-stone-600">
-          The engine weighs mobility, corners, and disc count differently as the
-          board fills.
+          Choose one of six alpha-beta strengths and five evaluators. Stronger
+          levels solve the endgame exactly.
         </p>
       </header>
 

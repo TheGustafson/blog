@@ -49,6 +49,65 @@ export type UltimateTicTacToeSnapshot = {
   decision: UltimateDecision | null;
 };
 
+export type HexColor = "R" | "B";
+export type HexSeat = "one" | "two";
+
+export type HexMctsDecision = {
+  algorithm: "uct";
+  strategy: "plain-uct" | "uct-rave";
+  raveEquivalence: number;
+  rolloutPolicy: "random" | "save-bridge";
+  knowledgeThreshold: number | null;
+  virtualConnectionsEnabled: boolean;
+  bestMove: string | null;
+  simulations: number;
+  treeNodes: number;
+  rootVisits: number;
+  rolloutMoves: number;
+  bridgeReplies: number;
+  knowledgeNodes: number;
+  prunedMoves: number;
+  mustPlayNodes: number;
+  rootPrunedMoves: number;
+  rootMustPlayMoves: number;
+  virtualConnections: number;
+  semiConnections: number;
+  connectionSearchTruncatedNodes: number;
+  provenNodes: number;
+  solverPropagations: number;
+  provenWinner: HexSeat | null;
+  proofDistance: number | null;
+  expectedScore: number;
+  elapsedMs: number;
+  rootMoves: Array<{
+    move: string;
+    visits: number;
+    expectedScore: number;
+    raveVisits: number;
+    raveExpectedScore: number;
+    provenWinner: HexSeat | null;
+    proofDistance: number | null;
+  }>;
+};
+
+export type HexSnapshot = {
+  size: number;
+  board: Array<HexColor | null>;
+  seatToMove: HexSeat;
+  colorToMove: HexColor;
+  seatColors: [HexColor, HexColor];
+  colorsSwapped: boolean;
+  swapAvailable: boolean;
+  result: "ongoing" | "win";
+  winnerSeat: HexSeat | null;
+  winnerColor: HexColor | null;
+  winningPath: string[];
+  legalMoves: string[];
+  history: string[];
+  lastMove: string | null;
+  decision: HexMctsDecision | null;
+};
+
 export type ConnectFourSnapshot = {
   columns: Array<Array<"R" | "Y" | null>>;
   sideToMove: "R" | "Y";

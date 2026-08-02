@@ -1,0 +1,47 @@
+[package]
+name = "ai-hex"
+version = "0.1.0"
+default-run = "ai-hex"
+authors = ["Nick Gustafson"]
+edition = "2024"
+rust-version = "1.85"
+description = "A small Hex rules and Monte Carlo tree search engine"
+license = "MIT"
+readme = "README.md"
+documentation = "https://docs.rs/ai-hex"
+homepage = "https://thegustafson.com/games/hex"
+repository = "https://github.com/TheGustafson/ai-hex"
+keywords = ["hex", "game", "engine", "mcts", "wasm"]
+categories = ["game-engines", "wasm"]
+include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "ai-hex"
+path = "src/bin/engine.rs"
+
+[[bin]]
+name = "selfplay"
+path = "src/bin/selfplay.rs"
+
+[features]
+default = []
+wasm = ["dep:wasm-bindgen"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2.126", optional = true }
+
+[dev-dependencies]
+serde_json = "1.0"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[profile.wasm-release]
+inherits = "release"
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+strip = "symbols"

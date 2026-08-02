@@ -1,15 +1,16 @@
 # Game AI integration
 
-The browser games use four independent Rust crates:
+The browser games use five independent Rust crates:
 
 - [`ai-ultimate-tictactoe`](games/ultimate-tictactoe/README.md)
 - [`ai-connect4`](games/connect4/README.md)
+- [`ai-hex`](games/hex/README.md)
 - [`ai-othello`](games/othello/README.md)
 - [`ai-chess`](games/chess/README.md)
 
 Each crate is maintained in its own public repository. The directories under
 `games/` are Git submodules pinned to exact release commits. The workspace
-manifest is only a convenience for building and testing the four engines with
+manifest is only a convenience for building and testing the five engines with
 the browser integration.
 
 The crates deliberately share no game framework. Their public interfaces use
@@ -22,7 +23,7 @@ From the blog repository root:
 ```bash
 cargo test --release --manifest-path game-ai/Cargo.toml --workspace --all-features
 cargo +1.85.0 check --manifest-path game-ai/Cargo.toml --workspace --all-targets --all-features
-cargo doc --manifest-path game-ai/Cargo.toml --workspace --all-features --no-deps
+cargo doc --manifest-path game-ai/Cargo.toml --workspace --all-features --no-deps --lib
 bash game-ai/tools/build-wasm.sh
 ```
 

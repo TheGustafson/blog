@@ -13,6 +13,8 @@ OTHELLO_OUTPUT_DIR="$BLOG_DIR/public/game-ai/othello"
 OTHELLO_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_othello.wasm"
 CHESS_OUTPUT_DIR="$BLOG_DIR/public/game-ai/chess"
 CHESS_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_chess.wasm"
+HEX_OUTPUT_DIR="$BLOG_DIR/public/game-ai/hex"
+HEX_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_hex.wasm"
 EXPECTED_WASM_BINDGEN_VERSION="0.2.126"
 
 if ! command -v wasm-bindgen >/dev/null 2>&1; then
@@ -114,3 +116,20 @@ wasm-bindgen \
   --out-name chess \
   "$CHESS_WASM_PATH"
 cp "$GAME_AI_DIR/browser/chess.worker.js" "$CHESS_OUTPUT_DIR/worker.js"
+
+cargo build \
+  --locked \
+  --manifest-path "$GAME_AI_DIR/Cargo.toml" \
+  --package ai-hex \
+  --profile wasm-release \
+  --target wasm32-unknown-unknown \
+  --features wasm
+
+mkdir -p "$HEX_OUTPUT_DIR"
+wasm-bindgen \
+  --target no-modules \
+  --no-typescript \
+  --out-dir "$HEX_OUTPUT_DIR" \
+  --out-name hex \
+  "$HEX_WASM_PATH"
+cp "$GAME_AI_DIR/browser/hex.worker.js" "$HEX_OUTPUT_DIR/worker.js"

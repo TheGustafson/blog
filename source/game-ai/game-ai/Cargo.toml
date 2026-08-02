@@ -2,6 +2,7 @@
 members = [
     "games/chess",
     "games/connect4",
+    "games/hex",
     "games/othello",
     "games/ultimate-tictactoe",
 ]

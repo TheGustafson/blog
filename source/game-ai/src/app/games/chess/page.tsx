@@ -7,7 +7,8 @@ const GAMES_ARE_PUBLIC = process.env.PUBLISH_GAME_AI === "1";
 
 export const metadata: Metadata = {
   title: "Chess",
-  description: "Play chess against a small Rust and WebAssembly engine.",
+  description:
+    "Play chess against a Rust engine with classical and neural evaluation.",
   robots: GAMES_ARE_PUBLIC
     ? { index: true, follow: true }
     : { index: false, follow: false },
@@ -31,8 +32,8 @@ export default function ChessPage() {
           Chess
         </h1>
         <p className="mt-4 font-[family-name:var(--font-newsreader)] text-lg text-stone-600">
-          The engine searches progressively deeper and uses a small neural
-          network to score positions.
+          Choose an evaluator and one of six strengths for iterative-deepening
+          alpha-beta search.
         </p>
       </header>
 

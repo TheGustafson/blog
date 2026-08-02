@@ -3,7 +3,7 @@
 :HL["/_next/static/media/5611c55482296524-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/_next/static/media/7d4881bb7e1bf84d-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/_next/static/css/894c0ba8e58fc522.css","style"]
-:HL["/_next/static/css/dec2b542e2a692a2.css","style"]
-:HL["/_next/static/css/5f16f7f17e52ba6d.css","style"]
+:HL["/_next/static/css/f591b2ba6525e728.css","style"]
+:HL["/_next/static/css/8b34f28d6b58a748.css","style"]
 :HL["/_next/static/css/49d1d1e3ec6e7992.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"games","param":null,"prefetchHints":0,"slots":{"children":{"name":"chess","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"6I2Kpid4_YJUXVHk4sxXe"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"games","param":null,"prefetchHints":0,"slots":{"children":{"name":"chess","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"Tk0HjiCYv-rn2OY3GEJ8X"}

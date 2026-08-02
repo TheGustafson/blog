@@ -8,7 +8,7 @@ const SOURCE_URL =
 
 export const metadata: Metadata = {
   title: "Game AIs",
-  description: "Small game AIs by Nick Gustafson.",
+  description: "Playable Rust game engines compiled to WebAssembly.",
   robots: GAMES_ARE_PUBLIC
     ? { index: true, follow: true }
     : { index: false, follow: false },
@@ -22,29 +22,36 @@ const games = [
     number: "01",
     title: "Ultimate Tic-Tac-Toe",
     href: "/games/tic-tac-toe",
-    note: "Each move routes the next player to one of nine smaller boards. The engine searches the tactical consequences with alpha-beta.",
+    note: "Ultimate Tic-Tac-Toe is played across nine boards, and each move normally routes the opponent to the matching board. Choose PUCT, UCT, or alpha-beta search and one of six strengths.",
     preview: "ultimate-tic-tac-toe",
   },
   {
     number: "02",
     title: "Connect Four",
     href: "/games/connect-four",
-    note: "The engine looks several turns ahead and skips branches that cannot improve its choice.",
+    note: "The engine uses alpha-beta, move ordering, and a transposition table. Choose one of six search budgets.",
     preview: "connect-four",
   },
   {
     number: "03",
     title: "Othello",
     href: "/games/othello",
-    note: "It values mobility, corners, and avoiding exposed discs early. As the board fills, disc count matters more.",
+    note: "Choose an alpha-beta strength and evaluator. Stronger levels solve the endgame exactly.",
     preview: "othello",
   },
   {
     number: "04",
     title: "Chess",
     href: "/games/chess",
-    note: "The engine searches one turn deeper at a time. A small neural network scores the positions at the edge of its search.",
+    note: "Choose an evaluator and strength for iterative-deepening search with quiescence and a transposition table.",
     preview: "chess",
+  },
+  {
+    number: "05",
+    title: "Hex",
+    href: "/games/hex",
+    note: "Hex is a connection game where each player joins a different pair of opposite sides. Choose UCT or UCT-RAVE, one of six strengths, and a board size from 9×9 through 24×24.",
+    preview: "hex",
   },
 ] as const;
 
@@ -150,6 +157,24 @@ const chess = [
   "♖",
 ];
 
+const hexRed = new Set(["3,0", "3,1", "2,2", "2,3", "1,4", "1,5", "0,6"]);
+const hexBlue = new Set(["0,1", "1,1", "2,1", "3,2", "4,2", "5,3", "6,3"]);
+
+function hexPreviewCenter(file: number, rank: number) {
+  return {
+    x: 11 + 10.4 * (file + rank / 2),
+    y: 10 + 9 * rank,
+  };
+}
+
+function hexPreviewPoints(file: number, rank: number) {
+  const { x, y } = hexPreviewCenter(file, rank);
+  return Array.from({ length: 6 }, (_, index) => {
+    const angle = ((-90 + index * 60) * Math.PI) / 180;
+    return `${x + 6 * Math.cos(angle)},${y + 6 * Math.sin(angle)}`;
+  }).join(" ");
+}
+
 function GamePreview({
   kind,
 }: {
@@ -193,6 +218,42 @@ function GamePreview({
       </div>
     );
   }
+  if (kind === "hex") {
+    return (
+      <svg
+        className="block w-[min(21rem,84vw)] overflow-visible"
+        viewBox="0 0 110 74"
+        aria-hidden="true"
+      >
+        {Array.from({ length: 7 }, (_, rank) =>
+          Array.from({ length: 7 }, (_, file) => {
+            const key = `${file},${rank}`;
+            const point = hexPreviewCenter(file, rank);
+            return (
+              <g key={key}>
+                <polygon
+                  points={hexPreviewPoints(file, rank)}
+                  fill="#eee7d9"
+                  stroke="#9d9589"
+                  strokeWidth="0.65"
+                />
+                {(hexRed.has(key) || hexBlue.has(key)) && (
+                  <circle
+                    cx={point.x}
+                    cy={point.y}
+                    r="4.1"
+                    fill={hexRed.has(key) ? "#a94636" : "#315f73"}
+                    stroke="rgb(247 244 236 / 0.72)"
+                    strokeWidth="0.55"
+                  />
+                )}
+              </g>
+            );
+          }),
+        )}
+      </svg>
+    );
+  }
   return (
     <div className="games-index-chess" aria-hidden="true">
       {chess.map((piece, index) => (
@@ -210,7 +271,8 @@ export default function GamesPage() {
           Game AIs
         </h1>
         <p className="mt-5 max-w-xl font-[family-name:var(--font-newsreader)] text-xl leading-relaxed text-stone-600">
-          Get <RektCycle /> by AI. A WASM game engine behind each opponent.
+          Get <RektCycle /> by AI. Every opponent is a Rust engine compiled to
+          WebAssembly.
         </p>
         {GAMES_ARE_PUBLIC && (
           <a

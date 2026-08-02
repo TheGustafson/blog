@@ -6,6 +6,7 @@ repository_root=$(cd "$game_ai_root/.." && pwd)
 
 engines=(
   "connect4:ai-connect4"
+  "hex:ai-hex"
   "othello:ai-othello"
   "chess:ai-chess"
   "ultimate-tictactoe:ai-ultimate-tictactoe"

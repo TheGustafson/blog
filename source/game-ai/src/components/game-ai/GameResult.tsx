@@ -16,7 +16,7 @@ export function GameResult({
 
   useEffect(() => {
     const keyboardTriggered =
-      document.activeElement instanceof HTMLElement &&
+      document.activeElement instanceof Element &&
       document.activeElement.matches(":focus-visible");
     const frame = requestAnimationFrame(() => {
       const result = resultRef.current;

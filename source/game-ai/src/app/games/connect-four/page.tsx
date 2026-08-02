@@ -7,7 +7,8 @@ const GAMES_ARE_PUBLIC = process.env.PUBLISH_GAME_AI === "1";
 
 export const metadata: Metadata = {
   title: "Connect Four",
-  description: "Play Connect Four against a Rust search engine.",
+  description:
+    "Play Connect Four against a Rust alpha-beta engine with six strength levels.",
   robots: GAMES_ARE_PUBLIC
     ? { index: true, follow: true }
     : { index: false, follow: false },
@@ -31,8 +32,8 @@ export default function ConnectFourPage() {
           Connect Four
         </h1>
         <p className="mt-4 font-[family-name:var(--font-newsreader)] text-lg text-stone-600">
-          Choose how many turns ahead the engine looks. Alpha-beta lets it stop
-          searching a line once that line cannot improve its choice.
+          The engine uses alpha-beta, move ordering, and a transposition table.
+          Choose one of six depth and node budgets.
         </p>
       </header>
 

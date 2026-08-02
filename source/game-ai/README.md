@@ -26,7 +26,7 @@ cargo install wasm-bindgen-cli --version 0.2.126 --locked
 npm run build
 ```
 
-The package build first compiles the four Rust engines to WebAssembly and then
+The package build first compiles the five Rust engines to WebAssembly and then
 exports the Game AI routes with Next.js. The static output is written to
 `out/`.
 
