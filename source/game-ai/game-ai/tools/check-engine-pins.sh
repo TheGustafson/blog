@@ -5,6 +5,7 @@ game_ai_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 repository_root=$(cd "$game_ai_root/.." && pwd)
 
 engines=(
+  "backgammon:ai-backgammon"
   "connect4:ai-connect4"
   "hex:ai-hex"
   "othello:ai-othello"

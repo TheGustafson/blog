@@ -5,6 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GAME_AI_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BLOG_DIR="$(cd "$GAME_AI_DIR/.." && pwd)"
+BACKGAMMON_OUTPUT_DIR="$BLOG_DIR/public/game-ai/backgammon"
+BACKGAMMON_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_backgammon.wasm"
 ULTIMATE_OUTPUT_DIR="$BLOG_DIR/public/game-ai/ultimate-tictactoe"
 ULTIMATE_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_ultimate_tictactoe.wasm"
 CONNECT4_OUTPUT_DIR="$BLOG_DIR/public/game-ai/connect4"
@@ -29,6 +31,24 @@ if [[ "$ACTUAL_WASM_BINDGEN_VERSION" != "wasm-bindgen $EXPECTED_WASM_BINDGEN_VER
     >&2
   exit 1
 fi
+
+cargo build \
+  --locked \
+  --manifest-path "$GAME_AI_DIR/Cargo.toml" \
+  --package ai-backgammon \
+  --lib \
+  --profile wasm-release \
+  --target wasm32-unknown-unknown \
+  --features wasm
+
+mkdir -p "$BACKGAMMON_OUTPUT_DIR"
+wasm-bindgen \
+  --target no-modules \
+  --no-typescript \
+  --out-dir "$BACKGAMMON_OUTPUT_DIR" \
+  --out-name backgammon \
+  "$BACKGAMMON_WASM_PATH"
+cp "$GAME_AI_DIR/browser/backgammon.worker.js" "$BACKGAMMON_OUTPUT_DIR/worker.js"
 
 cargo build \
   --locked \

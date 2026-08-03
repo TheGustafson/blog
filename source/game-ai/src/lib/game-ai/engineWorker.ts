@@ -9,11 +9,7 @@ export type UltimateMctsMoveStats = {
 
 type UltimateMctsDecision = {
   algorithm: "mcts";
-  strategy:
-    | "random-uct"
-    | "tactical-uct"
-    | "handcrafted-puct"
-    | "learned-puct";
+  strategy: "random-uct" | "tactical-uct" | "handcrafted-puct" | "learned-puct";
   bestMove: string | null;
   simulations: number;
   treeNodes: number;

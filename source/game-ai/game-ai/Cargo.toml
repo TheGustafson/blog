@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "games/backgammon",
     "games/chess",
     "games/connect4",
     "games/hex",

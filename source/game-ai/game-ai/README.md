@@ -1,43 +1,28 @@
 # Game AI integration
 
-The browser games use five independent Rust crates:
+The browser games use six independent Rust crates:
 
+- [`ai-backgammon`](games/backgammon/README.md)
 - [`ai-ultimate-tictactoe`](games/ultimate-tictactoe/README.md)
 - [`ai-connect4`](games/connect4/README.md)
 - [`ai-hex`](games/hex/README.md)
 - [`ai-othello`](games/othello/README.md)
 - [`ai-chess`](games/chess/README.md)
 
-Each crate is maintained in its own public repository. The directories under
-`games/` are Git submodules pinned to exact release commits. The workspace
-manifest is only a convenience for building and testing the five engines with
-the browser integration.
+Each directory under `games/` is the exact tagged source used for the published
+WebAssembly engine. The workspace manifest builds and tests the six crates
+together without imposing a shared game framework.
 
-The crates deliberately share no game framework. Their public interfaces use
-the same basic shape—`Position`, legal moves, make/unmake, a search
-configuration, and a search report—without forcing unrelated games through one
-trait.
-
-From the blog repository root:
+From the corresponding-source root:
 
 ```bash
-cargo test --release --manifest-path game-ai/Cargo.toml --workspace --all-features
-cargo +1.85.0 check --manifest-path game-ai/Cargo.toml --workspace --all-targets --all-features
-cargo doc --manifest-path game-ai/Cargo.toml --workspace --all-features --no-deps --lib
+cargo check --locked --manifest-path game-ai/Cargo.toml --workspace --all-targets --all-features
+cargo clippy --locked --manifest-path game-ai/Cargo.toml --workspace --all-targets --all-features -- -D warnings
+cargo test --release --locked --manifest-path game-ai/Cargo.toml --workspace --all-features
+RUSTDOCFLAGS="-D warnings" cargo doc --locked --manifest-path game-ai/Cargo.toml --workspace --all-features --no-deps --lib
 bash game-ai/tools/build-wasm.sh
 ```
 
-Clone the authoring repository with its engine pins using:
-
-```bash
-git clone --recurse-submodules <private-blog-url>
-```
-
-For an existing checkout, initialize or restore the recorded pins with
-`git submodule update --init --recursive`. Run
-`game-ai/tools/check-engine-pins.sh` to verify that every engine is clean and
-checked out at the tag matching its Cargo version.
-
-`tools/build-wasm.sh` compiles the optional browser bindings and pairs them
-with the workers under `browser/`. The React code only sends commands and
-renders snapshots; rules and search stay in Rust.
+The documentation command is library-only because several crates ship a binary
+named `selfplay`. The browser workers under `browser/` send commands and render
+snapshots; rules and search stay in Rust.

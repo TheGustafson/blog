@@ -12,9 +12,7 @@ export const metadata: Metadata = {
   robots: GAMES_ARE_PUBLIC
     ? { index: true, follow: true }
     : { index: false, follow: false },
-  alternates: GAMES_ARE_PUBLIC
-    ? { canonical: "/games" }
-    : undefined,
+  alternates: GAMES_ARE_PUBLIC ? { canonical: "/games" } : undefined,
 };
 
 const games = [
@@ -52,6 +50,13 @@ const games = [
     href: "/games/hex",
     note: "Hex is a connection game where each player joins a different pair of opposite sides. Choose UCT or UCT-RAVE, one of six strengths, and a board size from 9×9 through 24×24.",
     preview: "hex",
+  },
+  {
+    number: "06",
+    title: "Backgammon",
+    href: "/games/backgammon",
+    note: "The engine generates complete legal checker plays and searches future dice rolls with weighted expectimax. Choose pass-and-play or one of six search budgets.",
+    preview: "backgammon",
   },
 ] as const;
 
@@ -159,6 +164,20 @@ const chess = [
 
 const hexRed = new Set(["3,0", "3,1", "2,2", "2,3", "1,4", "1,5", "0,6"]);
 const hexBlue = new Set(["0,1", "1,1", "2,1", "3,2", "4,2", "5,3", "6,3"]);
+const backgammonCheckers = [
+  { column: 0, side: "top", color: "white", count: 2 },
+  { column: 5, side: "top", color: "black", count: 5 },
+  { column: 7, side: "top", color: "black", count: 3 },
+  { column: 11, side: "top", color: "white", count: 5 },
+  { column: 0, side: "bottom", color: "black", count: 2 },
+  { column: 5, side: "bottom", color: "white", count: 5 },
+  { column: 7, side: "bottom", color: "white", count: 3 },
+  { column: 11, side: "bottom", color: "black", count: 5 },
+] as const;
+
+function backgammonColumnX(column: number) {
+  return column < 6 ? 12 + column * 22.5 : 172 + (column - 6) * 22.5;
+}
 
 function hexPreviewCenter(file: number, rank: number) {
   return {
@@ -175,11 +194,7 @@ function hexPreviewPoints(file: number, rank: number) {
   }).join(" ");
 }
 
-function GamePreview({
-  kind,
-}: {
-  kind: (typeof games)[number]["preview"];
-}) {
+function GamePreview({ kind }: { kind: (typeof games)[number]["preview"] }) {
   if (kind === "ultimate-tic-tac-toe") {
     return (
       <div className="games-index-ultimate" aria-hidden="true">
@@ -196,9 +211,7 @@ function GamePreview({
           <span
             key={index}
             className={
-              connectFour.has(index)
-                ? `is-${connectFour.get(index)}`
-                : ""
+              connectFour.has(index) ? `is-${connectFour.get(index)}` : ""
             }
           />
         ))}
@@ -210,9 +223,7 @@ function GamePreview({
       <div className="games-index-othello" aria-hidden="true">
         {Array.from({ length: 64 }, (_, index) => (
           <span key={index}>
-            {othello.has(index) && (
-              <i className={`is-${othello.get(index)}`} />
-            )}
+            {othello.has(index) && <i className={`is-${othello.get(index)}`} />}
           </span>
         ))}
       </div>
@@ -250,6 +261,55 @@ function GamePreview({
               </g>
             );
           }),
+        )}
+      </svg>
+    );
+  }
+  if (kind === "backgammon") {
+    return (
+      <svg
+        className="games-index-backgammon block w-[min(21rem,84vw)]"
+        viewBox="0 0 320 190"
+        aria-hidden="true"
+      >
+        <rect
+          x="1"
+          y="1"
+          width="318"
+          height="188"
+          fill="#8c5436"
+          stroke="#51443a"
+          strokeWidth="2"
+        />
+        <rect x="151" y="2" width="18" height="186" fill="#5e3929" />
+        {Array.from({ length: 12 }, (_, column) => {
+          const x = backgammonColumnX(column);
+          const fill = column % 2 === 0 ? "#d2aa69" : "#6f3027";
+          return (
+            <g key={column}>
+              <polygon
+                points={`${x},8 ${x + 21},8 ${x + 10.5},79`}
+                fill={fill}
+              />
+              <polygon
+                points={`${x},182 ${x + 21},182 ${x + 10.5},111`}
+                fill={fill}
+              />
+            </g>
+          );
+        })}
+        {backgammonCheckers.flatMap((stack) =>
+          Array.from({ length: stack.count }, (_, index) => (
+            <circle
+              key={`${stack.side}-${stack.column}-${index}`}
+              cx={backgammonColumnX(stack.column) + 10.5}
+              cy={stack.side === "top" ? 18 + index * 13 : 172 - index * 13}
+              r="8.4"
+              fill={stack.color === "white" ? "#eee7d9" : "#292624"}
+              stroke={stack.color === "white" ? "#8b8174" : "#ddd3c3"}
+              strokeWidth="0.8"
+            />
+          )),
         )}
       </svg>
     );
@@ -303,9 +363,7 @@ export default function GamesPage() {
                   {game.note}
                 </p>
                 <div className="mt-8 flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.1em] text-stone-500">
-                  <span className="text-orange-800">
-                    play →
-                  </span>
+                  <span className="text-orange-800">play →</span>
                 </div>
               </div>
               <GamePreview kind={game.preview} />

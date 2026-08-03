@@ -1,0 +1,35 @@
+[package]
+name = "ai-backgammon"
+version = "0.1.0"
+authors = ["Nick Gustafson"]
+edition = "2024"
+rust-version = "1.85"
+description = "A compact cubeless Backgammon rules and expectimax engine"
+license = "MIT"
+readme = "README.md"
+documentation = "https://docs.rs/ai-backgammon"
+homepage = "https://thegustafson.com/games/backgammon"
+repository = "https://github.com/TheGustafson/ai-backgammon"
+keywords = ["backgammon", "game", "engine", "expectimax", "wasm"]
+categories = ["game-engines", "wasm"]
+include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+wasm = ["dep:wasm-bindgen"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2.126", optional = true }
+
+[profile.wasm-release]
+inherits = "release"
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+strip = "symbols"
+
+[lints.rust]
+unsafe_code = "forbid"
