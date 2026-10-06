@@ -312,6 +312,11 @@ figure.post-figure figcaption::before {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  .mcts-intro-final-state {
+    opacity: 1 !important;
+    stroke-dashoffset: 0 !important;
+  }
 }
 
 /* Wide tables scroll sideways instead of breaking the page, like equations. */
@@ -319,6 +324,72 @@ figure.post-figure figcaption::before {
   display: block;
   max-width: 100%;
   overflow-x: auto;
+}
+
+/* Keep connector lines from cutting through labels in animated tree diagrams. */
+.mcts-wide-figure svg text,
+.mcts-loop-figure svg text {
+  paint-order: stroke fill;
+  stroke: #faf8f1;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* Keep dense diagram labels readable on phones instead of shrinking a 700-unit SVG to ~350px. */
+@media (max-width: 639px) {
+  .mcts-hero-tree .mcts-hero-stat {
+    font-size: 22px !important;
+  }
+
+  .mcts-hero-tree .mcts-hero-stat-node[data-depth="0"],
+  .mcts-hero-tree .mcts-hero-stat-node[data-depth="1"] {
+    r: 18px;
+  }
+
+  .mcts-hero-tree .mcts-hero-stat[data-depth="2"],
+  .mcts-hero-tree .mcts-hero-stat[data-depth="3"],
+  .mcts-hero-tree .mcts-hero-stat[data-depth="4"],
+  .mcts-hero-tree .mcts-hero-stat[data-depth="5"] {
+    display: none;
+  }
+
+  .mcts-hero-tree .mcts-hero-outcome {
+    font-size: 22px !important;
+  }
+
+  .mcts-hero-tree .mcts-hero-outcome-node {
+    r: 16px;
+  }
+
+  .mcts-wide-figure {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+
+  .mcts-wide-figure > svg {
+    width: 56rem;
+    max-width: none;
+  }
+
+  .mcts-wide-figure > .mcts-mobile-compact {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .mcts-wide-figure:not(:has(> .mcts-mobile-compact))::before {
+    content: "Swipe to inspect the full figure →";
+    position: sticky;
+    left: 0;
+    display: block;
+    width: max-content;
+    padding: 0.35rem 0.75rem;
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.625rem;
+    letter-spacing: 0.04em;
+    color: #78716c;
+  }
 }
 
 /*

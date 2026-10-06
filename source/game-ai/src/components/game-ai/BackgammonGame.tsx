@@ -846,6 +846,7 @@ export function BackgammonGame() {
       data-backgammon-ai-moves={aiMoves}
       data-backgammon-ai-depth={lastSearch?.analysis.depth ?? undefined}
       data-backgammon-ai-nodes={lastSearch?.analysis.nodes ?? undefined}
+      data-search-strength={strength}
       className="game-ai-workbench game-ai-backgammon-game not-prose mx-auto mb-10 mt-4 w-[min(920px,calc(100vw-2rem))] sm:mt-6"
     >
       <div className="backgammon-setup game-ai-play-controls">

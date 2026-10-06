@@ -1,22 +1,17 @@
 "use client";
 
-import {
-  type KeyboardEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   GameEngineWorker,
   type Mark,
   type UltimateDecision,
+  type UltimateMctsMoveStats,
   type UltimateTicTacToeSnapshot,
   readProtocolError,
 } from "@/lib/game-ai/engineWorker";
 import { EngineStartupNote } from "./EngineStartupNote";
 import { GameResult } from "./GameResult";
+import { UltimateTicTacToeBoard } from "./UltimateTicTacToeBoard";
 
 const ALPHA_STRENGTHS = {
   beginner: { label: "Beginner", depth: 1, nodes: 500, softTime: 25 },
@@ -41,12 +36,39 @@ const MCTS_STRENGTHS = {
   maximum: { label: "Maximum", simulations: 100_000, softTime: 1_000 },
 };
 
+const FLAT_STRENGTHS = {
+  beginner: { label: "Beginner", rolloutsPerMove: 1, softTime: 25 },
+  easy: { label: "Easy", rolloutsPerMove: 2, softTime: 50 },
+  medium: { label: "Medium", rolloutsPerMove: 4, softTime: 100 },
+  hard: { label: "Hard", rolloutsPerMove: 8, softTime: 250 },
+  expert: { label: "Expert", rolloutsPerMove: 16, softTime: 650 },
+  maximum: { label: "Maximum", rolloutsPerMove: 160, softTime: 1_000 },
+};
+
 const UCT_EXPLORATION = 1.41421356237;
 
 type Strength = keyof typeof ALPHA_STRENGTHS;
 type SearchAlgorithm = "alpha-beta" | "mcts";
 type MctsMode = "learned" | "handcrafted" | "tactical" | "random";
 type MctsDecision = Exclude<UltimateDecision, { algorithm: "alpha-beta" }>;
+export type UltimateArticleStrategy =
+  "flat-monte-carlo" | MctsDecision["strategy"];
+
+type FlatDecision = {
+  algorithm: "flat";
+  strategy: "flat-monte-carlo";
+  bestMove: string | null;
+  simulations: number;
+  treeNodes: number;
+  rootVisits: number;
+  rolloutMoves: number;
+  leafEvaluations: 0;
+  expectedScore: number;
+  elapsedMs: number;
+  rootMoves: UltimateMctsMoveStats[];
+};
+
+type SearchReadoutDecision = MctsDecision | FlatDecision;
 
 const MIN_THINKING_MS = 420;
 const MOVE_ARRIVAL_MS = 190;
@@ -61,21 +83,9 @@ function wait(milliseconds: number) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-function globalIndex(board: number, cell: number) {
-  const boardRow = Math.floor(board / 3);
-  const boardColumn = board % 3;
-  const cellRow = Math.floor(cell / 3);
-  const cellColumn = cell % 3;
-  return (boardRow * 3 + cellRow) * 9 + boardColumn * 3 + cellColumn;
-}
-
-function coordinate(index: number) {
-  const file = String.fromCharCode("a".charCodeAt(0) + (index % 9));
-  return `${file}${9 - Math.floor(index / 9)}`;
-}
-
-function MctsSearchReadout({ decision }: { decision: MctsDecision }) {
+function MctsSearchReadout({ decision }: { decision: SearchReadoutDecision }) {
   const moves = decision.rootMoves.slice(0, 6);
+  const isFlat = decision.algorithm === "flat";
   const signalMax = Math.max(
     0.000001,
     ...moves.flatMap((move) => [
@@ -87,8 +97,9 @@ function MctsSearchReadout({ decision }: { decision: MctsDecision }) {
     decision.simulations === 0
       ? 0
       : decision.rolloutMoves / decision.simulations;
-  const isPuct = decision.strategy.endsWith("-puct");
+  const isPuct = !isFlat && decision.strategy.endsWith("-puct");
   const strategyLabel = {
+    "flat-monte-carlo": "Flat Monte Carlo",
     "learned-puct": "Learned policy PUCT",
     "handcrafted-puct": "Handcrafted PUCT",
     "tactical-uct": "Tactical UCT",
@@ -100,23 +111,23 @@ function MctsSearchReadout({ decision }: { decision: MctsDecision }) {
       <div className="ultimate-mcts-summary">
         <div>
           <h2>Last search</h2>
-          <p>
-            {strategyLabel}
-          </p>
+          <p>{strategyLabel}</p>
         </div>
         <dl>
           <div>
-            <dt>Simulations</dt>
+            <dt>{isFlat ? "Random games" : "Simulations"}</dt>
             <dd>{decision.simulations.toLocaleString()}</dd>
           </div>
           <div>
-            <dt>Tree nodes</dt>
-            <dd>{decision.treeNodes.toLocaleString()}</dd>
+            <dt>{isFlat ? "Games per move" : "Tree nodes"}</dt>
+            <dd>
+              {isFlat
+                ? (decision.rootMoves[0]?.visits ?? 0).toLocaleString()
+                : decision.treeNodes.toLocaleString()}
+            </dd>
           </div>
           <div>
-            <dt>
-              {isPuct ? "Leaf evaluations" : "Rollout moves"}
-            </dt>
+            <dt>{isPuct ? "Leaf evaluations" : "Rollout moves"}</dt>
             <dd>
               {isPuct
                 ? decision.leafEvaluations.toLocaleString()
@@ -124,9 +135,7 @@ function MctsSearchReadout({ decision }: { decision: MctsDecision }) {
             </dd>
           </div>
           <div>
-            <dt>
-              {isPuct ? "Rollout moves" : "Average rollout"}
-            </dt>
+            <dt>{isPuct ? "Rollout moves" : "Average rollout"}</dt>
             <dd>
               {isPuct
                 ? decision.rolloutMoves.toLocaleString()
@@ -143,48 +152,56 @@ function MctsSearchReadout({ decision }: { decision: MctsDecision }) {
           </div>
         </dl>
       </div>
-      <div className="ultimate-mcts-moves">
-        <div>
-          <h3>Root move comparison</h3>
-          <p>
-            <i /> visits <b /> prior
-          </p>
-        </div>
-        <ol>
-          <li className="is-heading" aria-hidden="true">
-            <span>Move</span>
-            <span />
-            <span>Visits</span>
-            <span>Score</span>
-            <span>Prior</span>
-          </li>
-          {moves.map((move) => (
-            <li key={move.move}>
-              <code>{move.move}</code>
-              <span className="ultimate-mcts-visit-bar" aria-hidden="true">
-                <i
-                  style={{
-                    width: `${Math.max(2, (move.visits / Math.max(1, decision.rootVisits) / signalMax) * 100)}%`,
-                  }}
-                />
-                <b
-                  style={{
-                    width: `${Math.max(2, (move.prior / signalMax) * 100)}%`,
-                  }}
-                />
-              </span>
-              <span>{move.visits.toLocaleString()}</span>
-              <span>{(move.expectedScore * 100).toFixed(1)}%</span>
-              <span>{(move.prior * 100).toFixed(1)}%</span>
+      {!isFlat && (
+        <div className="ultimate-mcts-moves">
+          <div>
+            <h3>Root move comparison</h3>
+            <p>
+              <i /> visits <b /> prior
+            </p>
+          </div>
+          <ol>
+            <li className="is-heading" aria-hidden="true">
+              <span>Move</span>
+              <span />
+              <span>Visits</span>
+              <span>Score</span>
+              <span>Prior</span>
             </li>
-          ))}
-        </ol>
-      </div>
+            {moves.map((move) => (
+              <li key={move.move}>
+                <code>{move.move}</code>
+                <span className="ultimate-mcts-visit-bar" aria-hidden="true">
+                  <i
+                    style={{
+                      width: `${Math.max(2, (move.visits / Math.max(1, decision.rootVisits) / signalMax) * 100)}%`,
+                    }}
+                  />
+                  <b
+                    style={{
+                      width: `${Math.max(2, (move.prior / signalMax) * 100)}%`,
+                    }}
+                  />
+                </span>
+                <span>{move.visits.toLocaleString()}</span>
+                <span>{(move.expectedScore * 100).toFixed(1)}%</span>
+                <span>{(move.prior * 100).toFixed(1)}%</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
     </section>
   );
 }
 
-export function UltimateTicTacToeGame() {
+export function UltimateTicTacToeGame({
+  fixedStrategy,
+  initialStrength = "maximum",
+}: {
+  fixedStrategy?: UltimateArticleStrategy;
+  initialStrength?: Strength;
+} = {}) {
   const engineRef = useRef<GameEngineWorker<UltimateTicTacToeSnapshot> | null>(
     null,
   );
@@ -200,12 +217,21 @@ export function UltimateTicTacToeGame() {
   const [error, setError] = useState<string | null>(null);
   const [humanSide, setHumanSide] = useState<Mark>("X");
   const [algorithm, setAlgorithm] = useState<SearchAlgorithm>("mcts");
-  const [strength, setStrength] = useState<Strength>("maximum");
-  const [mctsMode, setMctsMode] = useState<MctsMode>("learned");
+  const [strength, setStrength] = useState<Strength>(initialStrength);
+  const [mctsMode, setMctsMode] = useState<MctsMode>(() => {
+    if (
+      fixedStrategy === "random-uct" ||
+      fixedStrategy === "flat-monte-carlo"
+    ) {
+      return "random";
+    }
+    if (fixedStrategy === "tactical-uct") return "tactical";
+    if (fixedStrategy === "handcrafted-puct") return "handcrafted";
+    return "learned";
+  });
   const [arrivingMove, setArrivingMove] = useState<string | null>(null);
-  const [lastMctsDecision, setLastMctsDecision] = useState<MctsDecision | null>(
-    null,
-  );
+  const [lastMctsDecision, setLastMctsDecision] =
+    useState<SearchReadoutDecision | null>(null);
 
   const legalMoves = useMemo(
     () => new Set(snapshot?.legalMoves ?? []),
@@ -274,7 +300,7 @@ export function UltimateTicTacToeGame() {
           response = await engine.command(command);
         }
         const encoded =
-          carriedHistory === null
+          carriedHistory === null && !fixedStrategy
             ? new URLSearchParams(window.location.search).get("uttt")
             : null;
         const moves =
@@ -302,11 +328,81 @@ export function UltimateTicTacToeGame() {
       if (engineRef.current === engine) engineRef.current = null;
       engine.dispose();
     };
-  }, [algorithm, storeSnapshot]);
+  }, [algorithm, fixedStrategy, storeSnapshot]);
 
   const playEngineTurn = useCallback(async () => {
     await runBusy(async () => {
       const started = performance.now();
+      if (fixedStrategy === "flat-monte-carlo") {
+        const current = snapshotRef.current;
+        if (!current || current.legalMoves.length === 0) return;
+        const setting = FLAT_STRENGTHS[strength];
+        const totals = new Map(
+          current.legalMoves.map((move) => [
+            move,
+            { visits: 0, score: 0, rolloutMoves: 0 },
+          ]),
+        );
+        let completedBatches = 0;
+        let totalRolloutMoves = 0;
+
+        for (let batch = 0; batch < setting.rolloutsPerMove; batch += 1) {
+          const searched = await send(
+            `mcts simulations ${current.legalMoves.length} softtime 1000 exploration ${UCT_EXPLORATION} seed ${41 + batch} strategy random-uct`,
+          );
+          const decision = searched.snapshot.decision;
+          if (!decision || decision.algorithm !== "mcts") {
+            throw new Error("flat Monte Carlo returned no rollout report");
+          }
+          for (const move of decision.rootMoves) {
+            const total = totals.get(move.move);
+            if (!total) continue;
+            total.visits += move.visits;
+            total.score += move.expectedScore * move.visits;
+          }
+          totalRolloutMoves += decision.rolloutMoves;
+          completedBatches += 1;
+          if (performance.now() - started >= setting.softTime) break;
+        }
+
+        const rootMoves = [...totals.entries()]
+          .map(([move, total]) => ({
+            move,
+            visits: total.visits,
+            prior: 1 / totals.size,
+            expectedScore:
+              total.visits === 0 ? 0.5 : total.score / total.visits,
+          }))
+          .sort(
+            (left, right) =>
+              right.expectedScore - left.expectedScore ||
+              left.move.localeCompare(right.move),
+          );
+        const flatDecision: FlatDecision = {
+          algorithm: "flat",
+          strategy: "flat-monte-carlo",
+          bestMove: rootMoves[0]?.move ?? null,
+          simulations: completedBatches * current.legalMoves.length,
+          treeNodes: 1,
+          rootVisits: completedBatches * current.legalMoves.length,
+          rolloutMoves: totalRolloutMoves,
+          leafEvaluations: 0,
+          expectedScore: rootMoves[0]?.expectedScore ?? 0.5,
+          elapsedMs: Math.round(performance.now() - started),
+          rootMoves,
+        };
+        setLastMctsDecision(flatDecision);
+        if (!flatDecision.bestMove) return;
+        await wait(
+          Math.max(0, MIN_THINKING_MS - (performance.now() - started)),
+        );
+        setArrivingMove(flatDecision.bestMove);
+        await wait(MOVE_ARRIVAL_MS);
+        await send(
+          positionCommand([...current.history, flatDecision.bestMove]),
+        );
+        return;
+      }
       const command =
         algorithm === "mcts"
           ? (() => {
@@ -335,7 +431,7 @@ export function UltimateTicTacToeGame() {
       await wait(MOVE_ARRIVAL_MS);
       await send(positionCommand([...searched.snapshot.history, bestMove]));
     });
-  }, [algorithm, mctsMode, runBusy, send, strength]);
+  }, [algorithm, fixedStrategy, mctsMode, runBusy, send, strength]);
 
   useEffect(() => {
     if (
@@ -389,24 +485,6 @@ export function UltimateTicTacToeGame() {
     });
   };
 
-  const moveFocus = (
-    event: KeyboardEvent<HTMLButtonElement>,
-    index: number,
-  ) => {
-    if (!event.key.startsWith("Arrow")) return;
-    event.preventDefault();
-    const row = Math.floor(index / 9);
-    const column = index % 9;
-    let next = index;
-    if (event.key === "ArrowLeft") next = row * 9 + ((column + 8) % 9);
-    if (event.key === "ArrowRight") next = row * 9 + ((column + 1) % 9);
-    if (event.key === "ArrowUp") next = ((row + 8) % 9) * 9 + column;
-    if (event.key === "ArrowDown") next = ((row + 1) % 9) * 9 + column;
-    boardRef.current
-      ?.querySelector<HTMLButtonElement>(`[data-global-index="${next}"]`)
-      ?.focus();
-  };
-
   const resultMessage =
     snapshot?.result === "draw"
       ? "Draw."
@@ -433,96 +511,107 @@ export function UltimateTicTacToeGame() {
           ? arrivingMove
             ? "The engine found its move."
             : algorithm === "mcts"
-              ? "MCTS is running simulations…"
+              ? fixedStrategy === "flat-monte-carlo"
+                ? "Flat Monte Carlo is playing random games…"
+                : "MCTS is running simulations…"
               : "The engine is searching…"
           : snapshot.activeBoard === null
             ? "Your move. Choose any open board."
             : "Your move. Play in the highlighted board.";
   const selectedAlphaStrength = ALPHA_STRENGTHS[strength];
   const selectedMctsStrength = MCTS_STRENGTHS[strength];
-
   return (
     <div
       aria-busy={busy}
       data-engine-ready={ready}
       data-search-algorithm={algorithm}
       data-mcts-mode={algorithm === "mcts" ? mctsMode : undefined}
+      data-article-strategy={fixedStrategy}
+      data-search-strength={strength}
       className="game-ai-workbench game-ai-ultimate-game not-prose mx-auto mb-10 mt-4 w-[min(760px,calc(100vw-2rem))] sm:mt-6"
     >
-      <div className="game-ai-play-controls has-engine-switcher">
-        <div className="ultimate-engine-controls">
-          <label className="ultimate-engine-control">
-            <span>Engine</span>
-            <select
-              aria-label="Engine"
-              value={algorithm}
-              disabled={!ready || busy}
-              onChange={(event) =>
-                setAlgorithm(event.target.value as SearchAlgorithm)
-              }
-            >
-              <option value="mcts">Monte Carlo tree search</option>
-              <option value="alpha-beta">Alpha-beta search</option>
-            </select>
-          </label>
-          {algorithm === "mcts" && (
-            <label className="ultimate-rollout-control">
-              <span>Search</span>
+      <div
+        className={`game-ai-play-controls ${fixedStrategy ? "has-fixed-engine" : "has-engine-switcher"}`}
+      >
+        {!fixedStrategy && (
+          <div className="ultimate-engine-controls">
+            <label className="ultimate-engine-control">
+              <span>Engine</span>
               <select
-                aria-label="MCTS search"
-                value={mctsMode}
+                aria-label="Engine"
+                value={algorithm}
                 disabled={!ready || busy}
-                onChange={(event) => setMctsMode(event.target.value as MctsMode)}
+                onChange={(event) =>
+                  setAlgorithm(event.target.value as SearchAlgorithm)
+                }
               >
-                <option value="learned">Learned policy PUCT</option>
-                <option value="handcrafted">Handcrafted PUCT</option>
-                <option value="tactical">Tactical rollout UCT</option>
-                <option value="random">Random rollout UCT</option>
+                <option value="mcts">Monte Carlo tree search</option>
+                <option value="alpha-beta">Alpha-beta search</option>
               </select>
             </label>
-          )}
-        </div>
-        <label className="ultimate-strength-control game-ai-search-control">
-          <span>Strength</span>
-          <select
-            value={strength}
-            disabled={!ready || busy}
-            onChange={(event) => setStrength(event.target.value as Strength)}
-          >
-            {algorithm === "mcts"
-              ? Object.entries(MCTS_STRENGTHS).map(([value, setting]) => (
-                  <option key={value} value={value}>
-                    {setting.label} · {setting.simulations.toLocaleString()}{" "}
-                    sims · {setting.softTime.toLocaleString()} ms
-                  </option>
-                ))
-              : Object.entries(ALPHA_STRENGTHS).map(([value, setting]) => (
-                  <option key={value} value={value}>
-                    {setting.label} — depth {setting.depth},{" "}
-                    {setting.nodes.toLocaleString()} nodes
-                  </option>
-                ))}
-          </select>
-          <small className="ultimate-strength-limits game-ai-search-limits">
-            {algorithm === "mcts" ? (
-              <>
-                Up to {selectedMctsStrength.simulations.toLocaleString()}{" "}
-                simulations · {selectedMctsStrength.softTime.toLocaleString()}{" "}
-                ms soft time ·{" "}
-                {mctsMode === "tactical" || mctsMode === "random"
-                  ? "UCT"
-                  : "PUCT"}{" "}
-                C = {Math.SQRT2.toFixed(3)}
-              </>
-            ) : (
-              <>
-                Max depth {selectedAlphaStrength.depth} ·{" "}
-                {selectedAlphaStrength.nodes.toLocaleString()} nodes ·{" "}
-                {selectedAlphaStrength.softTime.toLocaleString()} ms soft time
-              </>
+            {algorithm === "mcts" && (
+              <label className="ultimate-rollout-control">
+                <span>Search</span>
+                <select
+                  aria-label="MCTS search"
+                  value={mctsMode}
+                  disabled={!ready || busy}
+                  onChange={(event) =>
+                    setMctsMode(event.target.value as MctsMode)
+                  }
+                >
+                  <option value="learned">Learned policy PUCT</option>
+                  <option value="handcrafted">Handcrafted PUCT</option>
+                  <option value="tactical">Tactical rollout UCT</option>
+                  <option value="random">Random rollout UCT</option>
+                </select>
+              </label>
             )}
-          </small>
-        </label>
+          </div>
+        )}
+        {!fixedStrategy && (
+          <label className="ultimate-strength-control game-ai-search-control">
+            <span>Strength</span>
+            <select
+              value={strength}
+              disabled={!ready || busy}
+              onChange={(event) => setStrength(event.target.value as Strength)}
+            >
+              {algorithm === "mcts"
+                ? Object.entries(MCTS_STRENGTHS).map(([value, setting]) => (
+                    <option key={value} value={value}>
+                      {setting.label} · {setting.simulations.toLocaleString()}{" "}
+                      sims · {setting.softTime.toLocaleString()} ms
+                    </option>
+                  ))
+                : Object.entries(ALPHA_STRENGTHS).map(([value, setting]) => (
+                    <option key={value} value={value}>
+                      {setting.label} — depth {setting.depth},{" "}
+                      {setting.nodes.toLocaleString()} nodes
+                    </option>
+                  ))}
+            </select>
+            <small className="ultimate-strength-limits game-ai-search-limits">
+              {algorithm === "mcts" ? (
+                <>
+                  Up to {selectedMctsStrength.simulations.toLocaleString()}{" "}
+                  simulations · {selectedMctsStrength.softTime.toLocaleString()}{" "}
+                  ms soft time ·{" "}
+                  {mctsMode === "tactical" || mctsMode === "random"
+                    ? "UCT"
+                    : "PUCT"}{" "}
+                  C = {Math.SQRT2.toFixed(3)}
+                </>
+              ) : (
+                <>
+                  Max depth {selectedAlphaStrength.depth} ·{" "}
+                  {selectedAlphaStrength.nodes.toLocaleString()} nodes ·{" "}
+                  {selectedAlphaStrength.softTime.toLocaleString()} ms soft time
+                </>
+              )}
+            </small>
+          </label>
+        )}
         <button
           type="button"
           disabled={!ready || busy}
@@ -557,72 +646,15 @@ export function UltimateTicTacToeGame() {
             </div>
           )}
 
-          <div
-            ref={boardRef}
-            role="group"
-            aria-label="Ultimate Tic-Tac-Toe board. Use arrow keys to move between cells."
-            data-ultimate-board
-            className="ultimate-board"
-          >
-            {Array.from({ length: 9 }, (_, board) => {
-              const miniResult = snapshot?.miniBoards[board] ?? null;
-              const active = snapshot?.activeBoard === board;
-              const free =
-                snapshot?.activeBoard === null && miniResult === null;
-              const winning = snapshot?.macroWinningLine.includes(board);
-              return (
-                <div
-                  key={board}
-                  role="group"
-                  aria-label={`Mini-board ${board + 1}${miniResult === "draw" ? ", drawn" : miniResult ? `, won by ${miniResult}` : active ? ", play here" : ", open"}`}
-                  data-mini-board={board}
-                  data-active={active ? "true" : "false"}
-                  data-free={free ? "true" : "false"}
-                  data-closed={miniResult === null ? "false" : "true"}
-                  className={`ultimate-mini-board${active ? " is-active" : ""}${free ? " is-free" : ""}${winning ? " is-macro-win" : ""}`}
-                >
-                  {Array.from({ length: 9 }, (_, cell) => {
-                    const index = globalIndex(board, cell);
-                    const move = coordinate(index);
-                    const mark = snapshot?.board[index] ?? null;
-                    const arriving = arrivingMove === move;
-                    const playable = humanTurn && legalMoves.has(move);
-                    const last = snapshot?.lastMove === move;
-                    return (
-                      <button
-                        key={cell}
-                        type="button"
-                        data-ultimate-cell
-                        data-global-index={index}
-                        data-last-move={last ? "true" : "false"}
-                        aria-disabled={!playable}
-                        tabIndex={index === 0 ? 0 : -1}
-                        onClick={() => makeMove(move)}
-                        onKeyDown={(event) => moveFocus(event, index)}
-                        aria-label={`${move}${mark ? `, ${mark}` : playable ? ", empty and legal" : ", empty"}${last ? ", last move" : ""}`}
-                      >
-                        {(mark || arriving) && (
-                          <span
-                            className={`game-ai-mark ultimate-mark is-${(mark ?? snapshot?.sideToMove ?? "X").toLowerCase()}${arriving ? " is-arriving" : ""}`}
-                          >
-                            {mark ?? snapshot?.sideToMove}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                  {miniResult !== null && (
-                    <span
-                      className={`ultimate-mini-result is-${miniResult.toLowerCase()}`}
-                      aria-hidden="true"
-                    >
-                      {miniResult === "draw" ? "draw" : miniResult}
-                    </span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          {snapshot && (
+            <UltimateTicTacToeBoard
+              ref={boardRef}
+              snapshot={snapshot}
+              arrivingMove={arrivingMove}
+              playableMoves={humanTurn ? legalMoves : undefined}
+              onMove={makeMove}
+            />
+          )}
 
           <div className="game-ai-board-status ultimate-board-actions">
             <p>

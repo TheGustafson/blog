@@ -40,6 +40,7 @@ const STRENGTHS = {
 
 type Strength = keyof typeof STRENGTHS;
 type SearchStrategy = HexMctsDecision["strategy"];
+export type HexArticleStrategy = SearchStrategy;
 
 const SEARCH_STRATEGIES: Record<
   SearchStrategy,
@@ -62,9 +63,7 @@ const MARGIN = 20;
 function viewSize(size: number) {
   return {
     width:
-      MARGIN * 2 +
-      HALF_WIDTH * 2 +
-      ROOT_THREE * RADIUS * ((size - 1) * 1.5),
+      MARGIN * 2 + HALF_WIDTH * 2 + ROOT_THREE * RADIUS * ((size - 1) * 1.5),
     height: MARGIN * 2 + RADIUS * 2 + RADIUS * 1.5 * (size - 1),
   };
 }
@@ -124,10 +123,7 @@ function SearchReadout({ decision }: { decision: HexMctsDecision }) {
   const usesRave = decision.strategy === "uct-rave";
   const moves = decision.rootMoves.slice(0, 6);
   const maxVisits = Math.max(1, ...moves.map((move) => move.visits));
-  const maxRaveVisits = Math.max(
-    1,
-    ...moves.map((move) => move.raveVisits),
-  );
+  const maxRaveVisits = Math.max(1, ...moves.map((move) => move.raveVisits));
   const averageRollout =
     decision.simulations === 0
       ? 0
@@ -139,8 +135,8 @@ function SearchReadout({ decision }: { decision: HexMctsDecision }) {
         <div>
           <h2>Last search</h2>
           <p>
-            {SEARCH_STRATEGIES[decision.strategy].label} · bridge-aware rollouts ·
-            H-search · MCTS-Solver
+            {SEARCH_STRATEGIES[decision.strategy].label} · bridge-aware rollouts
+            · H-search · MCTS-Solver
           </p>
         </div>
         <dl>
@@ -167,13 +163,15 @@ function SearchReadout({ decision }: { decision: HexMctsDecision }) {
           <div>
             <dt>VC / SC derivations</dt>
             <dd>
-              {decision.virtualConnections.toLocaleString()} / {decision.semiConnections.toLocaleString()}
+              {decision.virtualConnections.toLocaleString()} /{" "}
+              {decision.semiConnections.toLocaleString()}
             </dd>
           </div>
           <div>
             <dt>Derived proofs</dt>
             <dd>
-              {decision.provenNodes.toLocaleString()} · {decision.solverPropagations.toLocaleString()} propagated
+              {decision.provenNodes.toLocaleString()} ·{" "}
+              {decision.solverPropagations.toLocaleString()} propagated
             </dd>
           </div>
           <div>
@@ -209,8 +207,12 @@ function SearchReadout({ decision }: { decision: HexMctsDecision }) {
           <h3>Top root moves</h3>
           {usesRave ? (
             <p className="hex-root-legend">
-              <span><i /> Tree visits</span>
-              <span><b /> RAVE samples</span>
+              <span>
+                <i /> Tree visits
+              </span>
+              <span>
+                <b /> RAVE samples
+              </span>
             </p>
           ) : (
             <p>The tree returns to these moves most often.</p>
@@ -242,7 +244,9 @@ function SearchReadout({ decision }: { decision: HexMctsDecision }) {
                   : `${(move.expectedScore * 100).toFixed(1)}%`}
               </em>
               {usesRave && (
-                <small title={`${move.raveVisits.toLocaleString()} RAVE samples`}>
+                <small
+                  title={`${move.raveVisits.toLocaleString()} RAVE samples`}
+                >
                   {move.raveVisits > 0
                     ? `${(move.raveExpectedScore * 100).toFixed(1)}% RAVE`
                     : "No RAVE"}
@@ -256,7 +260,15 @@ function SearchReadout({ decision }: { decision: HexMctsDecision }) {
   );
 }
 
-export function HexGame() {
+export function HexGame({
+  fixedStrategy,
+  initialStrength = "maximum",
+  initialBoardSize = DEFAULT_BOARD_SIZE,
+}: {
+  fixedStrategy?: HexArticleStrategy;
+  initialStrength?: Strength;
+  initialBoardSize?: number;
+} = {}) {
   const engineRef = useRef<GameEngineWorker<HexSnapshot> | null>(null);
   const snapshotRef = useRef<HexSnapshot | null>(null);
   const boardRef = useRef<SVGSVGElement | null>(null);
@@ -268,15 +280,18 @@ export function HexGame() {
   const [thinking, setThinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [humanSeat, setHumanSeat] = useState<HexSeat>("one");
-  const [searchStrategy, setSearchStrategy] =
-    useState<SearchStrategy>("uct-rave");
-  const [strength, setStrength] = useState<Strength>("maximum");
-  const [boardSize, setBoardSize] = useState(DEFAULT_BOARD_SIZE);
+  const [searchStrategy, setSearchStrategy] = useState<SearchStrategy>(
+    fixedStrategy ?? "uct-rave",
+  );
+  const [strength, setStrength] = useState<Strength>(initialStrength);
+  const [boardSize, setBoardSize] = useState(initialBoardSize);
   const [selectedMove, setSelectedMove] = useState<string | null>(null);
   const [keyboardMove, setKeyboardMove] = useState<string | null>(null);
   const [coarsePointer, setCoarsePointer] = useState(false);
   const [arrivingMove, setArrivingMove] = useState<string | null>(null);
-  const [lastDecision, setLastDecision] = useState<HexMctsDecision | null>(null);
+  const [lastDecision, setLastDecision] = useState<HexMctsDecision | null>(
+    null,
+  );
 
   const legalMoves = useMemo(
     () => new Set(snapshot?.legalMoves ?? []),
@@ -358,10 +373,12 @@ export function HexGame() {
       try {
         await engine.command("gai");
         await engine.command("isready");
-        const shared = new URLSearchParams(window.location.search).get("hex");
+        const shared = fixedStrategy
+          ? null
+          : new URLSearchParams(window.location.search).get("hex");
         const moves = shared?.split(".").filter(Boolean) ?? [];
         const response = await engine.command(
-          positionCommand(moves, DEFAULT_BOARD_SIZE),
+          positionCommand(moves, initialBoardSize),
         );
         const message = readProtocolError(response.output);
         if (!cancelled) {
@@ -382,7 +399,7 @@ export function HexGame() {
       if (engineRef.current === engine) engineRef.current = null;
       engine.dispose();
     };
-  }, [storeSnapshot]);
+  }, [fixedStrategy, initialBoardSize, storeSnapshot]);
 
   const playEngineTurn = useCallback(async () => {
     await runBusy(async () => {
@@ -546,10 +563,10 @@ export function HexGame() {
           ? thinking
             ? "The engine is thinking."
             : arrivingMove === "swap"
-            ? "The engine is taking Red."
-            : arrivingMove
-              ? `The engine chose ${arrivingMove.toUpperCase()}.`
-              : `${SEARCH_STRATEGIES[searchStrategy].label} is running simulations…`
+              ? "The engine is taking Red."
+              : arrivingMove
+                ? `The engine chose ${arrivingMove.toUpperCase()}.`
+                : `${SEARCH_STRATEGIES[searchStrategy].label} is running simulations…`
           : snapshot.lastMove === "swap"
             ? `The engine swapped. You are ${colorName(humanColor)}.`
             : `Your move as ${colorName(humanColor)}. Connect ${connectionGoal(humanColor)}.`;
@@ -578,7 +595,7 @@ export function HexGame() {
       ? keyboardMove
       : legalMoves.has(centerMove)
         ? centerMove
-        : snapshot?.legalMoves.find((move) => move !== "swap") ?? null
+        : (snapshot?.legalMoves.find((move) => move !== "swap") ?? null)
     : null;
 
   return (
@@ -586,51 +603,60 @@ export function HexGame() {
       aria-busy={busy}
       data-engine-ready={ready}
       data-human-color={humanColor}
+      data-article-strategy={fixedStrategy}
+      data-search-strength={strength}
       className="game-ai-workbench game-ai-hex-game not-prose mx-auto mb-10 mt-4 w-[min(860px,calc(100vw-2rem))] sm:mt-6"
     >
       <div className="game-ai-play-controls hex-play-controls">
-        <label className="hex-engine-control">
-          <span>Engine</span>
-          <select
-            value={searchStrategy}
-            disabled={!ready || busy}
-            onChange={(event) =>
-              setSearchStrategy(event.target.value as SearchStrategy)
-            }
-          >
-            {(Object.entries(SEARCH_STRATEGIES) as Array<
-              [SearchStrategy, (typeof SEARCH_STRATEGIES)[SearchStrategy]]
-            >).map(([value, engine]) => (
-              <option key={value} value={value}>
-                {engine.label}
-              </option>
-            ))}
-          </select>
-          <small className="game-ai-search-limits">
-            {SEARCH_STRATEGIES[searchStrategy].detail}
-          </small>
-        </label>
-        <label className="game-ai-search-control hex-strength-control">
-          <span>Strength</span>
-          <select
-            value={strength}
-            disabled={!ready || busy}
-            onChange={(event) => setStrength(event.target.value as Strength)}
-          >
-            {Object.entries(STRENGTHS).map(([value, setting]) => (
-              <option key={value} value={value}>
-                {setting.label} · {setting.simulations.toLocaleString()} sims ·{" "}
-                {setting.softTime.toLocaleString()} ms
-              </option>
-            ))}
-          </select>
-          <small className="game-ai-search-limits">
-            Up to {selectedStrength.simulations.toLocaleString()} simulations ·{" "}
-            {selectedStrength.softTime.toLocaleString()} ms soft time · UCT C ={" "}
-            {EXPLORATION.toFixed(3)} · bridge-aware rollouts · root pruning
-            immediately · child pruning after {KNOWLEDGE_THRESHOLD} visits
-          </small>
-        </label>
+        {!fixedStrategy && (
+          <label className="hex-engine-control">
+            <span>Engine</span>
+            <select
+              value={searchStrategy}
+              disabled={!ready || busy}
+              onChange={(event) =>
+                setSearchStrategy(event.target.value as SearchStrategy)
+              }
+            >
+              {(
+                Object.entries(SEARCH_STRATEGIES) as Array<
+                  [SearchStrategy, (typeof SEARCH_STRATEGIES)[SearchStrategy]]
+                >
+              ).map(([value, engine]) => (
+                <option key={value} value={value}>
+                  {engine.label}
+                </option>
+              ))}
+            </select>
+            <small className="game-ai-search-limits">
+              {SEARCH_STRATEGIES[searchStrategy].detail}
+            </small>
+          </label>
+        )}
+        {!fixedStrategy && (
+          <label className="game-ai-search-control hex-strength-control">
+            <span>Strength</span>
+            <select
+              value={strength}
+              disabled={!ready || busy}
+              onChange={(event) => setStrength(event.target.value as Strength)}
+            >
+              {Object.entries(STRENGTHS).map(([value, setting]) => (
+                <option key={value} value={value}>
+                  {setting.label} · {setting.simulations.toLocaleString()} sims
+                  · {setting.softTime.toLocaleString()} ms
+                </option>
+              ))}
+            </select>
+            <small className="game-ai-search-limits">
+              Up to {selectedStrength.simulations.toLocaleString()} simulations
+              · {selectedStrength.softTime.toLocaleString()} ms soft time · UCT
+              C = {EXPLORATION.toFixed(3)} · bridge-aware rollouts · root
+              pruning immediately · child pruning after {KNOWLEDGE_THRESHOLD}{" "}
+              visits
+            </small>
+          </label>
+        )}
         <label className="hex-size-control">
           <span>Board size</span>
           <select
@@ -666,7 +692,9 @@ export function HexGame() {
               message={resultMessage}
               onRestart={newGame}
               focusAfterRestart={() =>
-                boardRef.current?.querySelector<SVGGElement>("[data-hex-cell]")?.focus()
+                boardRef.current
+                  ?.querySelector<SVGGElement>("[data-hex-cell]")
+                  ?.focus()
               }
             />
           ) : (
@@ -705,10 +733,7 @@ export function HexGame() {
             }
           >
             {thinking && (
-              <div
-                className="hex-thinking-overlay"
-                aria-hidden="true"
-              >
+              <div className="hex-thinking-overlay" aria-hidden="true">
                 <strong>
                   Engine thinking
                   <i aria-hidden="true">
@@ -733,65 +758,103 @@ export function HexGame() {
               aria-label={`${currentSize} by ${currentSize} Hex board. Red connects top to bottom; Blue connects left to right.`}
             >
               <g className="hex-board-rails" aria-hidden="true">
-                <line x1={topLeft.x} y1={topLeft.y - railOffset} x2={topRight.x} y2={topRight.y - railOffset} className="is-red" />
-                <line x1={bottomLeft.x} y1={bottomLeft.y + railOffset} x2={bottomRight.x} y2={bottomRight.y + railOffset} className="is-red" />
-                <line x1={topLeft.x - diagonalX} y1={topLeft.y + diagonalY} x2={bottomLeft.x - diagonalX} y2={bottomLeft.y + diagonalY} className="is-blue" />
-                <line x1={topRight.x + diagonalX} y1={topRight.y - diagonalY} x2={bottomRight.x + diagonalX} y2={bottomRight.y - diagonalY} className="is-blue" />
+                <line
+                  x1={topLeft.x}
+                  y1={topLeft.y - railOffset}
+                  x2={topRight.x}
+                  y2={topRight.y - railOffset}
+                  className="is-red"
+                />
+                <line
+                  x1={bottomLeft.x}
+                  y1={bottomLeft.y + railOffset}
+                  x2={bottomRight.x}
+                  y2={bottomRight.y + railOffset}
+                  className="is-red"
+                />
+                <line
+                  x1={topLeft.x - diagonalX}
+                  y1={topLeft.y + diagonalY}
+                  x2={bottomLeft.x - diagonalX}
+                  y2={bottomLeft.y + diagonalY}
+                  className="is-blue"
+                />
+                <line
+                  x1={topRight.x + diagonalX}
+                  y1={topRight.y - diagonalY}
+                  x2={bottomRight.x + diagonalX}
+                  y2={bottomRight.y - diagonalY}
+                  className="is-blue"
+                />
               </g>
 
               {Array.from({ length: currentSize }, (_, rank) => (
                 <g key={`row-${rank}`} role="row">
                   {Array.from({ length: currentSize }, (_, file) => {
-                  const index = rank * currentSize + file;
-                  const move = coordinate(file, rank);
-                  const mark = snapshot?.board[index] ?? null;
-                  const legal = humanTurn && legalMoves.has(move);
-                  const selected = selectedMove === move;
-                  const last = snapshot?.lastMove === move;
-                  const winning = winningPath.has(move);
-                  const arriving = arrivalIndex === index;
-                  const displayColor = mark ?? (arriving ? snapshot?.colorToMove : null);
-                  const point = center(file, rank);
-                  return (
-                    <g
-                      key={move}
-                      role="gridcell"
-                      tabIndex={legal && keyboardFocusMove === move ? 0 : -1}
-                      aria-rowindex={rank + 1}
-                      aria-colindex={file + 1}
-                      aria-label={`${move.toUpperCase()}${mark ? `, ${colorName(mark)}` : legal ? ", empty" : ", unavailable"}`}
-                      aria-disabled={!legal}
-                      aria-selected={selected}
-                      data-hex-cell={move}
-                      className={`hex-cell${legal ? " is-legal" : ""}${selected ? " is-selected" : ""}${last ? " is-last" : ""}${winning ? " is-winning" : ""}`}
-                      onClick={() => makeMove(move)}
-                      onFocus={() => setKeyboardMove(move)}
-                      onKeyDown={(event) => {
-                        if ((event.key === "Enter" || event.key === " ") && legal) {
-                          event.preventDefault();
-                          makeMove(move);
-                          return;
-                        }
-                        moveFocus(event, file, rank);
-                      }}
-                    >
-                      <polygon points={polygonPoints(file, rank)} />
-                      {!displayColor && (
-                        <circle className="hex-hover-preview" cx={point.x} cy={point.y} r={RADIUS * 0.6} />
-                      )}
-                      {displayColor && (
-                        <circle
-                          className={`hex-stone is-${displayColor === "R" ? "red" : "blue"}${arriving ? " is-arriving" : ""}`}
-                          cx={point.x}
-                          cy={point.y}
-                          r={RADIUS * 0.68}
-                        />
-                      )}
-                      {last && (
-                        <circle className="hex-last-ring" cx={point.x} cy={point.y} r={RADIUS * 0.28} />
-                      )}
-                    </g>
-                  );
+                    const index = rank * currentSize + file;
+                    const move = coordinate(file, rank);
+                    const mark = snapshot?.board[index] ?? null;
+                    const legal = humanTurn && legalMoves.has(move);
+                    const selected = selectedMove === move;
+                    const last = snapshot?.lastMove === move;
+                    const winning = winningPath.has(move);
+                    const arriving = arrivalIndex === index;
+                    const displayColor =
+                      mark ?? (arriving ? snapshot?.colorToMove : null);
+                    const point = center(file, rank);
+                    return (
+                      <g
+                        key={move}
+                        role="gridcell"
+                        tabIndex={legal && keyboardFocusMove === move ? 0 : -1}
+                        aria-rowindex={rank + 1}
+                        aria-colindex={file + 1}
+                        aria-label={`${move.toUpperCase()}${mark ? `, ${colorName(mark)}` : legal ? ", empty" : ", unavailable"}`}
+                        aria-disabled={!legal}
+                        aria-selected={selected}
+                        data-hex-cell={move}
+                        className={`hex-cell${legal ? " is-legal" : ""}${selected ? " is-selected" : ""}${last ? " is-last" : ""}${winning ? " is-winning" : ""}`}
+                        onClick={() => makeMove(move)}
+                        onFocus={() => setKeyboardMove(move)}
+                        onKeyDown={(event) => {
+                          if (
+                            (event.key === "Enter" || event.key === " ") &&
+                            legal
+                          ) {
+                            event.preventDefault();
+                            makeMove(move);
+                            return;
+                          }
+                          moveFocus(event, file, rank);
+                        }}
+                      >
+                        <polygon points={polygonPoints(file, rank)} />
+                        {!displayColor && (
+                          <circle
+                            className="hex-hover-preview"
+                            cx={point.x}
+                            cy={point.y}
+                            r={RADIUS * 0.6}
+                          />
+                        )}
+                        {displayColor && (
+                          <circle
+                            className={`hex-stone is-${displayColor === "R" ? "red" : "blue"}${arriving ? " is-arriving" : ""}`}
+                            cx={point.x}
+                            cy={point.y}
+                            r={RADIUS * 0.68}
+                          />
+                        )}
+                        {last && (
+                          <circle
+                            className="hex-last-ring"
+                            cx={point.x}
+                            cy={point.y}
+                            r={RADIUS * 0.28}
+                          />
+                        )}
+                      </g>
+                    );
                   })}
                 </g>
               ))}
@@ -799,11 +862,19 @@ export function HexGame() {
               <g className="hex-coordinate-labels" aria-hidden="true">
                 {Array.from({ length: currentSize }, (_, file) => {
                   const point = center(file, 0);
-                  return <text key={`f${file}`} x={point.x} y={point.y - 16}>{String.fromCharCode(65 + file)}</text>;
+                  return (
+                    <text key={`f${file}`} x={point.x} y={point.y - 16}>
+                      {String.fromCharCode(65 + file)}
+                    </text>
+                  );
                 })}
                 {Array.from({ length: currentSize }, (_, rank) => {
                   const point = center(0, rank);
-                  return <text key={`r${rank}`} x={point.x - 17} y={point.y + 2.5}>{rank + 1}</text>;
+                  return (
+                    <text key={`r${rank}`} x={point.x - 17} y={point.y + 2.5}>
+                      {rank + 1}
+                    </text>
+                  );
                 })}
               </g>
             </svg>
