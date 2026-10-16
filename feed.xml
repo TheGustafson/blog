@@ -43,7 +43,7 @@
       <link>https://thegustafson.com/blog/probability-distributions</link>
       <guid isPermaLink="true">https://thegustafson.com/blog/probability-distributions</guid>
       <category>Arc 1: Mathematical &amp; Computational Prerequisites</category>
-      <description>How softmax produces a categorical distribution, how Bayes' rule updates probabilities, and how the chain rule assigns probabilities to sequences.</description>
+      <description>How softmax produces a categorical distribution, how temperature reshapes it, and how the chain rule assigns probabilities to sequences.</description>
     </item>
     <item>
       <title>Cross-Entropy, KL Divergence, and What Loss Functions Measure</title>
