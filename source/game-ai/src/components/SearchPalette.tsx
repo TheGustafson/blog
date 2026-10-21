@@ -12,9 +12,9 @@ import { useRouter } from "next/navigation";
 
 type Entry = {
   slug: string;
+  href?: string | null;
   title: string;
   description: string;
-  arc: number | null;
   headings: string[];
 };
 
@@ -102,9 +102,9 @@ export function SearchPalette() {
     setHits(indexRef.current ? searchIndex(indexRef.current, value) : []);
   };
 
-  const go = (slug: string) => {
+  const go = (entry: Entry) => {
     close();
-    router.push(`/blog/${slug}`);
+    router.push(entry.href || `/blog/${entry.slug}`);
   };
 
   return (
@@ -143,11 +143,11 @@ export function SearchPalette() {
                   e.preventDefault();
                   setActive((a) => Math.max(a - 1, 0));
                 } else if (e.key === "Enter" && hits[active]) {
-                  go(hits[active].entry.slug);
+                  go(hits[active].entry);
                 }
               }}
-              placeholder="Search the series…"
-              aria-label="Search the series"
+              placeholder="Search notes…"
+              aria-label="Search notes"
               className="w-full px-4 py-3 bg-transparent text-[15px] text-stone-800 placeholder:text-stone-400 focus:outline-none border-b border-stone-200"
             />
             {q.trim().length >= 2 && (
@@ -161,7 +161,7 @@ export function SearchPalette() {
                   <li key={h.entry.slug}>
                     <button
                       type="button"
-                      onClick={() => go(h.entry.slug)}
+                      onClick={() => go(h.entry)}
                       onMouseEnter={() => setActive(i)}
                       className={`w-full text-left px-4 py-2.5 transition-colors ${
                         i === active ? "bg-stone-100" : ""
@@ -171,11 +171,6 @@ export function SearchPalette() {
                         <span className="text-sm text-stone-800 font-medium">
                           {h.entry.title}
                         </span>
-                        {h.entry.arc && (
-                          <span className="ml-auto shrink-0 text-[10px] font-mono text-stone-500">
-                            Arc {String(h.entry.arc).padStart(2, "0")}
-                          </span>
-                        )}
                       </div>
                       {h.heading && (
                         <div className="text-[12px] text-stone-500 mt-0.5">

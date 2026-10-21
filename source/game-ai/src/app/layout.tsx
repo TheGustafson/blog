@@ -108,25 +108,6 @@ export default function RootLayout({
                 aria-hidden
                 className="hidden lg:inline-block w-px h-4 bg-stone-200"
               />
-              {/* Secondary: the series and its apparatus */}
-              <Link
-                href="/series"
-                className="hidden lg:inline text-stone-500 hover:text-stone-700 transition-colors py-2 -my-2"
-              >
-                the series
-              </Link>
-              <Link
-                href="/map"
-                className="hidden lg:inline text-stone-500 hover:text-stone-700 transition-colors py-2 -my-2"
-              >
-                map
-              </Link>
-              <Link
-                href="/toybox"
-                className="hidden lg:inline text-stone-500 hover:text-stone-700 transition-colors py-2 -my-2"
-              >
-                toy box
-              </Link>
               <a
                 href="https://github.com/TheGustafson"
                 target="_blank"
@@ -146,7 +127,11 @@ export default function RootLayout({
         <footer className="border-t border-stone-200 mt-20">
           <div className="max-w-2xl mx-auto px-5 py-8 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
             <div className="text-xs text-stone-500 italic">
-              &ldquo;The most exciting phrase in science is not &apos;Eureka!&apos; but &apos;That&apos;s funny...&apos;&rdquo; — Asimov
+              &ldquo;When I begin to reel from my{" "}
+              <s className="decoration-stone-400">literary</s> agentic labors, I
+              make the occasional cheese dip&rdquo; —{" "}
+              <s className="decoration-stone-400">Ignatius Riley</s> Nick
+              Gustafson
             </div>
             <div className="text-[11px] font-mono text-stone-500 flex items-baseline gap-2">
               <a
