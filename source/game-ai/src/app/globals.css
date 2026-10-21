@@ -318,203 +318,73 @@ figure.post-figure figcaption::before {
     stroke-dashoffset: 0 !important;
   }
 
-  .footer-strike,
-  .footer-strike::after,
-  .footer-pop {
+  .footer-rewrite-cursor {
+    display: none !important;
+  }
+
+  .footer-rewrite-word,
+  .footer-rewrite-pop {
     animation: none !important;
-  }
-
-  .footer-strike {
-    color: #a8a29e !important;
-    opacity: 0.78 !important;
-  }
-
-  .footer-strike::after {
-    transform: rotate(-1.5deg) scaleX(1) !important;
-    opacity: 0.78 !important;
-  }
-
-  .footer-pop {
-    transform: none !important;
-    color: #292524 !important;
+    transition: none !important;
   }
 }
 
 /*
- * Footer quote editorial strike + subtle replacement pop.
+ * Footer quote backspace-and-rewrite + subtle, graceful pop.
  */
-.footer-strike {
-  position: relative;
+.footer-rewrite-slot {
   display: inline-block;
-  text-decoration: none;
-  color: #a8a29e;
+  white-space: nowrap;
 }
 
-.footer-strike::after {
-  content: "";
-  position: absolute;
-  left: -0.04em;
-  right: -0.04em;
-  top: 53%;
-  height: 1.35px;
-  border-radius: 999px;
-  background: #9a3412;
-  opacity: 0.78;
-  transform-origin: left center;
-  transform: rotate(-1.5deg) scaleX(1);
-}
-
-.footer-pop {
+.footer-rewrite-word {
   display: inline-block;
   transform-origin: center 65%;
-  color: #292524;
+  transition: color 180ms ease;
 }
 
-.footer-strike-first {
-  animation: footer-strike-dim-1 7.6s ease-in-out infinite;
+.footer-rewrite-cursor {
+  display: inline-block;
+  width: 0.06em;
+  height: 0.84em;
+  margin-left: 0.06em;
+  background: currentColor;
+  vertical-align: -0.05em;
+  animation: footer-cursor-blink 760ms steps(1, end) infinite;
 }
 
-.footer-strike-first::after {
-  animation: footer-strike-draw-1 7.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+.footer-rewrite-pop {
+  color: #9a3412;
+  animation: footer-pop-graceful 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.footer-pop-first {
-  animation: footer-pop-1 7.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-}
-
-.footer-strike-second {
-  animation: footer-strike-dim-2 7.6s ease-in-out infinite;
-}
-
-.footer-strike-second::after {
-  animation: footer-strike-draw-2 7.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-}
-
-.footer-pop-second {
-  animation: footer-pop-2 7.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-}
-
-@keyframes footer-strike-draw-1 {
+@keyframes footer-cursor-blink {
   0%,
-  5% {
-    transform: rotate(-1.5deg) scaleX(0);
-    opacity: 0;
+  46% {
+    opacity: 1;
   }
-  13%,
-  88% {
-    transform: rotate(-1.5deg) scaleX(1);
-    opacity: 0.78;
-  }
-  96%,
+  47%,
   100% {
-    transform: rotate(-1.5deg) scaleX(0);
     opacity: 0;
   }
 }
 
-@keyframes footer-strike-dim-1 {
-  0%,
-  5% {
-    color: #57534e;
-    opacity: 1;
-  }
-  13%,
-  88% {
-    color: #a8a29e;
-    opacity: 0.78;
-  }
-  96%,
-  100% {
-    color: #57534e;
-    opacity: 1;
-  }
-}
-
-@keyframes footer-pop-1 {
-  0%,
-  10% {
+@keyframes footer-pop-graceful {
+  0% {
     transform: translateY(0) scale(1) rotate(0deg);
     color: #78716c;
   }
-  14% {
-    transform: translateY(-1.25px) scale(1.065) rotate(-0.9deg);
+  28% {
+    transform: translateY(-1.25px) scale(1.065) rotate(-0.8deg);
     color: #9a3412;
   }
-  18% {
-    transform: translateY(-0.5px) scale(1.035) rotate(0.45deg);
+  58% {
+    transform: translateY(-0.4px) scale(1.03) rotate(0.4deg);
     color: #9a3412;
   }
-  24%,
-  88% {
-    transform: translateY(0) scale(1) rotate(0deg);
-    color: #292524;
-  }
-  96%,
   100% {
     transform: translateY(0) scale(1) rotate(0deg);
-    color: #78716c;
-  }
-}
-
-@keyframes footer-strike-draw-2 {
-  0%,
-  22% {
-    transform: rotate(-1.5deg) scaleX(0);
-    opacity: 0;
-  }
-  30%,
-  88% {
-    transform: rotate(-1.5deg) scaleX(1);
-    opacity: 0.78;
-  }
-  96%,
-  100% {
-    transform: rotate(-1.5deg) scaleX(0);
-    opacity: 0;
-  }
-}
-
-@keyframes footer-strike-dim-2 {
-  0%,
-  22% {
-    color: #57534e;
-    opacity: 1;
-  }
-  30%,
-  88% {
-    color: #a8a29e;
-    opacity: 0.78;
-  }
-  96%,
-  100% {
-    color: #57534e;
-    opacity: 1;
-  }
-}
-
-@keyframes footer-pop-2 {
-  0%,
-  27% {
-    transform: translateY(0) scale(1) rotate(0deg);
-    color: #78716c;
-  }
-  31% {
-    transform: translateY(-1.25px) scale(1.06) rotate(-0.75deg);
-    color: #9a3412;
-  }
-  35% {
-    transform: translateY(-0.5px) scale(1.03) rotate(0.4deg);
-    color: #9a3412;
-  }
-  41%,
-  88% {
-    transform: translateY(0) scale(1) rotate(0deg);
-    color: #292524;
-  }
-  96%,
-  100% {
-    transform: translateY(0) scale(1) rotate(0deg);
-    color: #78716c;
+    color: #44403c;
   }
 }
 
