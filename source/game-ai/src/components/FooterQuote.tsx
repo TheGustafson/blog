@@ -162,12 +162,19 @@ export function FooterQuote() {
     state.phase === "retype-second";
 
   return (
-    <div className="text-xs text-stone-500 italic">
+    <div className="inline-grid text-xs text-stone-500 italic">
       <span className="sr-only">
         &ldquo;When I begin to reel from my agentic labors, I make the
         occasional cheese dip&rdquo; — Nick Gustafson
       </span>
-      <span aria-hidden="true">
+      <span
+        aria-hidden="true"
+        className="invisible pointer-events-none select-none [grid-area:1/1]"
+      >
+        &ldquo;When I begin to reel from my literary labors, I make the
+        occasional cheese dip&rdquo; — Nick Gustafson
+      </span>
+      <span aria-hidden="true" className="[grid-area:1/1]">
         &ldquo;When I begin to reel from my{" "}
         <span className="footer-rewrite-slot">
           <span
