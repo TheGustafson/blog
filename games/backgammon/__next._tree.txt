@@ -6,4 +6,4 @@
 :HL["/_next/static/css/e5702e74198f4e33.css","style"]
 :HL["/_next/static/css/c2d05f1a68035b89.css","style"]
 :HL["/_next/static/css/87337dc1f39e7695.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"games","param":null,"prefetchHints":0,"slots":{"children":{"name":"backgammon","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"JnTZtnOxaIUixv8XO6PkO"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"games","param":null,"prefetchHints":0,"slots":{"children":{"name":"backgammon","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"JvvKWB3HWKQyBe4lgi1kb"}

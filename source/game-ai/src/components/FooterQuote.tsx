@@ -25,7 +25,7 @@ type QuoteState = {
 
 const ORIG_FIRST = "literary";
 const NEW_FIRST = "agentic";
-const ORIG_SECOND = "Ignatius Riley";
+const ORIG_SECOND = "Ignatius Reilly";
 const NEW_SECOND = "Nick Gustafson";
 
 const INITIAL_STATE: QuoteState = {
@@ -166,6 +166,13 @@ export function FooterQuote() {
       <span className="sr-only">
         &ldquo;When I begin to reel from my agentic labors, I make the
         occasional cheese dip&rdquo; — Nick Gustafson
+      </span>
+      <span
+        aria-hidden="true"
+        className="invisible pointer-events-none select-none [grid-area:1/1]"
+      >
+        &ldquo;When I begin to reel from my literary labors, I make the
+        occasional cheese dip&rdquo; — Ignatius Reilly
       </span>
       <span
         aria-hidden="true"
