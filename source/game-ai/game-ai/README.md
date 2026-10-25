@@ -1,7 +1,8 @@
 # Game AI integration
 
-The browser games use six independent Rust crates:
+The browser games use seven independent Rust crates:
 
+- [`ai-crosshair`](games/crosshair/README.md)
 - [`ai-backgammon`](games/backgammon/README.md)
 - [`ai-ultimate-tictactoe`](games/ultimate-tictactoe/README.md)
 - [`ai-connect4`](games/connect4/README.md)
@@ -10,7 +11,7 @@ The browser games use six independent Rust crates:
 - [`ai-chess`](games/chess/README.md)
 
 Each directory under `games/` is the exact tagged source used for the published
-WebAssembly engine. The workspace manifest builds and tests the six crates
+WebAssembly engine. The workspace manifest builds and tests the seven crates
 together without imposing a shared game framework.
 
 From the corresponding-source root:

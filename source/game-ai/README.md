@@ -4,7 +4,7 @@ This directory contains the source used to build the Game AIs distributed at
 [thegustafson.com/games](https://thegustafson.com/games).
 
 It is deliberately narrower than the private authoring repository. It includes
-the six published Rust crates, WebAssembly worker glue, game routes
+the seven published Rust crates, WebAssembly worker glue, game routes
 and React components, shared layout files needed by those routes, exact package
 manifests, and the source and license for Chessground 10.1.1. It excludes blog
 drafts, notes, training corpora, generated build directories, and unrelated
@@ -26,7 +26,7 @@ cargo install wasm-bindgen-cli --version 0.2.126 --locked
 npm run build
 ```
 
-The package build first compiles the six Rust engines to WebAssembly
+The package build first compiles the seven Rust engines to WebAssembly
 and then exports the Game AI routes with Next.js. The static output is written
 to `out/`.
 

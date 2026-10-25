@@ -1,0 +1,7 @@
+/target
+**/__pycache__/
+*.pyc
+.venv/
+*.so
+*.cxhrdat
+/training/runs/

@@ -7,6 +7,12 @@
     <description>Writing by Nick Gustafson — software engineer and data scientist. Notes on machine learning, the systems behind it, and the things worth understanding deeply.</description>
     <language>en-us</language>
     <item>
+      <title>Crosshair: A New Board Game to Showcase Pure AlphaZero Self-Play</title>
+      <link>https://thegustafson.com/blog/crosshair-alphazero</link>
+      <guid isPermaLink="true">https://thegustafson.com/blog/crosshair-alphazero</guid>
+      <description>Inventing a Hex and Ultimate Tic-Tac-Toe mashup, and training an AlphaZero agent from scratch in Rust and JAX to play it.</description>
+    </item>
+    <item>
       <title>Monte Carlo Tree Search is Awesome</title>
       <link>https://thegustafson.com/blog/mcts-is-awesome</link>
       <guid isPermaLink="true">https://thegustafson.com/blog/mcts-is-awesome</guid>

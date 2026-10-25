@@ -156,6 +156,67 @@ export type ChessPlaySnapshot = {
   analysis: { bestMove: string | null } | null;
 };
 
+export type CrosshairColor = "R" | "B";
+
+export type CrosshairStrategy =
+  | "az-puct"
+  | "handcrafted-puct"
+  | "tactical-uct"
+  | "random-uct"
+  | "alpha-beta";
+
+export type CrosshairMovePreview = {
+  move: string;
+  flips: string[];
+  nextActiveRow: number | null;
+  nextActiveCol: number | null;
+  nextWildcard: boolean;
+  immediateWin: boolean;
+};
+
+export type CrosshairRootMoveStats = {
+  move: string;
+  visits: number;
+  prior: number;
+  expectedScore: number;
+};
+
+export type CrosshairDecision = {
+  strategy: CrosshairStrategy;
+  bestMove: string | null;
+  simulations: number;
+  treeNodes: number;
+  rootVisits: number;
+  rolloutMoves: number;
+  leafEvaluations: number;
+  depth: number;
+  expectedScore: number;
+  networkValue: number | null;
+  elapsedMs: number;
+  rootMoves: CrosshairRootMoveStats[];
+};
+
+export type CrosshairSnapshot = {
+  size: number;
+  board: Array<CrosshairColor | null>;
+  sideToMove: CrosshairColor;
+  ply: number;
+  counts: { red: number; blue: number };
+  activeRow: number | null;
+  activeCol: number | null;
+  wildcard: boolean;
+  result: "ongoing" | "win";
+  winner: CrosshairColor | null;
+  winReason: "connection" | null;
+  winningLine: string[];
+  legalMoves: string[];
+  movePreviews: CrosshairMovePreview[];
+  history: string[];
+  lastMove: string | null;
+  lastFlips: string[];
+  decision: CrosshairDecision | null;
+};
+
 export type WorkerResponse<Snapshot> = {
   output: string;
   snapshot: Snapshot;

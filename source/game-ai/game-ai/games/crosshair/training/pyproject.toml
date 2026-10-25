@@ -1,0 +1,12 @@
+[project]
+name = "crosshair-jax"
+version = "0.1.0"
+description = "JAX GPU AlphaZero training pipeline for ai-crosshair"
+requires-python = ">=3.12"
+dependencies = [
+    "jax[cuda12]>=0.12.0.1",
+    "numpy>=2.5.4",
+]
+
+[tool.uv]
+package = false

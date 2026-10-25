@@ -17,6 +17,8 @@ CHESS_OUTPUT_DIR="$BLOG_DIR/public/game-ai/chess"
 CHESS_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_chess.wasm"
 HEX_OUTPUT_DIR="$BLOG_DIR/public/game-ai/hex"
 HEX_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_hex.wasm"
+CROSSHAIR_OUTPUT_DIR="$BLOG_DIR/public/game-ai/crosshair"
+CROSSHAIR_WASM_PATH="$GAME_AI_DIR/target/wasm32-unknown-unknown/wasm-release/ai_crosshair.wasm"
 EXPECTED_WASM_BINDGEN_VERSION="0.2.126"
 
 if ! command -v wasm-bindgen >/dev/null 2>&1; then
@@ -153,3 +155,21 @@ wasm-bindgen \
   --out-name hex \
   "$HEX_WASM_PATH"
 cp "$GAME_AI_DIR/browser/hex.worker.js" "$HEX_OUTPUT_DIR/worker.js"
+
+cargo build \
+  --locked \
+  --manifest-path "$GAME_AI_DIR/Cargo.toml" \
+  --package ai-crosshair \
+  --lib \
+  --profile wasm-release \
+  --target wasm32-unknown-unknown \
+  --features wasm
+
+mkdir -p "$CROSSHAIR_OUTPUT_DIR"
+wasm-bindgen \
+  --target no-modules \
+  --no-typescript \
+  --out-dir "$CROSSHAIR_OUTPUT_DIR" \
+  --out-name crosshair \
+  "$CROSSHAIR_WASM_PATH"
+cp "$GAME_AI_DIR/browser/crosshair.worker.js" "$CROSSHAIR_OUTPUT_DIR/worker.js"

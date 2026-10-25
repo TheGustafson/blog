@@ -3,6 +3,7 @@ members = [
     "games/backgammon",
     "games/chess",
     "games/connect4",
+    "games/crosshair",
     "games/hex",
     "games/othello",
     "games/ultimate-tictactoe",

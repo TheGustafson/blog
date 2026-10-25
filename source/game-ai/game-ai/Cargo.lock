@@ -26,6 +26,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "ai-crosshair"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "ai-hex"
 version = "0.1.0"
 dependencies = [

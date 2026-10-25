@@ -1,0 +1,47 @@
+[package]
+name = "ai-crosshair"
+version = "0.1.0"
+default-run = "ai-crosshair"
+authors = ["Nick Gustafson"]
+edition = "2024"
+rust-version = "1.85"
+description = "Crosshair connection game engine with AlphaZero PUCT, UCT, alpha-beta, and WebAssembly support"
+license = "MIT"
+readme = "README.md"
+documentation = "https://docs.rs/ai-crosshair"
+homepage = "https://thegustafson.com/games/crosshair"
+repository = "https://github.com/TheGustafson/ai-crosshair"
+keywords = ["crosshair", "game", "engine", "mcts", "wasm"]
+categories = ["game-engines", "wasm"]
+include = ["/src/**", "/tests/**", "/README.md", "/LICENSE"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "ai-crosshair"
+path = "src/bin/engine.rs"
+
+[[bin]]
+name = "selfplay"
+path = "src/bin/selfplay.rs"
+
+[features]
+default = []
+wasm = ["dep:wasm-bindgen"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2.126", optional = true }
+
+[dev-dependencies]
+serde_json = "1.0"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[profile.wasm-release]
+inherits = "release"
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+strip = "symbols"

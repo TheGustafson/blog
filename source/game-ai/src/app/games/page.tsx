@@ -18,41 +18,48 @@ export const metadata: Metadata = {
 const games = [
   {
     number: "01",
+    title: "Crosshair",
+    href: "/games/crosshair",
+    note: "Crosshair is a connection game where Red joins top to bottom, Blue joins left to right, and each move sends the opponent to the same row or column. Choose AlphaZero PUCT, UCT, or alpha-beta search.",
+    preview: "crosshair",
+  },
+  {
+    number: "02",
     title: "Ultimate Tic-Tac-Toe",
     href: "/games/tic-tac-toe",
     note: "Ultimate Tic-Tac-Toe is played across nine boards, and each move normally routes the opponent to the matching board. Choose PUCT, UCT, or alpha-beta search and one of six strengths.",
     preview: "ultimate-tic-tac-toe",
   },
   {
-    number: "02",
+    number: "03",
     title: "Connect Four",
     href: "/games/connect-four",
     note: "The engine uses alpha-beta, move ordering, and a transposition table. Choose one of six search budgets.",
     preview: "connect-four",
   },
   {
-    number: "03",
+    number: "04",
     title: "Othello",
     href: "/games/othello",
     note: "Choose an alpha-beta strength and evaluator. Stronger levels solve the endgame exactly.",
     preview: "othello",
   },
   {
-    number: "04",
+    number: "05",
     title: "Chess",
     href: "/games/chess",
     note: "Choose an evaluator and strength for iterative-deepening search with quiescence and a transposition table.",
     preview: "chess",
   },
   {
-    number: "05",
+    number: "06",
     title: "Hex",
     href: "/games/hex",
     note: "Hex is a connection game where each player joins a different pair of opposite sides. Choose UCT or UCT-RAVE, one of six strengths, and a board size from 9×9 through 24×24.",
     preview: "hex",
   },
   {
-    number: "06",
+    number: "07",
     title: "Backgammon",
     href: "/games/backgammon",
     note: "The engine generates complete legal checker plays and searches future dice rolls with weighted expectimax. Choose pass-and-play or one of six search budgets.",
@@ -164,6 +171,8 @@ const chess = [
 
 const hexRed = new Set(["3,0", "3,1", "2,2", "2,3", "1,4", "1,5", "0,6"]);
 const hexBlue = new Set(["0,1", "1,1", "2,1", "3,2", "4,2", "5,3", "6,3"]);
+const crosshairRed = new Set(["6,3", "3,1", "1,3", "2,4", "4,5"]);
+const crosshairBlue = new Set(["3,3", "5,3", "3,5", "2,2", "4,2"]);
 const backgammonCheckers = [
   { column: 0, side: "top", color: "white", count: 2 },
   { column: 5, side: "top", color: "black", count: 5 },
@@ -310,6 +319,135 @@ function GamePreview({ kind }: { kind: (typeof games)[number]["preview"] }) {
               strokeWidth="0.8"
             />
           )),
+        )}
+      </svg>
+    );
+  }
+  if (kind === "crosshair") {
+    return (
+      <svg
+        className="games-index-crosshair block w-[min(19rem,78vw)]"
+        viewBox="0 0 156 156"
+        aria-hidden="true"
+      >
+        <rect x="2" y="2" width="152" height="152" fill="#a69d8f" />
+        <line
+          x1="0"
+          y1="1.75"
+          x2="156"
+          y2="1.75"
+          stroke="#a94636"
+          strokeWidth="3.5"
+        />
+        <line
+          x1="0"
+          y1="154.25"
+          x2="156"
+          y2="154.25"
+          stroke="#a94636"
+          strokeWidth="3.5"
+        />
+        <line
+          x1="1.75"
+          y1="3.5"
+          x2="1.75"
+          y2="152.5"
+          stroke="#315f73"
+          strokeWidth="3.5"
+        />
+        <line
+          x1="154.25"
+          y1="3.5"
+          x2="154.25"
+          y2="152.5"
+          stroke="#315f73"
+          strokeWidth="3.5"
+        />
+        {Array.from({ length: 7 }, (_, rank) =>
+          Array.from({ length: 7 }, (_, file) => {
+            const key = `${file},${rank}`;
+            const x = 3.5 + file * 21.35;
+            const y = 3.5 + rank * 21.35;
+            const cx = x + 10.2;
+            const cy = y + 10.2;
+            const isCrosshair = file === 3 || rank === 3;
+            const isPivot = file === 3 && rank === 3;
+            const isRed = crosshairRed.has(key);
+            const isBlue = crosshairBlue.has(key);
+            const isPinched = key === "5,3";
+            const isPreviewTarget = key === "4,3";
+            return (
+              <g key={key}>
+                <rect
+                  x={x}
+                  y={y}
+                  width="20.4"
+                  height="20.4"
+                  fill={
+                    isPivot
+                      ? "#eed39b"
+                      : isPinched
+                        ? "#f8dfd3"
+                        : isPreviewTarget
+                          ? "#fbf3df"
+                          : isCrosshair
+                            ? "#f5e6c4"
+                            : "#e4ddd0"
+                  }
+                />
+                {isPivot && (
+                  <rect
+                    x={x + 0.75}
+                    y={y + 0.75}
+                    width="18.9"
+                    height="18.9"
+                    fill="none"
+                    stroke="#b67931"
+                    strokeWidth="1.5"
+                  />
+                )}
+                {(isRed || isBlue) && (
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r="7.1"
+                    fill={isRed ? "#a94636" : "#315f73"}
+                    stroke="rgb(247 244 236 / 0.82)"
+                    strokeWidth="1"
+                  />
+                )}
+                {isPivot && (
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r="2.6"
+                    fill="none"
+                    stroke="#f7f4ec"
+                    strokeWidth="1.2"
+                  />
+                )}
+                {isPinched && (
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r="8.6"
+                    fill="none"
+                    stroke="#a94636"
+                    strokeWidth="1.6"
+                  />
+                )}
+                {isPreviewTarget && (
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r="7.1"
+                    fill="#a94636"
+                    fillOpacity="0.38"
+                  />
+                )}
+              </g>
+            );
+          }),
         )}
       </svg>
     );
