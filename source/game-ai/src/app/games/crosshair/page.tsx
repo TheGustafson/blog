@@ -36,9 +36,10 @@ export default function CrosshairPage() {
           Crosshair is a connection game where Red joins top to bottom and Blue
           joins left to right on a 7×7 board. Each move sends your opponent to
           the same row or column, or anywhere if that row and column are full.
-          Sandwiching an adjacent enemy stone along a row or column, or
-          completing a 2×2 checkerboard with your diagonal, flips those enemy
-          stones to your color.
+          Sandwiching an adjacent enemy stone along a row or column flips it to
+          your color, and completing a 2×2 checkerboard with your diagonal
+          flips both enemy stones (cascading if a flip forms another 2×2
+          checkerboard).
         </p>
       </header>
 
