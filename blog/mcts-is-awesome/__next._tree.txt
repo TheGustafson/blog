@@ -13,4 +13,4 @@
 :HL["/blog/mcts-is-awesome/i-can-stop-anytime.webp","image"]
 :HL["/blog/mcts-is-awesome/forgot-one-minus-sign.webp","image"]
 :HL["/blog/mcts-is-awesome/joined-on-move-30.webp","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"mcts-is-awesome","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"WNMol_AfHMQI7cIUFcHDM"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"mcts-is-awesome","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"aktN4CWzxd7HtgjbmdYmY"}
