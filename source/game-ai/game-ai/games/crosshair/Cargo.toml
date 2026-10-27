@@ -1,6 +1,6 @@
 [package]
 name = "ai-crosshair"
-version = "0.1.0"
+version = "0.1.1"
 default-run = "ai-crosshair"
 authors = ["Nick Gustafson"]
 edition = "2024"

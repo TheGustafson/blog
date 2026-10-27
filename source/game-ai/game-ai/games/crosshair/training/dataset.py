@@ -314,15 +314,16 @@ class ReplayBuffer:
                 records_to_split(self._buffer[val_idx]),
             )
 
-        # Deterministic per-game-chunk assignment so train and val trajectories never leak
-        # across generations when the replay buffer grows.
+        # Deterministic per-game-chunk assignment using a coprime multiplier so chunk
+        # selection never resonates with games_per_gen multiples of 10.
         stride = max(2, int(round(1.0 / val_fraction)))
         offset = int(seed) % stride
         val_chunks: list[tuple[int, int]] = []
         train_chunks: list[tuple[int, int]] = []
 
         for c_idx, (start, end) in enumerate(chunks):
-            if (c_idx % stride) == offset and len(train_chunks) + (len(chunks) - c_idx - 1) >= 1:
+            bucket = ((c_idx * 7) + (c_idx // stride)) % stride
+            if bucket == offset and len(train_chunks) + (len(chunks) - c_idx - 1) >= 1:
                 val_chunks.append((start, end))
             else:
                 train_chunks.append((start, end))

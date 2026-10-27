@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import os
 import re
@@ -34,24 +35,24 @@ class LoopConfig:
     work_dir: Path
     engine_manifest: Path = DEFAULT_ENGINE_MANIFEST
     selfplay_bin: Path | None = None
-    generations: int = 5
-    games_per_gen: int = 100
-    datagen_sims: int = 200
+    generations: int = 8
+    games_per_gen: int = 220
+    datagen_sims: int = 450
     dirichlet_alpha: float = 0.3
     dirichlet_eps: float = 0.25
     temp_plies: int = 12
     augment_symmetries: bool = True
-    max_replay_samples: int = 250_000
+    max_replay_samples: int = 160_000
     val_fraction: float = 0.1
-    epochs_per_gen: int = 3
+    epochs_per_gen: int = 6
     batch_size: int = 512
-    lr: float = 3e-4
-    weight_decay: float = 1e-3
-    value_weight: float = 0.20
+    lr: float = 1.2e-3
+    weight_decay: float = 3e-4
+    value_weight: float = 1.0
     arena_games: int = 60
     arena_sims: int = 400
     opening_plies: int = 4
-    promotion_threshold: float = 0.52
+    promotion_threshold: float = 0.51
     verify_tolerance: float = 1e-5
     seed: int = 42
     export_default_weights: Path | None = None
@@ -438,44 +439,71 @@ def run_training_loop(cfg: LoopConfig) -> dict[str, Any]:
         )
 
     buffer = ReplayBuffer(max_samples=cfg.max_replay_samples)
-    existing_data = sorted(data_dir.glob("gen_*.bin"))
-    if existing_data:
-        buffer.load_files(existing_data)
-        print(f"[LOOP] Preloaded {len(buffer):,} samples from {len(existing_data)} existing files")
-
+    log_path = work_dir / "training_log.json"
     generation_logs: list[dict[str, Any]] = []
+    if log_path.exists():
+        try:
+            saved = json.loads(log_path.read_text())
+            generation_logs = list(saved.get("generations", []))
+        except Exception:
+            generation_logs = []
 
     for gen in range(1, cfg.generations + 1):
         gen_seed = cfg.seed + gen * 1009
         print(f"\n==================== GENERATION {gen}/{cfg.generations} ====================")
 
-        # 1. Self-play data generation
+        # 1. Self-play data generation (reuse existing pure self-play file if present)
         data_file = data_dir / f"gen_{gen:03d}.bin"
-        print(
-            f"[GEN {gen}] Generating {cfg.games_per_gen} self-play games "
-            f"({cfg.datagen_sims} sims/move) -> {data_file.name}"
-        )
-        datagen_stats = run_datagen(
-            selfplay_bin=selfplay_bin,
-            out_path=data_file,
-            weights_path=best_weights_path,
-            games=cfg.games_per_gen,
-            simulations=cfg.datagen_sims,
-            seed=gen_seed,
-            dirichlet_alpha=cfg.dirichlet_alpha,
-            dirichlet_eps=cfg.dirichlet_eps,
-            temp_plies=cfg.temp_plies,
-            augment_symmetries=cfg.augment_symmetries,
-        )
-        buffer.add_file(data_file)
-        print(
-            f"[GEN {gen}] Collected {datagen_stats['num_samples']:,} samples in "
-            f"{datagen_stats['elapsed_sec']:.2f}s ({datagen_stats['samples_per_sec']:,.0f} samples/s). "
-            f"Replay buffer: {len(buffer):,}/{cfg.max_replay_samples:,} samples "
-            f"({buffer.memory_bytes / (1024 * 1024):.1f} MiB)"
-        )
+        if data_file.exists() and data_file.stat().st_size > 64:
+            split = load_dataset_file(data_file)
+            num_s = split.num_samples
+            del split
+            datagen_stats = {
+                "games": cfg.games_per_gen,
+                "simulations": cfg.datagen_sims,
+                "num_samples": num_s,
+                "elapsed_sec": 0.0,
+                "samples_per_sec": 0.0,
+                "reused_existing": True,
+            }
+            buffer.add_file(data_file)
+            print(
+                f"[GEN {gen}] Reusing existing pure self-play file {data_file.name} "
+                f"({num_s:,} samples). "
+                f"Replay buffer: {len(buffer):,}/{cfg.max_replay_samples:,} samples "
+                f"({buffer.memory_bytes / (1024 * 1024):.1f} MiB)"
+            )
+        else:
+            print(
+                f"[GEN {gen}] Generating {cfg.games_per_gen} self-play games "
+                f"({cfg.datagen_sims} sims/move) -> {data_file.name}"
+            )
+            datagen_stats = run_datagen(
+                selfplay_bin=selfplay_bin,
+                out_path=data_file,
+                weights_path=best_weights_path,
+                games=cfg.games_per_gen,
+                simulations=cfg.datagen_sims,
+                seed=gen_seed,
+                dirichlet_alpha=cfg.dirichlet_alpha,
+                dirichlet_eps=cfg.dirichlet_eps,
+                temp_plies=cfg.temp_plies,
+                augment_symmetries=cfg.augment_symmetries,
+            )
+            buffer.add_file(data_file)
+            print(
+                f"[GEN {gen}] Collected {datagen_stats['num_samples']:,} samples in "
+                f"{datagen_stats['elapsed_sec']:.2f}s ({datagen_stats['samples_per_sec']:,.0f} samples/s). "
+                f"Replay buffer: {len(buffer):,}/{cfg.max_replay_samples:,} samples "
+                f"({buffer.memory_bytes / (1024 * 1024):.1f} MiB)"
+            )
+
+        if gen <= len(generation_logs) and (ckpt_dir / f"gen_{gen:03d}.bin").exists():
+            print(f"[GEN {gen}] Already completed in training_log.json; skipping training & arena.")
+            continue
 
         # 2. Train on GPU with JAX over the sliding-window replay buffer
+        gc.collect()
         train_split, val_split = buffer.split_train_val(
             val_fraction=cfg.val_fraction,
             seed=cfg.seed,
@@ -498,6 +526,8 @@ def run_training_loop(cfg: LoopConfig) -> dict[str, Any]:
         )
         cand_weights_path = ckpt_dir / f"gen_{gen:03d}.bin"
         save_weights(trained_params, cand_weights_path)
+        del train_split, val_split, current_params, trained_params
+        gc.collect()
 
         # 3. Verify JAX vs Rust forward pass numerical parity (< 1e-5)
         parity_stats = verify_forward_parity(
@@ -620,17 +650,17 @@ def main(argv: list[str] | None = None) -> int:
         help="Path to the ai-crosshair Cargo.toml manifest.",
     )
     parser.add_argument("--selfplay-bin", type=Path, default=None, help="Explicit path to selfplay binary.")
-    parser.add_argument("--generations", type=int, default=3, help="Number of self-play generations.")
-    parser.add_argument("--games-per-gen", type=int, default=180, help="Self-play games per generation.")
-    parser.add_argument("--datagen-sims", type=int, default=500, help="MCTS simulations per move during datagen.")
-    parser.add_argument("--epochs", type=int, default=3, help="Training epochs per generation.")
+    parser.add_argument("--generations", type=int, default=8, help="Number of self-play generations.")
+    parser.add_argument("--games-per-gen", type=int, default=220, help="Self-play games per generation.")
+    parser.add_argument("--datagen-sims", type=int, default=450, help="MCTS simulations per move during datagen.")
+    parser.add_argument("--epochs", type=int, default=8, help="Training epochs per generation.")
     parser.add_argument("--batch-size", type=int, default=512, help="Training mini-batch size.")
-    parser.add_argument("--lr", type=float, default=3e-4, help="Peak learning rate.")
-    parser.add_argument("--weight-decay", type=float, default=1e-3, help="L2 weight decay.")
-    parser.add_argument("--value-weight", type=float, default=0.20, help="Value MSE weight.")
+    parser.add_argument("--lr", type=float, default=1.4e-3, help="Peak learning rate.")
+    parser.add_argument("--weight-decay", type=float, default=1.5e-4, help="L2 weight decay.")
+    parser.add_argument("--value-weight", type=float, default=1.0, help="Value MSE weight.")
     parser.add_argument("--arena-games", type=int, default=60, help="Paired games per arena match.")
     parser.add_argument("--arena-sims", type=int, default=400, help="Simulations per move in arena matches.")
-    parser.add_argument("--promotion-threshold", type=float, default=0.52, help="Win rate threshold for promotion.")
+    parser.add_argument("--promotion-threshold", type=float, default=0.51, help="Win rate threshold for promotion.")
     parser.add_argument("--export-default-weights", type=Path, default=None, help="Copy promoted weights here.")
     parser.add_argument("--seed", type=int, default=42, help="Base random seed.")
     args = parser.parse_args(argv)

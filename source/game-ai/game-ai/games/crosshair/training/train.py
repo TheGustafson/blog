@@ -47,12 +47,12 @@ class EvalMetrics:
 class TrainConfig:
     """Hyperparameters for JAX GPU training."""
 
-    epochs: int = 3
+    epochs: int = 8
     batch_size: int = 512
-    lr: float = 3e-4
+    lr: float = 1.4e-3
     lr_min_ratio: float = 0.05
-    weight_decay: float = 1e-3
-    value_weight: float = 0.20
+    weight_decay: float = 1.5e-4
+    value_weight: float = 1.0
     beta1: float = 0.9
     beta2: float = 0.999
     eps: float = 1e-8
@@ -69,73 +69,264 @@ def init_optimizer(params: Params) -> OptimizerState:
 
 
 def _l2_regularization(params: Params) -> jax.Array:
-    """Compute sum of squared weights (excluding biases), with stronger regularization on the value head."""
+    """Compute sum of squared weights (excluding biases)."""
     terms = []
     for name, p in params.items():
         if name.startswith("W_"):
-            scale = 5.0 if name in ("W_val1", "W_val2") else 1.0
-            terms.append(scale * jnp.sum(jnp.square(p)))
+            terms.append(jnp.sum(jnp.square(p)))
     return jnp.sum(jnp.stack(terms))
 
 
-def _gpu_ridge_subspace_update(params: Params, train_split: DatasetSplit) -> Params:
-    """Project L2-regularized linear policy and value subspaces on the GPU prior to AdamW epochs."""
+def _subsample_split(train_split: DatasetSplit, max_samples: int = 32_768) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Return a deterministic strided subsample of (inputs, policy_targets, value_targets) in CPU RAM."""
+    n = train_split.num_samples
+    if n <= max_samples:
+        return train_split.inputs, train_split.policy_targets, train_split.value_targets
+    idx = np.linspace(0, n - 1, max_samples, dtype=np.int64)
+    return (
+        train_split.inputs[idx],
+        train_split.policy_targets[idx],
+        train_split.value_targets[idx],
+    )
+
+
+def _prepare_policy_trunk(params: Params, train_split: DatasetSplit) -> Params:
+    """Warm-start the 96-unit nonlinear policy trunk (`0..96`) and reserve `96..128` for value without dynamic-shape XLA compilation."""
     n = train_split.num_samples
     if n < 4096:
         return params
 
-    x_j = jnp.asarray(train_split.inputs, dtype=jnp.float32)
-    z_j = jnp.asarray(train_split.value_targets, dtype=jnp.float32)
-    pi_j = jnp.asarray(train_split.policy_targets, dtype=jnp.float32)
-    legal_j = x_j[:, 98:147] > 0.5
+    x_np, pi_np, _ = _subsample_split(train_split, max_samples=32_768)
+    sub_n = x_np.shape[0]
+    legal_np = x_np[:, 98:147] > 0.5
 
-    log_pi = jnp.where(legal_j, jnp.log(jnp.maximum(pi_j, 1e-4)), 0.0)
-    legal_cnt = jnp.maximum(jnp.sum(legal_j.astype(jnp.float32), axis=1, keepdims=True), 1.0)
-    log_pi = jnp.where(legal_j, log_pi - jnp.sum(log_pi, axis=1, keepdims=True) / legal_cnt, 0.0)
+    log_pi = np.where(legal_np, np.log(np.maximum(pi_np, 1e-4)), 0.0).astype(np.float32)
+    legal_cnt = np.maximum(np.sum(legal_np.astype(np.float32), axis=1, keepdims=True), 1.0)
+    log_pi = np.where(legal_np, log_pi - np.sum(log_pi, axis=1, keepdims=True) / legal_cnt, 0.0)
 
-    xtx = jnp.matmul(x_j.T, x_j, precision=jax.lax.Precision.HIGHEST)
-    eye = jnp.eye(INPUTS, dtype=jnp.float32)
-    reg_v = max(4000.0, 0.06 * float(n))
-    reg_p = max(3000.0, 0.04 * float(n))
+    xtx = (x_np.T @ x_np).astype(np.float64)
+    xty = (x_np.T @ log_pi).astype(np.float64)
+    reg_p = max(2500.0, 0.04 * float(sub_n))
+    w_pol_np = np.linalg.solve(
+        xtx + reg_p * np.eye(INPUTS, dtype=np.float64),
+        xty,
+    ).T.astype(np.float32)
 
-    xt_z = jnp.matmul(x_j.T, z_j, precision=jax.lax.Precision.HIGHEST)
-    xt_p = jnp.matmul(x_j.T, log_pi, precision=jax.lax.Precision.HIGHEST)
-    w_val = jnp.linalg.solve(xtx + reg_v * eye, xt_z)
-    w_pol = jnp.linalg.solve(xtx + reg_p * eye, xt_p).T  # (49, 294)
+    fresh_p = {k: np.array(v, dtype=np.float32, copy=True) for k, v in init_params(seed=42).items()}
+    prev_p = {k: np.array(v, dtype=np.float32, copy=True) for k, v in params.items()}
+    is_fresh = float(np.max(np.abs(prev_p["W_res1b"]))) < 1e-6
 
-    new_params = dict(params)
-    w_stem = new_params["W_stem"]
-    b_stem = new_params["b_stem"]
-    w_res1b = new_params["W_res1b"]
-    w_res2b = new_params["W_res2b"]
-    w_pol_head = new_params["W_pol"]
-    w_val1 = new_params["W_val1"]
-    w_val2 = new_params["W_val2"]
+    new_p = dict(fresh_p)
+    new_p["W_stem"][:49, :] = 0.5 * fresh_p["W_stem"][:49, :] + w_pol_np
+    new_p["b_stem"][:49] = 1.2
+    new_p["W_pol"][:, :49] = (
+        0.5 * fresh_p["W_pol"][:, :49] + np.eye(ACTIONS, dtype=np.float32) * 0.8
+    )
+    if not is_fresh:
+        new_p["W_stem"][49:96, :] = 0.75 * fresh_p["W_stem"][49:96, :] + 0.25 * prev_p["W_stem"][49:96, :]
+        new_p["b_stem"][49:96] = 0.75 * fresh_p["b_stem"][49:96] + 0.25 * prev_p["b_stem"][49:96]
+        for k in ("W_res1a", "b_res1a", "W_res1b", "b_res1b", "W_res2a", "b_res2a", "W_res2b", "b_res2b"):
+            new_p[k] = 0.75 * fresh_p[k] + 0.25 * prev_p[k]
 
-    # Units 0..49: linear policy subspace
-    w_stem = w_stem.at[:49, :].set(w_pol)
-    b_stem = b_stem.at[:49].set(1.5)
-    w_pol_head = w_pol_head.at[:, :49].set(jnp.eye(ACTIONS, dtype=jnp.float32) * 1.2)
+    # Reserve units 96..128 for the invariant value & road-corridor subspace
+    new_p["W_stem"][96:, :] = 0.0
+    new_p["b_stem"][96:] = 0.0
+    new_p["W_res1a"][96:, :] = 0.0
+    new_p["W_res1a"][:, 96:] = 0.0
+    new_p["b_res1a"][96:] = 0.0
+    new_p["W_res1b"][96:, :] = 0.0
+    new_p["W_res1b"][:, 96:] = 0.0
+    new_p["b_res1b"][96:] = 0.0
+    new_p["W_res2a"][96:, :] = 0.0
+    new_p["W_res2a"][:, 96:] = 0.0
+    new_p["b_res2a"][96:] = 0.0
+    new_p["W_res2b"][96:, :] = 0.0
+    new_p["W_res2b"][:, 96:] = 0.0
+    new_p["b_res2b"][96:] = 0.0
+    new_p["W_pol"][:, 96:] = 0.0
 
-    # Units 126, 127: positive/negative ReLU pair for exact linear value subspace
-    w_stem = w_stem.at[126, :].set(w_val * 2.2)
-    w_stem = w_stem.at[127, :].set(-w_val * 2.2)
-    b_stem = b_stem.at[126:].set(0.0)
-    w_res1b = w_res1b.at[126:, :].set(0.0)
-    w_res2b = w_res2b.at[126:, :].set(0.0)
+    return {k: jnp.asarray(v, dtype=jnp.float32) for k, v in new_p.items()}
 
-    w_val1 = w_val1.at[0, :].set(0.0).at[0, 126].set(1.0)
-    w_val1 = w_val1.at[1, :].set(0.0).at[1, 127].set(1.0)
-    w_val2 = (w_val2 * 0.25).at[0, 0].set(1.0).at[0, 1].set(-1.0)
 
-    new_params["W_stem"] = w_stem
-    new_params["b_stem"] = b_stem
-    new_params["W_res1b"] = w_res1b
-    new_params["W_res2b"] = w_res2b
-    new_params["W_pol"] = w_pol_head
-    new_params["W_val1"] = w_val1
-    new_params["W_val2"] = w_val2
-    return new_params
+def _finalize_hybrid_heads(
+    params: Params,
+    train_split: DatasetSplit,
+    target_logit_std: float = 0.52,
+    val_scale: float = 1.15,
+) -> Params:
+    """Attach the V4-symmetric road-corridor & span value subspace (`96..128`) and calibrate PUCT policy temperature."""
+    n = train_split.num_samples
+    if n < 4096:
+        return params
+
+    x_np, _, z_np = _subsample_split(train_split, max_samples=32_768)
+    sub_n = x_np.shape[0]
+    xtx = (x_np.T @ x_np).astype(np.float64)
+    xtz = (x_np.T @ z_np).astype(np.float64)
+    reg_v = max(3500.0, 0.06 * float(sub_n))
+    w_val = np.linalg.solve(
+        xtx + reg_v * np.eye(INPUTS, dtype=np.float64),
+        xtz,
+    ).astype(np.float32)
+
+    # Symmetrize w_val under Klein four-group V4 reflections
+    for ch in range(6):
+        g = w_val[ch * 49 : (ch + 1) * 49].reshape(7, 7)
+        w_val[ch * 49 : (ch + 1) * 49] = (
+            0.25 * (g + g[::-1, :] + g[:, ::-1] + g[::-1, ::-1])
+        ).reshape(49)
+
+    # Pooled flip capture regression bonus on Channel 3 (indices 147..196)
+    flips_np = x_np[:, 147:196]
+    f_sum = np.sum(flips_np, axis=1)
+    resid_val = z_np - (x_np @ w_val)
+    beta_flip_val = float(np.sum(f_sum * resid_val) / (np.sum(f_sum * f_sum) + 200.0))
+    w_val[147:196] += beta_flip_val
+
+    new_p = {k: np.array(v, dtype=np.float32, copy=True) for k, v in params.items()}
+
+    # Ensure units 96..128 bypass residual blocks and policy head cleanly
+    new_p["W_stem"][96:, :] = 0.0
+    new_p["b_stem"][96:] = 0.0
+    new_p["W_res1a"][96:, :] = 0.0
+    new_p["W_res1a"][:, 96:] = 0.0
+    new_p["b_res1a"][96:] = 0.0
+    new_p["W_res1b"][96:, :] = 0.0
+    new_p["W_res1b"][:, 96:] = 0.0
+    new_p["b_res1b"][96:] = 0.0
+    new_p["W_res2a"][96:, :] = 0.0
+    new_p["W_res2a"][:, 96:] = 0.0
+    new_p["b_res2a"][96:] = 0.0
+    new_p["W_res2b"][96:, :] = 0.0
+    new_p["W_res2b"][:, 96:] = 0.0
+    new_p["b_res2b"][96:] = 0.0
+    new_p["W_pol"][:, 96:] = 0.0
+
+    # Units 96..103 (7 units): own empty-rank detectors relu(1.0 - sum_c own[r, c])
+    for r in range(7):
+        new_p["W_stem"][96 + r, r * 7 : (r + 1) * 7] = -1.0
+        new_p["b_stem"][96 + r] = 1.0
+
+    # Units 103..110 (7 units): opp empty-file detectors relu(1.0 - sum_r opp[r, c])
+    for c in range(7):
+        for r in range(7):
+            new_p["W_stem"][103 + c, 49 + r * 7 + c] = -1.0
+        new_p["b_stem"][103 + c] = 1.0
+
+    # Units 110..117 (7 units): own file-corridor vertical road continuity detectors
+    for c in range(7):
+        u = 110 + c
+        for r in range(7):
+            sq = r * 7 + c
+            new_p["W_stem"][u, sq] = 0.50
+            new_p["W_stem"][u, 49 + sq] = -0.35
+            if c > 0:
+                new_p["W_stem"][u, r * 7 + (c - 1)] += 0.20
+            if c < 6:
+                new_p["W_stem"][u, r * 7 + (c + 1)] += 0.20
+        new_p["b_stem"][u] = -0.75
+
+    # Units 117..124 (7 units): opp rank-corridor horizontal road continuity detectors
+    for r in range(7):
+        u = 117 + r
+        for c in range(7):
+            sq = r * 7 + c
+            new_p["W_stem"][u, 49 + sq] = 0.50
+            new_p["W_stem"][u, sq] = -0.35
+            if r > 0:
+                new_p["W_stem"][u, 49 + (r - 1) * 7 + c] += 0.20
+            if r < 6:
+                new_p["W_stem"][u, 49 + (r + 1) * 7 + c] += 0.20
+        new_p["b_stem"][u] = -0.75
+
+    # Units 124, 125: center 3x3 control & edge anchor advantage (+ and -)
+    for r in range(2, 5):
+        for c in range(2, 5):
+            sq = r * 7 + c
+            new_p["W_stem"][124, sq] = 0.25
+            new_p["W_stem"][124, 49 + sq] = -0.25
+            new_p["W_stem"][125, 49 + sq] = 0.25
+            new_p["W_stem"][125, sq] = -0.25
+
+    # Units 126, 127: V4-symmetric Ridge + pooled-flip linear value (+ and -)
+    new_p["W_stem"][126, :] = w_val * 2.2
+    new_p["W_stem"][127, :] = -w_val * 2.2
+
+    h0 = np.maximum(0.0, x_np @ new_p["W_stem"].T + new_p["b_stem"])
+    u1 = np.maximum(0.0, h0 @ new_p["W_res1a"].T + new_p["b_res1a"])
+    h1 = np.maximum(0.0, h0 + u1 @ new_p["W_res1b"].T + new_p["b_res1b"])
+    u2 = np.maximum(0.0, h1 @ new_p["W_res2a"].T + new_p["b_res2a"])
+    h2 = np.maximum(0.0, h1 + u2 @ new_p["W_res2b"].T + new_p["b_res2b"])
+
+    # Calibrate policy head temperature to target_logit_std across legal moves
+    sample_k = min(sub_n, 4096)
+    logits_sub = h2[:sample_k] @ new_p["W_pol"].T + new_p["b_pol"]
+    leg_sub = (x_np[:sample_k, 98:147] > 0.5).astype(np.float32)
+    leg_cnt = np.maximum(np.sum(leg_sub, axis=1, keepdims=True), 1.0)
+    leg_mean = np.sum(logits_sub * leg_sub, axis=1, keepdims=True) / leg_cnt
+    leg_var = np.sum(np.square((logits_sub - leg_mean) * leg_sub), axis=1) / np.squeeze(leg_cnt, axis=1)
+    curr_std = float(np.mean(np.sqrt(np.maximum(leg_var, 1e-8))))
+    if curr_std > 1e-4:
+        pol_scale = float(np.clip(target_logit_std / curr_std, 0.65, 1.85))
+        new_p["W_pol"] *= pol_scale
+        new_p["b_pol"] *= pol_scale
+
+    # Fit regularized value readout from the 96-unit nonlinear policy trunk + dedicated span/corridor units
+    h_trunk = h2[:, :96]
+    resid_z = z_np - 0.45 * (h2[:, 126] - h2[:, 127])
+    hth = (h_trunk.T @ h_trunk).astype(np.float64)
+    htr = (h_trunk.T @ resid_z).astype(np.float64)
+    w_trunk_val = np.linalg.solve(
+        hth + max(10000.0, 0.16 * float(sub_n)) * np.eye(96, dtype=np.float64),
+        htr,
+    ).astype(np.float32)
+
+    new_p["W_val1"][:, :] = 0.0
+    new_p["b_val1"][:] = 0.0
+    new_p["W_val2"][:, :] = 0.0
+    new_p["b_val2"][:] = 0.0
+
+    new_p["W_val1"][0, 126] = 1.0
+    new_p["W_val1"][1, 127] = 1.0
+    new_p["W_val1"][2, 96:103] = 1.0
+    new_p["W_val1"][3, 103:110] = 1.0
+    new_p["W_val1"][4, 96:103] = -1.0
+    new_p["b_val1"][4] = 1.0
+    new_p["W_val1"][5, 103:110] = -1.0
+    new_p["b_val1"][5] = 1.0
+    new_p["W_val1"][6, 96:103] = -1.0
+    new_p["b_val1"][6] = 2.0
+    new_p["W_val1"][7, 103:110] = -1.0
+    new_p["b_val1"][7] = 2.0
+    new_p["W_val1"][8, 96:103] = -1.0
+    new_p["b_val1"][8] = 3.0
+    new_p["W_val1"][9, 103:110] = -1.0
+    new_p["b_val1"][9] = 3.0
+    new_p["W_val1"][10, [96, 102]] = -1.0
+    new_p["b_val1"][10] = 1.0
+    new_p["W_val1"][11, [103, 109]] = -1.0
+    new_p["b_val1"][11] = 1.0
+    new_p["W_val1"][12, 97:102] = -1.0
+    new_p["b_val1"][12] = 1.0
+    new_p["W_val1"][13, 104:109] = -1.0
+    new_p["b_val1"][13] = 1.0
+    new_p["W_val1"][14, 110:117] = 0.25
+    new_p["W_val1"][15, 117:124] = 0.25
+    new_p["W_val1"][16, :96] = w_trunk_val * 2.0
+    new_p["W_val1"][17, :96] = -w_trunk_val * 2.0
+    new_p["W_val1"][18, 124] = 1.0
+    new_p["W_val1"][19, 125] = 1.0
+
+    v_hid = np.maximum(0.0, h2 @ new_p["W_val1"].T + new_p["b_val1"])[:, :20]
+    vtv = (v_hid.T @ v_hid).astype(np.float64)
+    vtz = (v_hid.T @ z_np).astype(np.float64)
+    w_v2 = np.linalg.solve(
+        vtv + max(2500.0, 0.05 * float(sub_n)) * np.eye(20, dtype=np.float64),
+        vtz,
+    ).astype(np.float32)
+    new_p["W_val2"][0, :20] = w_v2 * val_scale
+
+    return {k: jnp.asarray(v, dtype=jnp.float32) for k, v in new_p.items()}
 
 
 @jax.jit
@@ -404,7 +595,8 @@ def train_model(
         if val.num_samples > 0:
             print(format_metrics("PRE-TRAIN (val)  ", pre_val))
 
-    params = _gpu_ridge_subspace_update(params, train_split)
+    use_hybrid = train_split.num_samples >= 4096
+    params = _prepare_policy_trunk(params, train_split)
 
     steps_per_epoch = max(1, (train_split.num_samples + cfg.batch_size - 1) // cfg.batch_size)
     total_steps = max(1, cfg.epochs * steps_per_epoch)
@@ -415,7 +607,7 @@ def train_model(
     total_steps_arr = jnp.asarray(total_steps, dtype=jnp.int32)
     lr_max_arr = jnp.asarray(cfg.lr, dtype=jnp.float32)
     lr_min_ratio_arr = jnp.asarray(cfg.lr_min_ratio, dtype=jnp.float32)
-    value_weight_arr = jnp.asarray(cfg.value_weight, dtype=jnp.float32)
+    value_weight_arr = jnp.asarray(0.0 if use_hybrid else cfg.value_weight, dtype=jnp.float32)
     weight_decay_arr = jnp.asarray(cfg.weight_decay, dtype=jnp.float32)
     beta1_arr = jnp.asarray(cfg.beta1, dtype=jnp.float32)
     beta2_arr = jnp.asarray(cfg.beta2, dtype=jnp.float32)
@@ -498,6 +690,8 @@ def train_model(
                 f"lr={last_lr:.2e} | {ep_sec * 1000:.1f} ms"
             )
 
+    jax.tree_util.tree_map(lambda a: a.block_until_ready(), params)
+    params = _finalize_hybrid_heads(params, train_split)
     jax.tree_util.tree_map(lambda a: a.block_until_ready(), params)
     wall_elapsed_sec = max(time.perf_counter() - t_wall_start, 1e-9)
     samples_per_sec = steady_state_samples / max(steady_state_sec, 1e-9)
