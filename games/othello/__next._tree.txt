@@ -5,4 +5,4 @@
 :HL["/_next/static/css/7ad0f22d931b9caa.css","style"]
 :HL["/_next/static/css/fad4d90db3d98129.css","style"]
 :HL["/_next/static/css/c2d05f1a68035b89.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"games","param":null,"prefetchHints":0,"slots":{"children":{"name":"othello","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"7lgfUc8OLqiMhedJ27ixn"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"games","param":null,"prefetchHints":0,"slots":{"children":{"name":"othello","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"tiXGFFYIUmTQinuicsDG7"}
