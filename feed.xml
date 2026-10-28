@@ -10,7 +10,7 @@
       <title>Crosshair-Bench: Evaluating Frontier Models on an Unseen Game</title>
       <link>https://thegustafson.com/blog/llms-vs-crosshair</link>
       <guid isPermaLink="true">https://thegustafson.com/blog/llms-vs-crosshair</guid>
-      <description>Running a 495-game tournament across 20 frontier and flash LLM configurations and a 114K-parameter AlphaZero network on a newly invented board game.</description>
+      <description>Running a 556-game tournament across 20 frontier and flash LLM configurations and a 114K-parameter AlphaZero network on a newly invented board game.</description>
     </item>
     <item>
       <title>Crosshair: A New Board Game to Showcase Pure AlphaZero Self-Play</title>
