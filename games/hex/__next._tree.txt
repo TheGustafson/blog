@@ -6,4 +6,4 @@
 :HL["/_next/static/css/2a35b44ac3ec1215.css","style"]
 :HL["/_next/static/css/c2d05f1a68035b89.css","style"]
 :HL["/_next/static/css/12c6af92ed0c62f7.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"games","param":null,"prefetchHints":0,"slots":{"children":{"name":"hex","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"E5dg5lPemd32g8SBZpXbf"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"games","param":null,"prefetchHints":0,"slots":{"children":{"name":"hex","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"pIySAeZEues345H3rqT9Z"}
