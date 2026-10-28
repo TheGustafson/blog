@@ -6,4 +6,4 @@
 :HL["/_next/static/css/2a35b44ac3ec1215.css","style"]
 :HL["/_next/static/css/c2d05f1a68035b89.css","style"]
 :HL["/_next/static/css/bb4c902f0f1df200.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"benchmark","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"engine-az-puct-1","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"pIySAeZEues345H3rqT9Z"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"benchmark","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"engine-az-puct-1","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"TZ560XG8-gROpytLY-TY4"}
