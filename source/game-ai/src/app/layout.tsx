@@ -89,6 +89,12 @@ export default function RootLayout({
               >
                 notes
               </Link>
+              <Link
+                href="/benchmark"
+                className="hidden sm:inline text-stone-600 font-medium hover:text-stone-900 transition-colors py-2 -my-2"
+              >
+                Benchmark
+              </Link>
               {SHOW_GAMES && (
                 <Link
                   href="/games"

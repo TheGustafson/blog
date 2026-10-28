@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[88655,["8500","static/chunks/8500-f62a38ff68ab7f42.js","6997","static/chunks/6997-8c0d8c15be5fd048.js","8655","static/chunks/8655-fb625da9a6b68d71.js","1898","static/chunks/app/benchmark/%5Bslug%5D/page-e28271e796f64199.js"],"CrosshairModelDetailClient"]
+3:I[90484,[],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"slug":"gpt-6-1-sol-low","initialParticipant":{"slug":"gpt-6-1-sol-low","rank":4,"key":"gpt-6.1-sol@low (raw)","label":"gpt-6.1-sol@low","rawLabel":"gpt-6.1-sol@low","actorType":"llm","provider":"OpenAI","tier":"flagship","promptMode":"raw","reasoningEffort":"low","elo":1408.3,"games":20,"wins":9,"losses":11,"winRate":0.45,"vsUct50":{"wins":4,"losses":0},"vsAz400":{"wins":0,"losses":4},"vsAz4000":{"wins":0,"losses":4},"top1Rate":0.3986,"top3Rate":0.6564,"policyTop1Rate":0.3368,"mwpl":0.0492,"blunders":35,"blunderRate":0.1203,"illegalAttempts":0,"avgLatencyMs":20363.9,"avgTokensPerTurn":1630.9,"avgReasoningTokensPerTurn":588,"totalCostUsd":2.73143,"costPerGameUsd":0.13657}}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"vDugnH4sCOokdD6hVp8NR"}
+5:null

@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[88655,["8500","static/chunks/8500-f62a38ff68ab7f42.js","6997","static/chunks/6997-8c0d8c15be5fd048.js","8655","static/chunks/8655-fb625da9a6b68d71.js","1898","static/chunks/app/benchmark/%5Bslug%5D/page-e28271e796f64199.js"],"CrosshairModelDetailClient"]
+3:I[90484,[],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"slug":"gpt-6-luna-high","initialParticipant":{"slug":"gpt-6-luna-high","rank":13,"key":"gpt-6-luna@high (raw)","label":"gpt-6-luna@high","rawLabel":"gpt-6-luna@high","actorType":"llm","provider":"OpenAI","tier":"flash","promptMode":"raw","reasoningEffort":"high","elo":1157.5,"games":36,"wins":13,"losses":23,"winRate":0.3611,"vsUct50":{"wins":2,"losses":2},"vsAz400":{"wins":0,"losses":4},"vsAz4000":{"wins":0,"losses":4},"top1Rate":0.3648,"top3Rate":0.652,"policyTop1Rate":0.3983,"mwpl":0.0623,"blunders":81,"blunderRate":0.1698,"illegalAttempts":0,"avgLatencyMs":36154.2,"avgTokensPerTurn":3932.7,"avgReasoningTokensPerTurn":2845.3,"totalCostUsd":0.7497,"costPerGameUsd":0.02082}}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"vDugnH4sCOokdD6hVp8NR"}
+5:null
