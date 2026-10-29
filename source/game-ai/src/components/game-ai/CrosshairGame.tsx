@@ -814,16 +814,6 @@ export function CrosshairGame({
             </div>
           )}
 
-          {coarsePointer && selectedMove && humanTurn && (
-            <button
-              type="button"
-              className="game-ai-primary-action crosshair-mobile-confirm"
-              onClick={() => makeMove(selectedMove)}
-            >
-              Play {selectedMove.toUpperCase()}
-            </button>
-          )}
-
           <div
             ref={boardRef}
             data-crosshair-board
@@ -1002,6 +992,15 @@ export function CrosshairGame({
               )}
             </p>
             <div>
+              {coarsePointer && selectedMove && humanTurn && (
+                <button
+                  type="button"
+                  className="game-ai-primary-action crosshair-mobile-confirm"
+                  onClick={() => makeMove(selectedMove)}
+                >
+                  Play {selectedMove.toUpperCase()}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={undo}
