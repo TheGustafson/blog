@@ -443,6 +443,7 @@ export function OthelloGame() {
                   >
                     {mark && (
                       <span
+                        data-othello-disc={mark}
                         className={`absolute inset-[10%] rounded-full border shadow-[0_3px_5px_rgba(0,0,0,0.28)] ${
                           mark === "B"
                             ? "border-stone-600 bg-[radial-gradient(circle_at_35%_28%,#57534e,#0c0a09_66%)]"

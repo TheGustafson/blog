@@ -18,6 +18,12 @@ const nextConfig = {
   assetPrefix: basePath || undefined,
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   images: { unoptimized: true },
+  // Keep publication within the shared authoring host's memory budget.
+  webpack(config) {
+    config.cache = false;
+    config.parallelism = 2;
+    return config;
+  },
   experimental: {
     // Lowers peak memory during webpack compilation; slower builds but
     // viable on memory-constrained machines with a hundred-plus MDX pages.
@@ -26,7 +32,7 @@ const nextConfig = {
     // build inside the same bounded worker budget. This matters locally too:
     // a preview build compiles the same hundred-plus MDX pages as publish.
     webpackBuildWorker: true,
-    cpus: 2,
+    cpus: 1,
   },
 };
 

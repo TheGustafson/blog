@@ -198,9 +198,11 @@ function MctsSearchReadout({ decision }: { decision: SearchReadoutDecision }) {
 export function UltimateTicTacToeGame({
   fixedStrategy,
   initialStrength = "maximum",
+  collapseSearchDetails = false,
 }: {
   fixedStrategy?: UltimateArticleStrategy;
   initialStrength?: Strength;
+  collapseSearchDetails?: boolean;
 } = {}) {
   const engineRef = useRef<GameEngineWorker<UltimateTicTacToeSnapshot> | null>(
     null,
@@ -684,7 +686,12 @@ export function UltimateTicTacToeGame({
           </div>
 
           {algorithm === "mcts" && lastMctsDecision && (
-            <MctsSearchReadout decision={lastMctsDecision} />
+            collapseSearchDetails ? (
+              <details className="game-ai-search-details">
+                <summary>Search details</summary>
+                <MctsSearchReadout decision={lastMctsDecision} />
+              </details>
+            ) : <MctsSearchReadout decision={lastMctsDecision} />
           )}
         </div>
       </div>

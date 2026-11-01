@@ -264,10 +264,12 @@ export function HexGame({
   fixedStrategy,
   initialStrength = "maximum",
   initialBoardSize = DEFAULT_BOARD_SIZE,
+  collapseSearchDetails = false,
 }: {
   fixedStrategy?: HexArticleStrategy;
   initialStrength?: Strength;
   initialBoardSize?: number;
+  collapseSearchDetails?: boolean;
 } = {}) {
   const engineRef = useRef<GameEngineWorker<HexSnapshot> | null>(null);
   const snapshotRef = useRef<HexSnapshot | null>(null);
@@ -920,7 +922,12 @@ export function HexGame({
               Engine error: {error}
             </p>
           )}
-          {lastDecision && <SearchReadout decision={lastDecision} />}
+          {lastDecision && (collapseSearchDetails ? (
+            <details className="game-ai-search-details">
+              <summary>Search details</summary>
+              <SearchReadout decision={lastDecision} />
+            </details>
+          ) : <SearchReadout decision={lastDecision} />)}
         </div>
       </div>
     </div>

@@ -45,6 +45,12 @@ export function MobileMoreMenu({ showGames }: { showGames: boolean }) {
       </summary>
       <div className="absolute right-0 top-10 z-40 flex w-40 flex-col border border-stone-300 bg-[var(--paper)] p-2 text-[13px]">
         <Link
+          href="/about"
+          className="px-2.5 py-2 text-stone-700 hover:bg-stone-100 transition-colors sm:hidden"
+        >
+          about
+        </Link>
+        <Link
           href="/benchmark"
           className="px-2.5 py-2 text-stone-700 hover:bg-stone-100 transition-colors sm:hidden"
         >

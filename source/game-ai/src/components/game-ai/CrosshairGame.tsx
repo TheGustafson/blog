@@ -263,10 +263,12 @@ export function CrosshairGame({
   fixedStrategy,
   initialStrength = "maximum",
   showControls = true,
+  collapseSearchDetails = false,
 }: {
   fixedStrategy?: CrosshairStrategy;
   initialStrength?: CrosshairStrength;
   showControls?: boolean;
+  collapseSearchDetails?: boolean;
 } = {}) {
   const engineRef = useRef<GameEngineWorker<CrosshairSnapshot> | null>(null);
   const snapshotRef = useRef<CrosshairSnapshot | null>(null);
@@ -1030,7 +1032,12 @@ export function CrosshairGame({
             </div>
           </div>
 
-          {lastDecision && <SearchReadout decision={lastDecision} />}
+          {lastDecision && (collapseSearchDetails ? (
+            <details className="game-ai-search-details">
+              <summary>Search details</summary>
+              <SearchReadout decision={lastDecision} />
+            </details>
+          ) : <SearchReadout decision={lastDecision} />)}
         </div>
       </div>
 

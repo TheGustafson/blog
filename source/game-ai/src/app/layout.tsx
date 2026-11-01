@@ -77,17 +77,25 @@ export default function RootLayout({
           <nav className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
             <Link
               href="/"
-              className="text-sm font-semibold text-stone-800 hover:text-black transition-colors tracking-wide py-2 -my-2"
+              className="text-xs sm:text-sm font-semibold text-stone-800 hover:text-black transition-colors tracking-wide py-2 -my-2"
             >
               nick gustafson
             </Link>
-            <div className="flex items-center gap-3.5 sm:gap-5 text-[13px] sm:text-sm">
+            <div className="flex items-center gap-2 sm:gap-5 text-[13px] sm:text-sm">
               {/* Primary: the writing */}
               <Link
                 href="/blog"
                 className="text-stone-600 font-medium hover:text-stone-900 transition-colors py-2 -my-2"
               >
                 notes
+              </Link>
+              <Link
+                href="/series"
+                aria-label="LLM series"
+                className="text-stone-600 font-medium hover:text-stone-900 transition-colors py-2 -my-2"
+              >
+                <span className="sm:hidden">series</span>
+                <span className="hidden sm:inline">LLM series</span>
               </Link>
               <Link
                 href="/benchmark"
@@ -106,7 +114,7 @@ export default function RootLayout({
               )}
               <Link
                 href="/about"
-                className="text-stone-600 font-medium hover:text-stone-900 transition-colors py-2 -my-2"
+                className="hidden sm:inline text-stone-600 font-medium hover:text-stone-900 transition-colors py-2 -my-2"
               >
                 about
               </Link>

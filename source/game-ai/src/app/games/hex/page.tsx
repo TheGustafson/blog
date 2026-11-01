@@ -38,7 +38,7 @@ export default function HexPage() {
         </p>
       </header>
 
-      <HexGame />
+      <HexGame collapseSearchDetails />
       <GameSourceLinks crateName="ai-hex" gameName="Hex" />
     </div>
   );

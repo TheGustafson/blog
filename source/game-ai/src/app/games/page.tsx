@@ -241,7 +241,7 @@ function GamePreview({ kind }: { kind: (typeof games)[number]["preview"] }) {
   if (kind === "hex") {
     return (
       <svg
-        className="block w-[min(21rem,84vw)] overflow-visible"
+        className="games-index-hex block w-[min(21rem,84vw)] overflow-visible"
         viewBox="0 0 110 74"
         aria-hidden="true"
       >
@@ -253,8 +253,8 @@ function GamePreview({ kind }: { kind: (typeof games)[number]["preview"] }) {
               <g key={key}>
                 <polygon
                   points={hexPreviewPoints(file, rank)}
-                  fill="#eee7d9"
-                  stroke="#9d9589"
+                  fill="#faf8f1"
+                  stroke="#b1a796"
                   strokeWidth="0.65"
                 />
                 {(hexRed.has(key) || hexBlue.has(key)) && (
@@ -262,8 +262,8 @@ function GamePreview({ kind }: { kind: (typeof games)[number]["preview"] }) {
                     cx={point.x}
                     cy={point.y}
                     r="4.1"
-                    fill={hexRed.has(key) ? "#a94636" : "#315f73"}
-                    stroke="rgb(247 244 236 / 0.72)"
+                    fill="#faf8f1"
+                    stroke={hexRed.has(key) ? "#ab5748" : "#315d85"}
                     strokeWidth="0.55"
                   />
                 )}
@@ -286,14 +286,14 @@ function GamePreview({ kind }: { kind: (typeof games)[number]["preview"] }) {
           y="1"
           width="318"
           height="188"
-          fill="#8c5436"
-          stroke="#51443a"
+          fill="#faf8f1"
+          stroke="#746e63"
           strokeWidth="2"
         />
-        <rect x="151" y="2" width="18" height="186" fill="#5e3929" />
+        <rect x="151" y="2" width="18" height="186" fill="#e7e0d3" />
         {Array.from({ length: 12 }, (_, column) => {
           const x = backgammonColumnX(column);
-          const fill = column % 2 === 0 ? "#d2aa69" : "#6f3027";
+          const fill = column % 2 === 0 ? "#e0d8c8" : "#d7bfa7";
           return (
             <g key={column}>
               <polygon
@@ -314,7 +314,7 @@ function GamePreview({ kind }: { kind: (typeof games)[number]["preview"] }) {
               cx={backgammonColumnX(stack.column) + 10.5}
               cy={stack.side === "top" ? 18 + index * 13 : 172 - index * 13}
               r="8.4"
-              fill={stack.color === "white" ? "#eee7d9" : "#292624"}
+              fill={stack.color === "white" ? "#faf8f1" : "#292624"}
               stroke={stack.color === "white" ? "#8b8174" : "#ddd3c3"}
               strokeWidth="0.8"
             />
@@ -411,8 +411,8 @@ function GamePreview({ kind }: { kind: (typeof games)[number]["preview"] }) {
                     cx={cx}
                     cy={cy}
                     r="7.1"
-                    fill={isRed ? "#a94636" : "#315f73"}
-                    stroke="rgb(247 244 236 / 0.82)"
+                    fill={isRed ? "#ab5748" : "#315d85"}
+                    stroke="#faf8f1"
                     strokeWidth="1"
                   />
                 )}

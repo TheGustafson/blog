@@ -54,9 +54,13 @@ export function SearchPalette() {
   const [active, setActive] = useState(0);
   const indexRef = useRef<Entry[] | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const openRef = useRef(false);
+  const previousFocus = useRef<HTMLElement | null>(null);
   const router = useRouter();
 
-  const openPalette = useCallback(() => {
+  const openPalette = useCallback((trigger?: HTMLElement) => {
+    if (!openRef.current) previousFocus.current = trigger ?? document.activeElement as HTMLElement | null;
+    openRef.current = true;
     setOpen(true);
     if (!indexRef.current) {
       import("@/data/searchIndex.json").then((m) => {
@@ -66,10 +70,13 @@ export function SearchPalette() {
   }, []);
 
   const close = useCallback(() => {
+    if (!openRef.current) return;
+    openRef.current = false;
     setOpen(false);
     setQ("");
     setHits([]);
     setActive(0);
+    if (previousFocus.current?.isConnected) previousFocus.current.focus();
   }, []);
 
   // `/` opens from anywhere; Escape closes.
@@ -111,9 +118,11 @@ export function SearchPalette() {
     <>
       <button
         type="button"
-        onClick={openPalette}
-        className="hidden sm:inline text-stone-500 hover:text-stone-700 transition-colors py-2 -my-2"
+        onClick={(event) => openPalette(event.currentTarget)}
+        className="inline min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 text-stone-500 hover:text-stone-700 transition-colors py-2 -my-2"
         aria-label="Search posts (press slash)"
+        aria-expanded={open}
+        aria-haspopup="dialog"
         title="Search — press /"
       >
         search

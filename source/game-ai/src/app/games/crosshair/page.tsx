@@ -43,7 +43,7 @@ export default function CrosshairPage() {
         </p>
       </header>
 
-      <CrosshairGame />
+      <CrosshairGame collapseSearchDetails />
       <GameSourceLinks crateName="ai-crosshair" gameName="Crosshair" />
     </div>
   );

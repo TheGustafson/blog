@@ -38,7 +38,7 @@ export default function TicTacToePage() {
         </p>
       </header>
 
-      <UltimateTicTacToeGame />
+      <UltimateTicTacToeGame collapseSearchDetails />
       <GameSourceLinks
         crateName="ai-ultimate-tictactoe"
         gameName="Ultimate Tic-Tac-Toe"

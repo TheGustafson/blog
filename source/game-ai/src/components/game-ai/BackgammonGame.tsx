@@ -164,6 +164,7 @@ function makeCheckerFlight(checker: HTMLElement | null): CheckerFlight | null {
   const element = checker.cloneNode(true) as HTMLElement;
   element.classList.remove("is-arriving");
   element.classList.add("backgammon-flying-checker");
+  if (checker.closest(".notebook-boards")) element.classList.add("notebook-checker-ink");
   element.setAttribute("aria-hidden", "true");
   Object.assign(element.style, {
     top: `${start.top}px`,
@@ -311,6 +312,7 @@ function setCheckerDragImage(
 ) {
   const ghost = document.createElement("span");
   ghost.className = `backgammon-drag-ghost is-${player}`;
+  if (event.currentTarget.closest(".notebook-boards")) ghost.classList.add("notebook-checker-ink");
   ghost.setAttribute("aria-hidden", "true");
   document.body.append(ghost);
   event.dataTransfer.setDragImage(ghost, 22, 22);
@@ -1115,7 +1117,12 @@ export function BackgammonGame() {
             </div>
           </div>
 
-          {lastSearch && <BackgammonSearchReadout record={lastSearch} />}
+          {lastSearch && (
+            <details className="game-ai-search-details">
+              <summary>Search details</summary>
+              <BackgammonSearchReadout record={lastSearch} />
+            </details>
+          )}
         </div>
       </div>
 
