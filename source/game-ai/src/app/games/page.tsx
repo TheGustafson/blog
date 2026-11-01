@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { RektCycle } from "@/components/game-ai/RektCycle";
 
 const GAMES_ARE_PUBLIC = process.env.PUBLISH_GAME_AI === "1";
@@ -103,71 +104,18 @@ const othello = new Map([
   [19, "dark"],
 ]);
 const chess = [
-  "♜",
-  "",
-  "♝",
-  "♛",
-  "♚",
-  "",
-  "",
-  "♜",
-  "♟",
-  "♟",
-  "",
-  "",
-  "",
-  "♟",
-  "♟",
-  "♟",
-  "",
-  "",
-  "♞",
-  "",
-  "♟",
-  "♞",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "♟",
-  "♙",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "♗",
-  "",
-  "♙",
-  "",
-  "",
-  "",
-  "",
-  "♘",
-  "",
-  "",
-  "♘",
-  "",
-  "",
-  "♙",
-  "♙",
-  "♙",
-  "",
-  "",
-  "",
-  "♙",
-  "♙",
-  "♙",
-  "♖",
-  "",
-  "♗",
-  "♕",
-  "♔",
-  "",
-  "",
-  "♖",
+  "r", "", "b", "q", "k", "", "", "r",
+  "p", "p", "", "", "", "p", "p", "p",
+  "", "", "n", "", "p", "n", "", "",
+  "", "", "", "p", "P", "", "", "",
+  "", "", "B", "", "P", "", "", "",
+  "", "N", "", "", "N", "", "", "P",
+  "P", "P", "", "", "", "P", "P", "P",
+  "R", "", "B", "Q", "K", "", "", "R",
 ];
+const chessRoles: Record<string, string> = {
+  p: "pawn", n: "knight", b: "bishop", r: "rook", q: "queen", k: "king",
+};
 
 const hexRed = new Set(["3,0", "3,1", "2,2", "2,3", "1,4", "1,5", "0,6"]);
 const hexBlue = new Set(["0,1", "1,1", "2,1", "3,2", "4,2", "5,3", "6,3"]);
@@ -206,11 +154,26 @@ function hexPreviewPoints(file: number, rank: number) {
 function GamePreview({ kind }: { kind: (typeof games)[number]["preview"] }) {
   if (kind === "ultimate-tic-tac-toe") {
     return (
-      <div className="games-index-ultimate" aria-hidden="true">
-        {Array.from({ length: 81 }, (_, index) => (
-          <span key={index}>{ultimateMarks.get(index) ?? ""}</span>
+      <svg className="games-index-ultimate-drawing" viewBox="0 0 270 270" aria-hidden="true">
+        <rect width="270" height="270" fill="#faf8f1" />
+        {[1, 2, 4, 5, 7, 8].map((line) => (
+          <g key={line} stroke="#c7beb0" strokeWidth="1">
+            <path d={`M ${line * 30} 0 V 270 M 0 ${line * 30} H 270`} />
+          </g>
         ))}
-      </div>
+        {[90, 180].map((line) => (
+          <path key={line} d={`M ${line} 0 V 270 M 0 ${line} H 270`} stroke="#746e63" strokeWidth="2.5" />
+        ))}
+        {Array.from(ultimateMarks, ([index, mark]) => {
+          const x = (index % 9) * 30 + 15;
+          const y = Math.floor(index / 9) * 30 + 15;
+          return mark === "×" ? (
+            <path key={index} d={`M ${x - 7} ${y - 7} l 14 14 M ${x + 7} ${y - 7} l -14 14`} stroke="#315d85" strokeWidth="2.5" strokeLinecap="round" />
+          ) : (
+            <circle key={index} cx={x} cy={y} r="8" fill="none" stroke="#ab5748" strokeWidth="2.5" />
+          );
+        })}
+      </svg>
     );
   }
   if (kind === "connect-four") {
@@ -455,7 +418,9 @@ function GamePreview({ kind }: { kind: (typeof games)[number]["preview"] }) {
   return (
     <div className="games-index-chess" aria-hidden="true">
       {chess.map((piece, index) => (
-        <span key={index}>{piece}</span>
+        <span key={index}>
+          {piece && <Image src={`/images/game-previews/chess/${piece === piece.toUpperCase() ? "white" : "black"}-${chessRoles[piece.toLowerCase()]}.svg`} alt="" width={45} height={45} />}
+        </span>
       ))}
     </div>
   );
