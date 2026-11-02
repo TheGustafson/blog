@@ -7,6 +7,12 @@
     <description>Writing by Nick Gustafson — software engineer and data scientist. Notes on machine learning, the systems behind it, and the things worth understanding deeply.</description>
     <language>en-us</language>
     <item>
+      <title>Let’s give the thermostat a reward function.</title>
+      <link>https://thegustafson.com/blog/smart-buildings</link>
+      <guid isPermaLink="true">https://thegustafson.com/blog/smart-buildings</guid>
+      <description>A tour of Goldilocks Plaza: its people, heating and cooling, conflicting controls, and a neural policy that could learn to coordinate them.</description>
+    </item>
+    <item>
       <title>Crosshair-Bench: Evaluating Frontier Models on an Unseen Game</title>
       <link>https://thegustafson.com/blog/llms-vs-crosshair</link>
       <guid isPermaLink="true">https://thegustafson.com/blog/llms-vs-crosshair</guid>
