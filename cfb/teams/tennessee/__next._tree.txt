@@ -3,10 +3,10 @@
 :HL["/_next/static/media/5611c55482296524-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/_next/static/media/7d4881bb7e1bf84d-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/_next/static/css/7ad0f22d931b9caa.css","style"]
-:HL["/_next/static/css/5e3aef8b4863dcb9.css","style"]
+:HL["/_next/static/css/7bb1cb09dc978cbf.css","style"]
 :HL["/_next/static/media/4f49a4114e1fe4d6-s.p.ttf","font",{"crossOrigin":"","type":"font/ttf"}]
 :HL["/_next/static/css/f28f7122f3e2d111.css","style"]
 :HL["/_next/static/css/c0703d05646bc93a.css","style"]
-:HL["/_next/static/css/d0f7c11fa1648248.css","style"]
-:HL["/_next/static/css/0c40fca2a67b436b.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"cfb","param":null,"prefetchHints":0,"slots":{"children":{"name":"teams","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"tennessee","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"P_Td_E_M123BUo6DICOa7"}
+:HL["/_next/static/css/a0e4c7a1c5ab93ae.css","style"]
+:HL["/_next/static/css/07f683b47a7af575.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"cfb","param":null,"prefetchHints":0,"slots":{"children":{"name":"teams","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"tennessee","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"ikCMrjityrKWh6r2nR89v"}
