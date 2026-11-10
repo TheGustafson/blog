@@ -9,4 +9,4 @@
 :HL["/_next/static/css/c0703d05646bc93a.css","style"]
 :HL["/_next/static/css/a0e4c7a1c5ab93ae.css","style"]
 :HL["/_next/static/css/07f683b47a7af575.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"cfb","param":null,"prefetchHints":0,"slots":{"children":{"name":"teams","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"north-carolina","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"ikCMrjityrKWh6r2nR89v"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"cfb","param":null,"prefetchHints":0,"slots":{"children":{"name":"teams","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"north-carolina","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"1q3bbXMjenUbHsk7VMlk4"}
