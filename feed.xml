@@ -7,6 +7,12 @@
     <description>Writing by Nick Gustafson — software engineer and data scientist. Notes on machine learning, the systems behind it, and the things worth understanding deeply.</description>
     <language>en-us</language>
     <item>
+      <title>Launching a better college football power index</title>
+      <link>https://thegustafson.com/blog/cfb-index</link>
+      <guid isPermaLink="true">https://thegustafson.com/blog/cfb-index</guid>
+      <description>A new college football power index and 12-team Playoff simulator that beats ESPN's FPI and SP+ across 7,336 out-of-sample games since 2017.</description>
+    </item>
+    <item>
       <title>Let’s give the thermostat a reward function.</title>
       <link>https://thegustafson.com/blog/smart-buildings</link>
       <guid isPermaLink="true">https://thegustafson.com/blog/smart-buildings</guid>

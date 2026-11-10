@@ -98,6 +98,12 @@ export default function RootLayout({
                 <span className="hidden sm:inline">LLM series</span>
               </Link>
               <Link
+                href="/cfb"
+                className="hidden sm:inline text-stone-600 font-medium hover:text-stone-900 transition-colors py-2 -my-2"
+              >
+                CFB Index
+              </Link>
+              <Link
                 href="/benchmark"
                 className="hidden sm:inline text-stone-600 font-medium hover:text-stone-900 transition-colors py-2 -my-2"
               >
