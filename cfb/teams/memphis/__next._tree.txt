@@ -9,4 +9,4 @@
 :HL["/_next/static/css/c0703d05646bc93a.css","style"]
 :HL["/_next/static/css/d0f7c11fa1648248.css","style"]
 :HL["/_next/static/css/0c40fca2a67b436b.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"cfb","param":null,"prefetchHints":0,"slots":{"children":{"name":"teams","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"memphis","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"sp5YENCC5ZKTia_ze9uQQ"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"cfb","param":null,"prefetchHints":0,"slots":{"children":{"name":"teams","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"memphis","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"P_Td_E_M123BUo6DICOa7"}
